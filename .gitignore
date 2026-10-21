@@ -1,0 +1,15 @@
+# Environments
+.env
+__pycache__/
+*.pyc
+
+# Local test outputs & recordings
+output/*.mp4
+output/*.webm
+output/*.jpg
+output/.temp*
+.temp*
+
+# System
+.DS_Store
+Thumbs.db

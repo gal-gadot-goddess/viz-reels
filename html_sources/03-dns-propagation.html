@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0e15"/>
+<title>VIZ 03 — DNS Propagation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REEL-VIZ FORMAT · 9:16 · 540x960 logical stage (auto-scaled)
+   Same engine/format as VIZ 01/02 · AUTOPLAYS (no play button)
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#5aa2ff; --purple:#b18cff; --lav:#c988fb; --pink:#ff7fa3;
+  --mint:#37e0b0; --amber:#ffb454; --txt:#e9eff8; --mut:#8492ab; --dim:#5e6c84;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Outfit',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%;background:#04060b;overflow:hidden;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center}
+#fit{width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;flex:none;width:540px;height:960px;transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -10%, #101a2c 0%, transparent 60%),
+    radial-gradient(80% 50% at 112% 112%, #191430 0%, transparent 60%),
+    radial-gradient(70% 45% at -10% 105%, #0e1a2e 0%, transparent 60%),
+    #0a0e15;}
+
+/* ---------- ambient ---------- */
+.grid{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);
+  background-size:45px 45px;
+  -webkit-mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);}
+.aur{position:absolute;width:430px;height:430px;border-radius:50%;filter:blur(75px);opacity:.15;z-index:0;pointer-events:none}
+.a1{background:#3d6bff;top:-170px;left:-130px;animation:drift 16s ease-in-out infinite alternate}
+.a2{background:#7a4bff;bottom:-150px;right:-130px;animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(42px,30px) scale(1.12)}}
+#grain{position:absolute;inset:0;z-index:40;opacity:.06;pointer-events:none;mix-blend-mode:overlay}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .65s cubic-bezier(.16,1,.3,1)}
+.rev.show{opacity:1;transform:none}
+.amber{color:var(--amber)} .mint{color:var(--mint)} .pink{color:var(--pink)}
+.purple{color:var(--purple)} .blue{color:var(--blue)} .lav{color:var(--lav)}
+
+/* ---------- header ---------- */
+#head{position:absolute;left:0;right:0;top:30px;text-align:center;z-index:6}
+.brand{font:500 11px/1 var(--mono);letter-spacing:.26em;color:var(--dim)}
+.title{margin-top:16px;font:800 40px/1.12 var(--sans);letter-spacing:.005em;color:var(--txt);
+  text-shadow:0 0 24px rgba(120,160,255,.16)}
+.sub{margin-top:8px;font:600 13.5px/1 var(--sans);color:#4c9aff}
+.chip{display:inline-block;margin-top:13px;background:#141b28;border:1px solid #212c3e;color:#93a0b8;
+  border-radius:9px;padding:7px 13px;font:italic 400 11.5px/1.25 var(--mono)}
+
+/* ---------- DNS record chip ---------- */
+#dnsRec{position:absolute;left:0;right:0;top:262px;text-align:center;z-index:6}
+#dnsRec .dlbl{font:700 9.5px/1 var(--mono);letter-spacing:.22em;color:#4c9aff}
+#dnsRec .dbox{display:inline-flex;align-items:center;gap:10px;margin-top:11px;padding:12px 18px;
+  border:1.6px solid rgba(90,162,255,.55);border-radius:10px;background:rgba(20,30,52,.75);
+  box-shadow:0 0 18px rgba(90,150,255,.18)}
+#dnsRec .dom{font:700 14px/1 var(--mono);color:#e9eff8;letter-spacing:.02em}
+#dnsRec .arr{font:400 13px/1 var(--mono);color:#6d7c96}
+#dnsRec .ip{font:700 14px/1 var(--mono);color:var(--mint);text-shadow:0 0 12px rgba(55,224,176,.45)}
+#dnsRec .ip.done{animation:ipflash .7s ease}
+@keyframes ipflash{40%{text-shadow:0 0 22px rgba(55,224,176,.95);color:#c9ffe9}}
+
+/* ---------- resolvers ---------- */
+#resLbl{position:absolute;left:26px;top:388px;z-index:6;font:700 10.5px/1 var(--mono);
+  letter-spacing:.24em;color:#a78bfa}
+.res{position:absolute;top:414px;width:80px;z-index:6;margin-left:-40px;text-align:center}
+.ringW{position:relative;width:58px;height:58px;margin:0 auto}
+.rsvg{position:absolute;inset:0;transform:rotate(-90deg);animation:spin 11s linear infinite}
+.res.fresh .rsvg{animation-duration:17s}
+.res.hot .rsvg{animation-duration:5s}
+@keyframes spin{to{transform:rotate(270deg)}}
+.track{stroke:rgba(150,170,215,.22);stroke-width:3;fill:none}
+.arc{stroke:var(--c,#ffb454);stroke-width:3;fill:none;stroke-linecap:round;
+  stroke-dasharray:58 42;filter:drop-shadow(0 0 4px rgba(255,180,84,.5))}
+.res.fresh .arc{stroke:#37e0b0;stroke-dasharray:94 6;filter:drop-shadow(0 0 5px rgba(55,224,176,.6))}
+.icard{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-14px 0 0 -14px;border-radius:6px;
+  border:1.4px solid rgba(122,152,215,.6);background:#0e1526;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3.5px;box-shadow:0 0 8px rgba(90,140,255,.12)}
+.icard i{display:block;width:12px;height:1.8px;border-radius:1px;background:rgba(140,170,230,.75)}
+.rname{margin-top:8px;font:700 8.5px/1 var(--mono);letter-spacing:.12em;color:#8a97b0}
+.rusers{margin-top:6px;display:flex;justify-content:center;gap:5px;opacity:.85}
+.u{width:9px;height:9px;border-radius:50% 50% 3px 3px;background:rgba(140,165,215,.5)}
+.res.fresh .u{background:rgba(55,224,176,.65)}
+.res.fresh .rname{color:#7fe9c9}
+
+/* ---------- servers ---------- */
+.srv{position:absolute;top:55px;width:150px;height:66px;z-index:5;border:1.6px solid rgba(150,170,215,.45);
+  border-radius:10px;background:linear-gradient(180deg,rgba(16,24,38,.94),rgba(12,18,32,.94));padding:9px 12px;
+  box-shadow:inset 0 0 12px rgba(90,150,255,.05)}
+#srvOld{left:75px;border-color:rgba(255,180,84,.5)}
+#srvOld.hot{animation:hotGlow 1.6s ease-in-out infinite}
+@keyframes hotGlow{50%{box-shadow:0 0 22px rgba(255,180,84,.35), inset 0 0 16px rgba(255,180,84,.14)}}
+#srvNew{left:55px;border-color:rgba(55,224,176,.5)}
+.sline{display:block;height:3px;border-radius:2px;background:rgba(150,170,215,.4);margin-bottom:6px}
+.sline.w1{width:80%}.sline.w2{width:62%}.sline.w3{width:70%}
+.sdots{display:flex;gap:5px;margin-top:9px}
+.sdots i{width:5px;height:5px;border-radius:50%;background:rgba(150,170,215,.45)}
+#srvOld .sdots i{background:rgba(255,180,84,.55)}
+#srvNew .sdots i{background:rgba(55,224,176,.55)}
+.sName{position:absolute;top:20px;left:0;width:100%;text-align:center;font:700 10px/1 var(--mono);letter-spacing:.22em}
+#zoneOld .sName{color:var(--amber)} #zoneNew .sName{color:var(--mint)}
+.sIp{position:absolute;top:134px;left:0;width:100%;text-align:center;font:500 9px/1 var(--mono);
+  letter-spacing:.1em;color:#6d7c96}
+.sStat{position:absolute;top:154px;left:0;width:100%;text-align:center;z-index:6}
+.sStat .sttl{font:700 9px/1 var(--mono);letter-spacing:.2em;color:var(--amber)}
+#zoneNew .sttl{color:var(--mint)}
+.sStat .sbig{display:block;margin-top:5px;font:800 27px/1.1 var(--sans);color:var(--amber);letter-spacing:.01em}
+#zoneNew .sbig{font:800 20px/1.1 var(--sans);color:var(--mint)}
+.sStat .scap{display:block;margin-top:4px;font:400 9px/1.3 var(--mono);color:#77839b}
+#zoneOld{position:absolute;left:0;top:600px;width:300px;height:340px;z-index:3}
+#zoneNew{position:absolute;left:260px;top:600px;width:280px;height:340px;z-index:3}
+
+/* ---------- fx: orbs, hits, rings ---------- */
+#fx{position:absolute;inset:0;z-index:8;pointer-events:none}
+.orb{position:absolute;left:0;top:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#ffd08a;
+  box-shadow:0 0 12px 3px rgba(255,205,120,.55),0 0 30px 8px rgba(255,180,80,.18)}
+.orb.g{background:#7fe0c0;box-shadow:0 0 12px 3px rgba(55,224,176,.55),0 0 30px 8px rgba(55,224,176,.18)}
+.hitdot{position:absolute;width:6px;height:6px;border-radius:2px;background:rgba(255,180,84,.75);
+  box-shadow:0 0 8px rgba(255,180,84,.4)}
+.ring{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  border:2px solid rgba(255,138,170,.85);animation:ringX .55s ease-out forwards}
+@keyframes ringX{to{transform:scale(3.1);opacity:0}}
+
+/* ---------- punchline ---------- */
+#punch{position:absolute;left:0;right:0;top:866px;text-align:center;z-index:6;opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.3,1)}
+#punch.show{opacity:1;transform:none}
+#punch .pt{font:800 21px/1.2 var(--sans);letter-spacing:.002em;color:#edf2fa}
+#punch .bar{display:block;margin:10px auto 0;width:96px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--amber),var(--lav));box-shadow:0 0 10px rgba(255,180,84,.45);
+  transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.9,.2,1) .3s}
+#punch.show .bar{transform:scaleX(1)}
+#brand2{position:absolute;left:0;right:0;top:928px;text-align:center;z-index:6;font:500 9.5px/1 var(--mono);
+  letter-spacing:.26em;color:#495870;opacity:0;transition:opacity .9s}
+#brand2.show{opacity:.9}
+
+/* ---------- controls ---------- */
+.ctl{position:absolute;z-index:45;width:40px;height:40px;border-radius:50%;border:1.4px solid rgba(140,165,215,.4);
+  background:rgba(16,23,38,.72);color:#9fb4d8;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation}
+.ctl:active{transform:scale(.93)}
+#mute{top:16px;right:16px}
+#replayBtn{top:16px;left:16px;opacity:0;pointer-events:none;transition:opacity .5s}
+#replayBtn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="aur a1"></div><div class="aur a2"></div>
+  <div class="grid"></div>
+
+  <header id="head">
+    <div class="brand rev">@yourhandle</div>
+    <h1 class="title rev"><span>DNS</span> <span class="blue">Propagation</span></h1>
+    <div class="sub rev">why changing your IP isn't instant</div>
+    <div class="chip rev">you changed the IP. why do users still hit the old server?</div>
+  </header>
+
+  <div id="dnsRec">
+    <div class="dlbl rev">YOUR DNS RECORD &middot; TTL 1 HOUR</div>
+    <div class="dbox rev"><span class="dom">yourapp.com</span><span class="arr">&rarr;</span><span class="ip" id="dip">198.51.100.20</span></div>
+  </div>
+
+  <div id="resLbl" class="rev">RESOLVERS</div>
+  <div id="resRow"></div>
+
+  <div id="zoneOld">
+    <div class="sName">OLD SERVER</div>
+    <div class="srv" id="srvOld"><i class="sline w1"></i><i class="sline w2"></i><i class="sline w3"></i>
+      <div class="sdots"><i></i><i></i><i></i></div></div>
+    <div class="sIp">203.0.113.10</div>
+    <div class="sStat">
+      <span class="sttl">TTL 1 HOUR</span>
+      <b class="sbig" id="minCount">0 MIN</b>
+      <span class="scap">since the change</span>
+    </div>
+  </div>
+
+  <div id="zoneNew">
+    <div class="sName">NEW SERVER</div>
+    <div class="srv" id="srvNew"><i class="sline w1"></i><i class="sline w2"></i><i class="sline w3"></i>
+      <div class="sdots"><i></i><i></i><i></i></div></div>
+    <div class="sIp">198.51.100.20</div>
+    <div class="sStat"><span class="sttl">TTL 60 SEC</span><b class="sbig" style="color:#4a5a74">&mdash;</b></div>
+  </div>
+
+  <div id="punch"><div class="pt">Every provider keeps your old IP until its timer runs out.</div><i class="bar"></i></div>
+  <div id="brand2">@yourhandle</div>
+
+  <div id="fx"></div>
+
+  <button class="ctl" id="replayBtn" aria-label="replay">&#8635;</button>
+  <button class="ctl" id="mute" aria-label="mute">&#128266;</button>
+
+  <div id="grain"></div>
+
+</div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),fx=$('#fx'),resRow=$('#resRow');
+
+/* ================= scaling ================= */
+let sc=1;
+function fit(){sc=Math.min(innerWidth/540,innerHeight/960);stage.style.transform=`scale(${sc})`;}
+addEventListener('resize',fit);fit();
+
+/* ================= AUDIO (synth SFX) ================= */
+let ctx=null,master=null,muted=false;
+function audioInit(){if(ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ctx=new AC();master=ctx.createGain();master.gain.value=.55;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;
+  master.connect(comp);comp.connect(ctx.destination);
+}
+const now=()=>ctx?ctx.currentTime:0;
+function tone(o={}){if(!ctx||muted)return;
+  const{type='sine',f=440,f2=null,dur=.12,vol=.18,at=0}=o,t0=now()+at;
+  const osc=ctx.createOscillator();osc.type=type;osc.frequency.setValueAtTime(f,t0);
+  if(f2)osc.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+dur+.06);
+}
+function noise(o={}){if(!ctx||muted)return;
+  const{dur=.4,vol=.2,at=0,f0=400,f1=2000,q=1.2}=o,t0=now()+at;
+  const len=Math.max(1,(dur+.05)*ctx.sampleRate|0),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=ctx.createBufferSource();n.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;
+  bp.frequency.setValueAtTime(f0,t0);bp.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  n.connect(bp);bp.connect(g);g.connect(master);n.start(t0);n.stop(t0+dur+.05);
+}
+const sfx={
+  thump(){tone({type:'sine',f:130,f2:38,dur:.4,vol:.6});tone({type:'triangle',f:520,f2:70,dur:.12,vol:.1})},
+  blip(f=760,at=0,vol=.12){tone({type:'square',f,dur:.07,vol,at})},
+  tick(){tone({type:'square',f:1150,dur:.045,vol:.07})},
+  pop(){tone({type:'sine',f:520,f2:150,dur:.13,vol:.3})},
+  ping(){tone({type:'sine',f:940,f2:1500,dur:.16,vol:.1})},
+  lowping(){tone({type:'sine',f:280,f2:150,dur:.16,vol:.16})},
+  whoosh(dur=.45,rev=false,vol=.14){noise({dur,f0:rev?2600:300,f1:rev?350:2600,vol})},
+  zap(){tone({type:'sawtooth',f:2100,f2:160,dur:.18,vol:.18});noise({dur:.12,vol:.05,f0:3000,f1:600})},
+  chord(){[261.6,329.6,392,523.2].forEach((f,i)=>tone({type:'triangle',f,dur:1.15,vol:.06,at:i*.03}));
+    tone({type:'sine',f:130,f2:60,dur:.5,vol:.24})},
+  ui(){tone({type:'sine',f:640,dur:.05,vol:.05})},
+};
+
+/* ================= timeline engine ================= */
+let gen=0,events=[],start=0,playing=false,raf=null;
+const later=(ms,fn)=>{const g=gen;setTimeout(()=>{g===gen&&fn()},ms)};
+function resetFx(){fx.innerHTML='';}
+function startPlay(){
+  gen++;resetFx();resetDom();
+  events=buildTimeline().sort((a,b)=>a.t-b.t);
+  start=performance.now();playing=true;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-start)/1000;
+  while(events.length&&events[0].t<=el)events.shift().fn();
+  if(playing)raf=requestAnimationFrame(tick);
+}
+
+/* ================= scene helpers & data ================= */
+const RES=[{n:'COMCAST'},{n:'VERIZON'},{n:'JIO',fresh:true},{n:'BT'},{n:'8.8.8.8'},{n:'1.1.1.1'}];
+const NOTES_R=[523.25,587.33,659.25,783.99,880,1046.5];
+const RX=[64,142,220,298,376,454];           /* resolver centers */
+const OLD={x:150,y:652},NEW={x:390,y:652};
+let RNODES=[];
+function el(cls,html=''){const d=document.createElement('div');d.className=cls;d.innerHTML=html;return d;}
+function ring(x,y,color){const r=el('ring');r.style.left=x+'px';r.style.top=y+'px';
+  if(color)r.style.borderColor=color;fx.appendChild(r);setTimeout(()=>r.remove(),620);}
+function bump(sel,scale=1.4){const n=$(sel);n.animate(
+  [{transform:`scale(${scale})`,opacity:.75},{transform:'scale(1)',opacity:1}],
+  {duration:260,easing:'ease-out'});}
+function flyArc(x1,y1,x2,y2,opt){
+  const o={dur:520,color:'',done:null,...opt};
+  const ob=el('orb'+(o.color?' '+o.color:''));
+  ob.style.transform=`translate(${x1}px,${y1}px)`;fx.appendChild(ob);
+  const g=gen,t0=performance.now(),cx=(x1+x2)/2,cy=Math.min(y1,y2)-44;
+  const step=tt=>{
+    if(g!==gen){ob.remove();return;}
+    let k=Math.min(1,(tt-t0)/o.dur);const e=k*k*(3-2*k);
+    const ix=(1-e)*(1-e)*x1+2*(1-e)*e*cx+e*e*x2;
+    const iy=(1-e)*(1-e)*y1+2*(1-e)*e*cy+e*e*y2;
+    ob.style.transform=`translate(${ix}px,${iy}px)`;
+    if(k<1)requestAnimationFrame(step);else{ob.remove();o.done&&o.done();}
+  };
+  requestAnimationFrame(step);
+}
+let hitN=0;
+function hitDust(){
+  const base=OLD.x-52+ (hitN%8)*15, row=Math.floor(hitN/8);
+  const d=el('hitdot');d.style.left=base+'px';d.style.top=(736+row*12)+'px';
+  fx.appendChild(d);later(1600,()=>d.remove());hitN++;
+}
+function query(i,toNew){
+  const nd=RNODES[i];
+  flyArc(RX[i],478,toNew?NEW.x:OLD.x,toNew?NEW.y:OLD.y,{
+    color:toNew?'g':'',dur:560,
+    done:()=>{
+      if(toNew){ring(NEW.x,NEW.y+6,'rgba(55,224,176,.8)');sfx.ping();}
+      else{ring(OLD.x,OLD.y+6,'rgba(255,180,84,.75)');sfx.lowping();hitDust();
+        bump('#minCount',1.5);}
+    }});
+}
+
+/* ================= reset & timeline ================= */
+function resetDom(){
+  document.querySelectorAll('.rev').forEach(n=>n.classList.remove('show'));
+  $('#srvOld').classList.remove('hot');
+  $('#minCount').textContent='0 MIN';
+  RNODES.forEach(r=>r.classList.remove('show','hot'));
+  $('#punch').classList.remove('show');$('#brand2').classList.remove('show');
+  $('#replayBtn').classList.remove('show');
+}
+function buildTimeline(){
+  const ev=[],at=(t,fn)=>ev.push({t,fn});
+  /* --- intro --- */
+  at(.20,()=>{$('#head .brand').classList.add('show');sfx.ui()});
+  at(.55,()=>{$('#head .title').classList.add('show');sfx.thump()});
+  at(.95,()=>{$('#head .sub').classList.add('show');sfx.ui()});
+  at(1.30,()=>{$('#head .chip').classList.add('show');sfx.blip(520)});
+  /* --- DNS record --- */
+  at(2.00,()=>{$('#dnsRec .dlbl').classList.add('show');sfx.blip(392,0,.08)});
+  at(2.30,()=>{$('#dnsRec .dbox').classList.add('show');sfx.blip(659,0,.1);
+    $('#dip').classList.add('done');sfx.chord();
+    later(750,()=>$('#dip').classList.remove('done'))});
+  /* --- resolvers pop in --- */
+  at(3.10,()=>{$('#resLbl').classList.add('show');sfx.blip(300,0,.07)});
+  RNODES.forEach((r,i)=>at(3.4+.15*i,()=>{
+    r.classList.add('show');
+    r.animate([{transform:'scale(.6)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],
+      {duration:320,easing:'ease-out'});
+    sfx.blip(NOTES_R[i],0,.07);
+  }));
+  /* resolver rings heat as queries come in later */
+  at(4.40,()=>{sfx.ui()});
+  /* --- wave 1: cached answers fly to OLD server --- */
+  const W1=[0,1,3,4,5];
+  W1.forEach((idx,j)=>at(4.9+.28*j,()=>{query(idx,false);sfx.whoosh(.18,false,.05)}));
+  /* --- JIO (fresh) answers from NEW server --- */
+  at(6.40,()=>{RNODES[2].classList.add('hot');sfx.ping()});
+  [0,1,2].forEach(j=>at(6.55+.26*j,()=>{query(2,true);sfx.whoosh(.18,false,.05)}));
+  /* --- wave 2: more cached hits on old --- */
+  const W2=[0,3,4,5,1,4];
+  W2.forEach((idx,j)=>at(7.60+.24*j,()=>{query(idx,false);sfx.whoosh(.18,false,.05)}));
+  /* --- 11 MIN counter ticks up --- */
+  for(let m=1;m<=11;m++){const t0=7.9+(m-1)*.09;
+    at(t0,()=>{if(m%2===0)sfx.tick();$('#minCount').textContent=m+' MIN';});
+  }
+  at(8.95,()=>{bump('#minCount',1.8);sfx.blip(1046,0,.1)});
+  at(9.20,()=>{$('#srvOld').classList.add('hot');sfx.lowping()});
+  /* --- final fresh query + stats breathe --- */
+  at(9.80,()=>{query(2,true);sfx.whoosh(.2,false,.06)});
+  at(10.40,()=>{RNODES.forEach((r,i)=>{if(!r.classList.contains('fresh'))r.classList.add('hot')});sfx.zap()});
+  /* --- punchline --- */
+  at(11.20,()=>{$('#punch').classList.add('show');sfx.chord()});
+  at(12.40,()=>{$('#brand2').classList.add('show');$('#replayBtn').classList.add('show')});
+  return ev;
+}
+
+/* ================= build resolvers & grain ================= */
+(function build(){
+  const SVG='<svg class="rsvg" viewBox="0 0 58 58"><circle class="track" cx="29" cy="29" r="26"/><circle class="arc" cx="29" cy="29" r="26" pathLength="100"/></svg>';
+  RES.forEach((r,i)=>{
+    const d=el('res'+(r.fresh?' fresh':'')+' rev');
+    d.style.left=RX[i]+'px';
+    d.innerHTML=`<div class="ringW">${SVG}<div class="icard"><i></i><i></i><i></i></div></div>
+      <div class="rname">${r.n}</div>
+      <div class="rusers"><i class="u"></i><i class="u"></i><i class="u"></i></div>`;
+    resRow.appendChild(d);RNODES.push(d);
+  });
+  try{
+    const c=document.createElement('canvas');c.width=c.height=120;
+    const g=c.getContext('2d'),im=g.createImageData(120,120);
+    for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;
+      im.data[i]=v;im.data[i+1]=v;im.data[i+2]=v;im.data[i+3]=30;}
+    g.putImageData(im,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`;
+  }catch(e){}
+})();
+
+/* ================= auto-start (video-friendly: no tap gate) ================= */
+audioInit();
+function tryUnlock(){
+  if(!ctx)return;
+  if(ctx.state==='suspended'){
+    ctx.resume().then(()=>{
+      const t=(performance.now()-start)/1000;
+      if(gen>0&&t<9)startPlay();
+    }).catch(()=>{});
+  }
+}
+addEventListener('pointerdown',tryUnlock);
+addEventListener('keydown',tryUnlock);
+$('#replayBtn').addEventListener('click',()=>{tryUnlock();startPlay()});
+$('#mute').addEventListener('click',()=>{
+  muted=!muted;if(master)master.gain.value=muted?0:.55;
+  $('#mute').innerHTML=muted?'&#128263;':'&#128266;';
+});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.key==='r'||e.key==='R'){e.preventDefault();startPlay();}
+  if(e.key==='m'||e.key==='M')$('#mute').click();
+});
+const AUTOLOOP=/[?&]loop=1/.test(location.search);
+if(AUTOLOOP)setInterval(()=>{if((performance.now()-start)/1000>14)startPlay()},500);
+setTimeout(startPlay,180);
+})();
+</script>
+</body>
+</html>
