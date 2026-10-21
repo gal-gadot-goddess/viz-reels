@@ -1,0 +1,25 @@
+[
+  {
+    "file": "03-dns-propagation.html",
+    "title": "dns propagation Explained in 20 Seconds!",
+    "video": "03-dns-propagation.mp4",
+    "music": null,
+    "timestamp": "2026-10-21T12:28:57Z",
+    "publish": {
+      "instagram": {
+        "id": "17866645455677463",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "4440588659537972",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      }
+    }
+  }
+]
