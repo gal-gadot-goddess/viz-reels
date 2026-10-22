@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How Git Works: Branch and Merge</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#fff}
+#stage{position:absolute;left:50%;top:50%;width:540px;height:960px;transform-origin:center;background:#04040c;overflow:hidden}
+canvas{position:absolute;inset:0;width:540px;height:960px}
+/* Reels safe zone: everything inside x 36-460, y 140-770 */
+.tx{position:absolute;left:36px;width:424px;text-align:center;transition:opacity .5s}
+#kk{top:142px;font-size:13px;letter-spacing:5px;font-weight:800;color:#fdba74}
+#tt{top:164px;margin:0;font-size:38px;font-weight:900;letter-spacing:-.5px;line-height:1.05;text-shadow:0 0 30px rgba(251,146,60,.5)}
+#cp{top:712px;font-size:19px;line-height:1.38;color:#e6dfd6;font-weight:600;text-shadow:0 2px 14px #000}
+.ui{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:9;display:flex;gap:4px;opacity:0;transition:opacity .4s}
+body.show .ui{opacity:1}
+.ui button{background:#1b1d33;color:#cfd4ea;border:1px solid #333a62;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+#hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(20,22,40,.92);border:1px solid #333a62;color:#cfd4ea;border-radius:999px;padding:8px 16px;font-size:12px;letter-spacing:1px;transition:opacity .6s;z-index:9;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage">
+<canvas id="c" width="1080" height="1920"></canvas>
+<div id="tw"><div class="tx" id="kk"></div><h1 class="tx" id="tt"></h1><div class="tx" id="cp"></div></div>
+</div>
+<div class="ui"><button onclick="restart()">↻ Replay</button><button onclick="guides=!guides">Safe zones</button><button id="sndBtn" onclick="toggleSnd()">🔊</button></div>
+<div id="hint">tap anywhere for sound 🔊</div>
+<script>
+const cv=document.getElementById("c"),ctx=cv.getContext("2d"),stage=document.getElementById("stage"),$=id=>document.getElementById(id);
+function fit(){const s=Math.min(document.body.clientHeight/960,document.body.clientWidth/540);stage.style.transform="translate(-50%,-50%) scale("+s+")"}
+addEventListener("resize",fit);fit();
+let hideT;const showUI=()=>{document.body.classList.add("show");clearTimeout(hideT);hideT=setTimeout(()=>document.body.classList.remove("show"),2500)};
+addEventListener("pointermove",showUI);addEventListener("touchstart",showUI);
+const R=(a,b,c,d)=>{const x=Math.sin(a*127.1+b*311.7+c*74.7+d*19.3+1.7)*43758.5453;return x-Math.floor(x)};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),lerp=(a,b,k)=>a+(b-a)*k,ease=x=>1-Math.pow(1-clamp(x,0,1),3),sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const SP={};
+function spr(h){const k=Math.round(h/10)*10;if(!SP[k]){const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d"),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,`hsla(${k},100%,88%,1)`);r.addColorStop(.25,`hsla(${k},100%,66%,.55)`);r.addColorStop(1,`hsla(${k},100%,50%,0)`);g.fillStyle=r;g.fillRect(0,0,64,64);SP[k]=c}return SP[k]}
+function dot(x,y,r,h,a){if(a<=.01||r<=.3)return;ctx.globalAlpha=Math.min(1,a);ctx.drawImage(spr(h),x-r,y-r,2*r,2*r);ctx.globalAlpha=1}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+
+/* ---- audio (synthesized, no files) ---- */
+let AC=null,master=null,sndOn=true,lastTk=0,lastN=0,lastCmd=null;
+function ensureAC(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();master=AC.createGain();master.gain.value=.32;master.connect(AC.destination);const h=$("hint");if(h){h.style.opacity=0;setTimeout(()=>h.remove(),700)}}
+ if(AC&&AC.state=="suspended")AC.resume()}
+addEventListener("pointerdown",ensureAC);addEventListener("keydown",ensureAC);
+setTimeout(()=>{const h=$("hint");if(h){h.style.opacity=0;setTimeout(()=>h.remove(),900)}},9000);
+function toggleSnd(){ensureAC();sndOn=!sndOn;$("sndBtn").textContent=sndOn?"🔊":"🔇"}
+function tone(f,dur,type,vol,slide,delay){if(!AC||!sndOn)return;const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t0);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(1,slide),t0+dur);
+ g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol||.5,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.06)}
+function noiseS(dur,vol,f0,f1,delay){if(!AC||!sndOn)return;const t0=AC.currentTime+(delay||0),n=Math.max(64,AC.sampleRate*dur|0),b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+ const s=AC.createBufferSource();s.buffer=b;const fl=AC.createBiquadFilter();fl.type="bandpass";fl.Q.value=1.1;fl.frequency.setValueAtTime(f0,t0);fl.frequency.exponentialRampToValueAtTime(f1,t0+dur);
+ const g=AC.createGain();g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);s.connect(fl);fl.connect(g);g.connect(master);s.start(t0)}
+function popSnd(i,big){if(!AC||!sndOn)return;
+ if(big){[262,330,392,523,660].forEach((f,k)=>tone(f,1,"sine",.2,0,k*.05));tone(131,1.1,"sine",.24);noiseS(.55,.12,700,4200)}
+ else{const f=[392,440,523,587,494][i%5];tone(f,.28,"triangle",.3);tone(f*2,.14,"sine",.09,0,.02)}}
+function tickSnd(){if(!AC||!sndOn)return;const n=AC.currentTime;if(n-lastTk<.04)return;lastTk=n;tone(1400+Math.random()*700,.03,"square",.05)}
+
+/* ---- story ---- */
+const MAIN=190,FEAT=320,GOLD=45,PUSH=140;
+const CM=[
+ {x:290,y:0,t:1.2,h:MAIN,msg:"initial commit",hash:"a1f3c9e",par:[],side:1},
+ {x:290,y:-70,t:2.6,h:MAIN,msg:"add login",hash:"7be42d0",par:[0],side:1},
+ {x:170,y:-140,t:5.0,h:FEAT,msg:"add search",hash:"c05d8a1",par:[1],side:-1},
+ {x:170,y:-210,t:6.2,h:FEAT,msg:"search UI",hash:"e92b7f4",par:[2],side:-1},
+ {x:290,y:-280,t:8.8,h:MAIN,msg:"fix typo",hash:"3d6a0c8",par:[1],side:1},
+ {x:290,y:-350,t:10.4,h:MAIN,msg:"Merge feature",hash:"f48e1b5",par:[4,3],side:1,merge:1}
+];
+const EDGES=[];CM.forEach((c,i)=>c.par.forEach((p,k)=>EDGES.push({p,c:i,h:CM[i].merge&&k==1?FEAT:c.h,mg:c.merge&&k==1})));
+const CMD=[
+ [.3,1.2,"git init"],[1.5,2.6,'git commit -m "add login"'],[3.0,4.0,"git checkout -b feature"],[4.1,5.0,'git commit -m "add search"'],
+ [5.3,6.2,'git commit -m "search UI"'],[6.5,7.3,"git checkout main"],[7.6,8.8,'git commit -m "fix typo"'],[9.2,10.4,"git merge feature"],[11.2,12.0,"git push"]
+];
+const TIPM=[[1.2,0],[2.6,1],[8.8,4],[10.4,5]],TIPF=[[4.0,1],[5.0,2],[6.2,3]];
+const KF=[[0,0,420,1],[2.6,0,420,1],[3.4,-70,420,1],[5.0,-70,420,1],[5.8,-140,420,1],[6.2,-140,420,1],[7.0,-210,420,1],[8.8,-210,420,1],[9.6,-280,420,1],[10.4,-280,420,1],[11.2,-350,420,1],[13.0,-350,420,1],[14.3,-175,500,.7],[16,-175,500,.7],[17.6,-175,500,.75],[20,-175,500,.75]];
+const CAP=[
+ [0,"HOW GIT WORKS","Time travel for code","Every commit is a saved snapshot."],
+ [1.5,"COMMIT","Save a snapshot","Each commit points back to its parent."],
+ [3.0,"BRANCH","Parallel universes","A branch lets you work without touching main."],
+ [6.5,"SWITCH","Back to main","Meanwhile, main keeps moving."],
+ [9.2,"MERGE","Bring it together","Git joins both histories in a new merge commit."],
+ [11.2,"PUSH","Share it","Your commits travel to the remote."],
+ [13.2,"THE BIG IDEA","Git is a graph","Snapshots, linked by parents. Nothing more."],
+ [16.3,"UNDER THE HOOD","A branch is just a file","One line of text: a branch name pointing at a commit."],
+ [18.5,"THAT'S IT","Five ideas, one graph","init → commit → branch → merge → push. That's 90% of daily Git."]
+];
+let phase=-1;
+function setPhase(i){phase=i;const c=CAP[i];["kk","tt","cp"].forEach(id=>$(id).style.opacity=0);tone(600,.12,"sine",.07,340);
+ setTimeout(()=>{$("kk").textContent=c[1];$("tt").textContent=c[2];$("cp").textContent=c[3];["kk","tt","cp"].forEach(id=>$(id).style.opacity=1)},i?180:0)}
+let CY=0,BY=420,ZM=1;
+function cam(t){for(let i=0;i<KF.length-1;i++){const a=KF[i],b=KF[i+1];if(t<=b[0]){const k=sm((t-a[0])/(b[0]-a[0]));CY=lerp(a[1],b[1],k);BY=lerp(a[2],b[2],k);ZM=lerp(a[3],b[3],k);return}}}
+const P=c=>[250+(c.x-250)*ZM,BY+(c.y-CY)*ZM];
+const bez=(a,b,u)=>{const ym=(a[1]+b[1])/2,m=1-u;return[m*m*m*a[0]+3*m*m*u*a[0]+3*m*u*u*b[0]+u*u*u*b[0],m*m*m*a[1]+3*m*m*u*ym+3*m*u*u*ym+u*u*u*b[1]]};
+function tipPos(ev,t){let i=-1;ev.forEach((e,j)=>{if(t>=e[0])i=j});if(i<0)return null;const cur=P(CM[ev[i][1]]),prev=i?P(CM[ev[i-1][1]]):cur,k=ease((t-ev[i][0])/.5);return[lerp(prev[0],cur[0],k),lerp(prev[1],cur[1],k)]}
+function pill(txt,x,y,h,a,bold){ctx.font="800 12px ui-sans-serif,system-ui";const w=ctx.measureText(txt).width+16;x=clamp(x,40+w/2,460-w/2);
+ rr(x-w/2,y-11,w,22,10);ctx.fillStyle=`rgba(6,8,24,${.88*a})`;ctx.fill();ctx.strokeStyle=`hsla(${h},95%,${bold?82:68}%,${a})`;ctx.lineWidth=bold?1.8:1.2;ctx.stroke();
+ ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.textAlign="center";ctx.fillText(txt,x,y+4)}
+
+/* ---- render ---- */
+let T0=performance.now(),loop=-1,guides=false;
+function restart(){T0=performance.now();loop=-1}
+const stars=Array.from({length:70},(_,i)=>({x:R(i,1,1,1)*540,y:R(i,2,2,2)*960,z:.2+R(i,3,3,3)}));
+let fired={},popped={};const bursts=[];
+function fx(key,fn){if(!fired[key]){fired[key]=1;fn()}}
+function spawnBurst(x,y,h,big){const n=big?26:14,ps=[];for(let i=0;i<n;i++){const a=R(i,x,0,0)*6.283,sp=(big?95:55)+R(i,y,0,0)*(big?150:95);ps.push([Math.cos(a),Math.sin(a),sp])}bursts.push({x,y,h,big:!!big,t0:performance.now(),ps})}
+function bg(T){
+ ctx.globalCompositeOperation="source-over";ctx.fillStyle="#04040c";ctx.fillRect(0,0,540,960);
+ ctx.globalCompositeOperation="lighter";
+ dot(180+Math.sin(T*.2)*70,420,460,320,.13);dot(330+Math.cos(T*.16)*70,560,460,190,.13);
+ stars.forEach(s=>{s.y-=s.z*.1;if(s.y<0)s.y=960;ctx.fillStyle=`rgba(255,255,255,${.1+.25*s.z*(.6+.4*Math.sin(T*2+s.x))})`;ctx.fillRect(s.x,s.y,1.3*s.z+.4,1.3*s.z+.4)});
+}
+function frame(now){
+ const TT=(now-T0)/1000,lp=Math.floor(TT/20),t=TT-lp*20,DUR=20;
+ if(lp!==loop){loop=lp;phase=-1;fired={};popped={};bursts.length=0}
+ let pi=0;CAP.forEach((c,i)=>{if(t>=c[0])pi=i});if(pi!==phase)setPhase(pi);
+ const fade=clamp(Math.min(t/.6,(DUR-t)/.6),0,1);$("tw").style.opacity=fade;
+ ctx.setTransform(2,0,0,2,0,0);bg(TT);cam(t);
+ ctx.globalCompositeOperation="lighter";
+ /* parallax grid: faint timeline ticks */
+ for(let i=-6;i<22;i++){const y=BY+(i*70-CY)*ZM;if(y<290||y>700)continue;ctx.fillStyle=`rgba(150,170,255,${.08*fade})`;ctx.fillRect(40,y,460,1)}
+ /* one-shot sound events */
+ if(t>=3.0)fx("br",()=>{tone(200,.55,"sawtooth",.15,950)});
+ if(t>=6.5)fx("sw",()=>{tone(740,.06,"square",.16);tone(980,.07,"square",.16,0,.08)});
+ if(t>=12.0)fx("pu",()=>{noiseS(1.1,.38,260,2600);tone(280,1.1,"sine",.2,1300)});
+ if(t>=12.45)fx("dn",()=>{tone(1244,.4,"triangle",.24);tone(1864,.55,"sine",.15,0,.04)});
+ /* edges */
+ const pushT=t-12.0;
+ for(const e of EDGES){const c=CM[e.c],p=CM[e.p];if(t<c.t)continue;
+  const a=P(p),b=P(c),pr=ease((t-c.t)/.7),S=36,gl=e.mg?Math.exp(-Math.abs(t-10.7)*1.2):0;
+  ctx.lineCap="round";
+  for(let pass=0;pass<2;pass++){ctx.lineWidth=pass?2.2:7;ctx.strokeStyle=`hsla(${e.mg?lerp(e.h,GOLD,gl):e.h},95%,${pass?72:55}%,${(pass?.85:.14+.2*gl)*fade})`;
+   ctx.beginPath();for(let i=0;i<=S;i++){const q=bez(a,b,i/S*pr);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])}ctx.stroke()}
+  if(pr>.99)for(let k=0;k<2;k++){const q=bez(a,b,(TT*.3+k*.5+R(e.p,e.c,0,0))%1);dot(q[0],q[1],9,e.h,.8*fade)}
+ }
+ /* nodes */
+ CM.forEach((c,i)=>{if(t<c.t)return;const [x,y]=P(c),pp=ease((t-c.t)/.5),sc=1+.6*(1-pp)*Math.sin(pp*3),ag=t-c.t;
+  if(!popped[i]){popped[i]=1;popSnd(i,c.merge);spawnBurst(x,y,c.merge?GOLD:c.h,c.merge)}
+  dot(x,y,(30+8*Math.sin(TT*3+i))*ZM*pp,c.h,.7*fade);
+  if(ag<.8){ctx.strokeStyle=`hsla(${c.merge?GOLD:c.h},100%,75%,${(1-ag/.8)*fade})`;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,(8+ag*70)*ZM,0,7);ctx.stroke()}
+  if(c.merge&&ag<1.4)dot(x,y,110*ZM*(1-ag/1.4*.5),GOLD,.8*(1-ag/1.4)*fade);
+  ctx.fillStyle=`hsla(${c.merge?GOLD:c.h},100%,${88}%,${pp*fade})`;ctx.beginPath();ctx.arc(x,y,10*ZM*sc,0,7);ctx.fill();
+  ctx.fillStyle=`hsla(${c.h},90%,30%,${pp*fade})`;ctx.beginPath();ctx.arc(x,y,5*ZM*sc,0,7);ctx.fill();
+  const pu=clamp((pushT-(CM.length-1-i)*.12)/.4,0,1);if(c.h==MAIN||c.merge||i==3||i==2){if(pu>0){ctx.strokeStyle=`hsla(${PUSH},95%,65%,${pu*fade})`;ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(x,y,16*ZM,0,7);ctx.stroke()}}
+ });
+ /* particle bursts + merge shockwave */
+ for(let bi=bursts.length-1;bi>=0;bi--){const b=bursts[bi],ag=(performance.now()-b.t0)/1000,D=b.big?1.4:.8;
+  if(ag>D){bursts.splice(bi,1);continue}
+  const k=ag/D,dd=ease(k)*D;
+  b.ps.forEach(p=>{dot(b.x+p[0]*p[2]*dd*ZM,b.y+p[1]*p[2]*dd*ZM,(b.big?10:7)*(1-k)+2,b.h,(1-k)*.9*fade)});
+  if(b.big){ctx.strokeStyle=`hsla(${GOLD},95%,72%,${(1-k)*.8*fade})`;ctx.lineWidth=2.5*(1-k)+.5;ctx.beginPath();ctx.arc(b.x,b.y,(20+ease(k)*180)*ZM,0,7);ctx.stroke()}}
+ /* push beam */
+ if(t>11.6){const a=ease((t-11.6)/.5)*fade,m=P(CM[5]);
+  if(t>12.0&&t<13.6){const q=P(CM[5]);for(let k=0;k<6;k++){const u=(((t-12)*1.1+k/6)%1);dot(q[0]+Math.sin(u*9+k)*3,lerp(q[1],318,u),10,PUSH,(1-u*.4)*fade)}}
+  ctx.globalCompositeOperation="source-over";pill(t>12.4?"☁ origin/main  ✓":"☁ origin/main",250,308,PUSH,a,t>12.4);ctx.globalCompositeOperation="lighter"}
+ ctx.globalCompositeOperation="source-over";
+ /* commit labels */
+ CM.forEach((c,i)=>{if(t<c.t)return;const [x,y]=P(c),a=ease((t-c.t-.15)/.5)*fade;if(a<.02)return;
+  const al=c.side<0?"right":"left",lx=x+c.side*22*ZM;ctx.textAlign=al;
+  ctx.font=`800 ${15*ZM}px ui-sans-serif,system-ui`;ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fillText(c.msg,lx,y-1*ZM);
+  ctx.font=`600 ${11.5*ZM}px ui-monospace,Menlo,Consolas,monospace`;ctx.fillStyle=`hsla(${c.h},90%,75%,${.85*a})`;ctx.fillText(c.hash,lx,y+14*ZM)});
+ /* branch pills + HEAD */
+ const head=t<4.0?"main":t<7.3?"feature":"main",tm=tipPos(TIPM,t),tf=tipPos(TIPF,t);
+ if(tm){const a=ease((t-1.3)/.4)*fade;pill((head=="main"?"HEAD → ":"")+"main",tm[0]+(t>=4&&t<10.4&&t>0?52:44)*ZM,tm[1]-28*ZM,MAIN,a,head=="main")}
+ if(tf){const a=ease((t-4.0)/.4)*fade;pill((head=="feature"?"HEAD → ":"")+"feature"+(t>10.8?" ✓":""),tf[0]-54*ZM,tf[1]-28*ZM,FEAT,a,head=="feature")}
+ /* command pill */
+ {let cur=null;CMD.forEach(c=>{if(t>=c[0])cur=c});
+  if(cur){const [ts,td,txt]=cur,n=Math.floor(clamp((t-ts)/(td-ts-.15),0,1)*txt.length),done=n>=txt.length,fl=done?Math.exp(-(t-td)*4):0,s=txt.slice(0,n)+((!done&&Math.floor(TT*4)%2)?"▌":"");
+   if(n>lastN&&cur===lastCmd)tickSnd();lastN=n;lastCmd=cur;
+   ctx.font="700 16px ui-monospace,Menlo,Consolas,monospace";const w=Math.max(150,ctx.measureText("$ "+txt).width+36);
+   rr(250-w/2,234,w,38,12);ctx.fillStyle=`rgba(8,10,28,${.9*fade})`;ctx.fill();ctx.strokeStyle=`rgba(${done?"253,186,116":"140,150,190"},${(.55+.45*fl)*fade})`;ctx.lineWidth=1.5+fl*2;ctx.stroke();
+   ctx.textAlign="left";ctx.fillStyle=`rgba(110,240,170,${fade})`;ctx.fillText("$",250-w/2+16,258);ctx.fillStyle=`rgba(255,255,255,${fade})`;ctx.fillText(s,250-w/2+34,258)}
+   else{lastN=0;lastCmd=null}}
+  /* new scene A: a branch is just a file */
+  if(t>16.3){const a=ease((t-16.3)/.6)*fade;
+   if(a>.01){const [fnx,fny]=P(CM[3]);
+    ctx.strokeStyle=`hsla(${FEAT},90%,70%,${.5*a})`;ctx.lineWidth=1.4;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(fnx+10,fny+14);ctx.quadraticCurveTo(fnx+30,fny+90,244,612);ctx.stroke();ctx.setLineDash([]);
+    rr(126,612,248,54,12);ctx.fillStyle=`rgba(6,8,24,${.9*a})`;ctx.fill();ctx.strokeStyle=`hsla(${FEAT},95%,72%,${a})`;ctx.lineWidth=1.6;ctx.stroke();
+    ctx.textAlign="left";
+    ctx.font="600 11px ui-monospace,Menlo,Consolas,monospace";ctx.fillStyle=`rgba(150,160,190,${a})`;ctx.fillText("cat .git/refs/heads/feature",138,631);
+    ctx.font="700 17px ui-monospace,Menlo,Consolas,monospace";ctx.fillStyle=`hsla(${FEAT},95%,80%,${a})`;ctx.fillText("→ e92b7f4",138,654)}}
+  /* new scene B: recap chips fly in */
+  if(t>18.4){[["git init",MAIN],["commit",310],["branch",FEAT],["merge",GOLD],["push",PUSH]].forEach((ch,i)=>{
+   const e=clamp((t-18.4-i*.16)/.5,0,1),a=ease(e)*fade;if(a<=.01)return;
+   pill(ch[0],250+(i-2)*84,686+(1-ease(e))*14,ch[1],a,true)})}
+ ctx.fillStyle=`rgba(0,0,0,${1-fade})`;ctx.fillRect(0,0,540,960);
+ if(guides){ctx.fillStyle="rgba(255,40,90,.16)";ctx.fillRect(0,0,540,135);ctx.fillRect(0,790,540,170);ctx.fillRect(480,135,60,655);ctx.fillRect(0,135,30,655);
+  ctx.strokeStyle="rgba(255,255,255,.5)";ctx.setLineDash([6,6]);ctx.strokeRect(30,135,450,655);ctx.setLineDash([])}
+ requestAnimationFrame(frame);
+}
+addEventListener("keydown",e=>{if(e.key=="r"||e.key=="R")restart();if(e.key=="g"||e.key=="G")guides=!guides});
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

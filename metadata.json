@@ -1,15 +1,13 @@
 {
-  "title": "dns propagation Explained in 20 Seconds!",
-  "ig_caption": "⚡ dns propagation Visualized! Which one do you prefer in your stack? Drop your thoughts below! 👇\n\nFollow @kreggscode for daily visual system design & architecture reels. ✨\n\n#SoftwareEngineering #SystemDesign #Tech #WebDev #Coding #Developers",
-  "fb_caption": "Architecture breakdown: dns propagation.\n\nUnderstanding the exact mechanical trade-offs is crucial for high-scale backend engineering.\n\nWhich approach has served your projects best? Let's discuss in the comments!\n\n#Programming #SoftwareEngineering #Backend #SystemDesign #Code",
-  "threads_caption": "dns propagation in 20s. What's your go-to architecture choice? #tech #coding",
+  "title": "🚦 Your API’s 429 Means You’ve Spent Your Tokens",
+  "ig_caption": "Stop blaming “random errors” — 429 is your rate limit talking. \nHere’s exactly what’s happening under the hood.\n\n• Your API allows requests only when you have permission “tokens”\n• Think: a bucket filled with tokens at a steady refill rate\n• Each request costs tokens (spend permission slowly)\n• If TOKENS LEFT hits 0, the API can’t grant access\n• Result: DENIED → 429, so SERVED stays at 0\n• In production: clients (📱) call the API, which may also coordinate with DB (💻) decisions\n\nPractical takeaway: In interviews, describe rate limiting as a budget with refill over time (not just “block after N”). In production, return a clear Retry-After and implement client-side backoff.\n\nWhat would you choose: strict token bucket (smooth throttling) or leaky bucket (constant outflow)—and why?",
+  "fb_caption": "A 429 response is not a vague failure—it’s explicit policy: “your client exceeded the allowed request budget.” In most systems, this is implemented with a rate-limiting algorithm that tracks permission over time.\n\nWhat the visual shows (token bucket model)\n- Tokens represent permission to perform work.\n- A bucket refills tokens gradually (refill over time), which models the system’s capacity.\n- Each incoming request consumes tokens.\n- When TOKENS LEFT reaches 0, the API cannot serve; it returns DENIED with HTTP 429 and (effectively) SERVED is 0.\n\nWhy this matters architecturally\n- Protects shared resources: Without limits, bursts can overwhelm CPU, DB connections, caches, or upstream dependencies.\n- Separates “capacity management” from “business logic”: Rate limiting should fail fast before expensive work.\n- Creates fairness: Limits per client/key (e.g., user, API key, IP, tenant) reduce noisy-neighbor effects.\n\nTrade-offs and production lessons\n- Token bucket vs. fixed window:\n  - Token bucket smooths bursts while enforcing an average rate.\n  - Fixed windows can cause edge-of-window spikes and uneven user experience.\n- Client behavior:\n  - Rate limits only work if clients respect them.\n  - Use exponential backoff with jitter when receiving 429.\n  - Prefer honoring Retry-After when provided.\n- Correctness under concurrency:\n  - Token accounting must be atomic and consistent across instances.\n  - Common patterns: centralized store (e.g., Redis with atomic Lua), or per-instance limits with downstream global protection.\n- Observability:\n  - Track 429 rate, per-key top offenders, and “near-miss” metrics (tokens low) to tune refill rates.\n\nPractical engineering recommendation\n- Implement token bucket rate limiting with Retry-After, and add client-side backoff so you recover gracefully instead of creating retry storms.\n\nDebate question: Should you rate limit by IP, API key, or user identity—and what failure mode worries you most (NAT sharing, key leakage, or account-level abuse)?",
+  "threads_caption": "429 isn’t random—it’s a token bucket saying “no more permission right now.” Tokens refill over time; when they hit 0 you get denied. Which rate-limit key would you pick: ip, api key, or user?",
   "hashtags": [
-    "#Tech",
-    "#Programming",
-    "#Coding",
-    "#SystemDesign",
-    "#SoftwareEngineering",
-    "#WebDev",
-    "#LearnToCode"
+    "#systemdesign",
+    "#backend",
+    "#rate_limiting",
+    "#apigateway",
+    "#distributedsystems"
   ]
 }

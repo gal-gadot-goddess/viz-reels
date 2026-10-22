@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0e15"/>
+<title>VIZ 06 — AI Detectors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REEL-VIZ FORMAT · 9:16 · 540x960 logical stage (auto-scaled)
+   Same engine/format as VIZ 01-05 · AUTOPLAYS (no play button)
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#5aa2ff; --purple:#b18cff; --lav:#c988fb; --pink:#ff7fa3;
+  --mint:#37e0b0; --amber:#ffb454; --txt:#e9eff8; --mut:#8492ab; --dim:#5e6c84;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Outfit',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%;background:#04060b;overflow:hidden;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center}
+#fit{width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;flex:none;width:540px;height:960px;transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -10%, #101a2c 0%, transparent 60%),
+    radial-gradient(80% 50% at 112% 112%, #191430 0%, transparent 60%),
+    radial-gradient(70% 45% at -10% 105%, #0e1a2e 0%, transparent 60%),
+    #0a0e15;}
+
+/* ---------- ambient ---------- */
+.grid{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);
+  background-size:45px 45px;
+  -webkit-mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);}
+.aur{position:absolute;width:430px;height:430px;border-radius:50%;filter:blur(75px);opacity:.15;z-index:0;pointer-events:none}
+.a1{background:#3d6bff;top:-170px;left:-130px;animation:drift 16s ease-in-out infinite alternate}
+.a2{background:#7a4bff;bottom:-150px;right:-130px;animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(42px,30px) scale(1.12)}}
+#grain{position:absolute;inset:0;z-index:40;opacity:.06;pointer-events:none;mix-blend-mode:overlay}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .65s cubic-bezier(.16,1,.3,1)}
+.rev.show{opacity:1;transform:none}
+.amber{color:var(--amber)} .mint{color:var(--mint)} .pink{color:var(--pink)}
+.purple{color:var(--purple)} .blue{color:var(--blue)} .lav{color:var(--lav)}
+
+/* ---------- header ---------- */
+#head{position:absolute;left:0;right:0;top:30px;text-align:center;z-index:6}
+.brand{font:500 11px/1 var(--mono);letter-spacing:.26em;color:var(--dim)}
+.title{margin-top:16px;font:800 40px/1.12 var(--sans);letter-spacing:.005em;color:var(--txt);
+  text-shadow:0 0 24px rgba(120,160,255,.16)}
+.sub{margin-top:8px;font:600 13.5px/1 var(--sans);color:#4c9aff}
+.chip{display:inline-block;margin-top:13px;background:#141b28;border:1px solid #212c3e;color:#93a0b8;
+  border-radius:9px;padding:7px 13px;font:italic 400 11.5px/1.25 var(--mono)}
+
+/* ---------- caption strip (the narrator) ---------- */
+#cap{position:absolute;left:44px;top:192px;width:452px;min-height:46px;text-align:center;z-index:7;
+  font:700 14.5px/1.35 var(--sans);color:#dbe4f2;background:rgba(17,24,38,.72);
+  border:1px solid #232f44;border-radius:11px;padding:9px 14px;opacity:0}
+#cap.show{opacity:1}
+#cap b{color:var(--amber)} #cap i{color:var(--mint);font-style:inherit} #cap u{color:var(--pink);text-decoration:none}
+
+/* ---------- step tag ---------- */
+#stepT{position:absolute;left:0;right:0;top:248px;text-align:center;z-index:6;
+  font:700 9.5px/1 var(--mono);letter-spacing:.28em;color:var(--lav);opacity:0;transition:opacity .4s}
+#stepT.show{opacity:1}
+
+/* ---------- document card ---------- */
+#doc{position:absolute;left:90px;top:272px;width:360px;height:210px;border-radius:12px;z-index:5;
+  border:1.6px solid rgba(148,168,214,.45);background:linear-gradient(180deg,#121a2b,#0d1421);
+  overflow:hidden;box-shadow:0 0 22px rgba(60,100,200,.12);opacity:0;transition:opacity .5s ease}
+#doc.show{opacity:1}
+.dtag{position:absolute;left:0;right:0;top:0;height:26px;line-height:26px;text-align:center;
+  font:700 9px/26px var(--mono);letter-spacing:.3em;color:#7f97bd;background:rgba(90,140,255,.06);
+  border-bottom:1px solid rgba(148,168,214,.25)}
+.dbody{position:absolute;left:0;right:0;top:30px;padding:0 16px}
+.dline{height:23px;line-height:23px;font:400 11.5px/23px var(--mono);text-align:left}
+.w{display:inline-block;margin-right:4px;color:#93a2b9;transition:color .35s,background .35s,box-shadow .35s}
+.dline.sd .w{color:var(--mint)}
+.dline.sd .w.s{color:var(--pink);background:rgba(255,127,163,.13);box-shadow:0 0 9px rgba(255,127,163,.3);
+  border-radius:3px}
+#beam{position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;z-index:6;opacity:0;
+  background:linear-gradient(90deg,rgba(90,162,255,.1),rgba(200,136,251,.85),rgba(90,162,255,.1));
+  box-shadow:0 0 14px rgba(200,136,251,.55)}
+#beam.show{opacity:1}
+#flagX{position:absolute;left:0;right:0;top:26px;bottom:0;display:flex;align-items:center;justify-content:center;
+  z-index:8;font:800 64px/1 var(--sans);color:rgba(255,127,163,.9);
+  text-shadow:0 0 24px rgba(255,127,163,.7);opacity:0;pointer-events:none}
+#flagX.show{opacity:1}
+
+/* ---------- scan stat pills ---------- */
+#pills{position:absolute;left:0;right:0;top:500px;z-index:6;text-align:center}
+#pills span{display:inline-block;margin:0 9px;padding:7px 13px;border-radius:8px;background:#141b28;
+  border:1px solid #212c3e;font:700 9.5px/1 var(--mono);letter-spacing:.14em;color:#77839b}
+#pills b{color:var(--txt);font:800 15px/1 var(--sans);margin-left:7px}
+#p1 b{color:var(--mint)}#p2 b{color:var(--pink)}
+
+/* ---------- probability meter ---------- */
+#mLabel{position:absolute;left:0;right:0;top:536px;text-align:center;z-index:6;
+  font:700 9.5px/1 var(--mono);letter-spacing:.26em;color:#6d7c96}
+#gauge{position:absolute;left:120px;top:556px;width:300px;height:150px;z-index:6}
+#gauge .arc{stroke:rgba(140,160,205,.35);stroke-width:10;fill:none;stroke-linecap:round}
+#gauge .seg{stroke-width:6;fill:none;stroke-linecap:round;opacity:.55}
+#gauge .sink{stroke:rgba(180,200,240,.5);stroke-width:2.5;transform-origin:140px 140px;
+  transform:rotate(-80deg);transition:transform 1.25s cubic-bezier(.3,.9,.25,1)}
+#gauge .hub{fill:#c9d6ee}
+#needleDot{position:absolute;left:269px;top:695px;width:15px;height:15px;margin-left:-7px;margin-top:-7px;
+  border-radius:50%;background:#c9d6ee;z-index:7;box-shadow:0 0 10px rgba(200,215,245,.6)}
+#pctV{position:absolute;left:0;right:0;top:692px;text-align:center;z-index:6;
+  font:800 42px/1 var(--sans);color:var(--txt)}
+#verdict{position:absolute;left:0;right:0;top:740px;text-align:center;z-index:6;opacity:0;
+  transition:opacity .4s}
+#verdict.show{opacity:1}
+#verdict span{display:inline-block;padding:8px 18px;border-radius:9px;border:1.4px solid rgba(255,127,163,.6);
+  background:rgba(60,16,28,.5);font:800 13px/1 var(--sans);letter-spacing:.16em;color:var(--pink);
+  text-shadow:0 0 12px rgba(255,127,163,.5)}
+
+/* ---------- punchline ---------- */
+#punch{position:absolute;left:0;right:0;top:866px;text-align:center;z-index:6;opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.3,1)}
+#punch.show{opacity:1;transform:none}
+#punch .pt{font:800 21px/1.25 var(--sans);letter-spacing:.002em;color:#edf2fa}
+#punch .bar{display:block;margin:10px auto 0;width:110px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--pink),var(--amber));box-shadow:0 0 10px rgba(255,127,163,.45);
+  transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.9,.2,1) .3s}
+#punch.show .bar{transform:scaleX(1)}
+#brand2{position:absolute;left:0;right:0;top:928px;text-align:center;z-index:6;font:500 9.5px/1 var(--mono);
+  letter-spacing:.26em;color:#495870;opacity:0;transition:opacity .9s}
+#brand2.show{opacity:.9}
+
+/* ---------- controls ---------- */
+.ctl{position:absolute;z-index:45;width:40px;height:40px;border-radius:50%;border:1.4px solid rgba(140,165,215,.4);
+  background:rgba(16,23,38,.72);color:#9fb4d8;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation}
+.ctl:active{transform:scale(.93)}
+#mute{top:16px;right:16px}
+#replayBtn{top:16px;left:16px;opacity:0;pointer-events:none;transition:opacity .5s}
+#replayBtn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="aur a1"></div><div class="aur a2"></div>
+  <div class="grid"></div>
+
+  <header id="head">
+    <div class="brand rev">@yourhandle</div>
+    <h1 class="title rev">AI <span class="pink">Detectors</span></h1>
+    <div class="sub rev">how they "catch" AI writing &mdash; and why they fail</div>
+    <div class="chip rev">can a machine really tell who wrote this?</div>
+  </header>
+
+  <div id="cap"></div>
+  <div id="stepT"></div>
+
+  <div id="doc">
+    <div class="dtag" id="dtag">STUDENT ESSAY</div>
+    <div id="beam"></div>
+    <div id="flagX">&#10005;</div>
+  </div>
+
+  <div id="pills" class="rev">
+    <span id="p1">PREDICTABLE <b id="c1">0</b></span>
+    <span id="p2">SURPRISING <b id="c2">0</b></span>
+  </div>
+
+  <div id="mLabel" class="rev">AI-PROBABILITY METER</div>
+  <svg id="gauge" class="rev" viewBox="0 0 280 150">
+    <path class="arc" d="M24 140 A116 116 0 0 1 256 140" pathLength="100"/>
+    <path class="seg" stroke="#37e0b0" d="M32 140 A108 108 0 0 1 138.6 34.1" pathLength="100" stroke-dasharray="30 70"/>
+    <path class="seg" stroke="#ffb454" d="M32 140 A108 108 0 0 1 248 140" pathLength="100" stroke-dasharray="40 70" stroke-dashoffset="-30"/>
+    <path class="seg" stroke="#ff7fa3" d="M140.6 33.1 A108 108 0 0 1 248 140" pathLength="100" stroke-dasharray="30 70" stroke-dashoffset="-70"/>
+    <line id="needle" class="sink" x1="140" y1="140" x2="140" y2="42"/>
+    <circle class="hub" cx="140" cy="140" r="6"/>
+  </svg>
+  <div id="needleDot" class="rev"></div>
+  <div id="pctV" class="rev">0%</div>
+  <div id="verdict"><span>FLAGGED AS AI-WRITTEN</span></div>
+
+  <div id="punch"><div class="pt">Detectors don't find AI. They find writing that plays it safe.</div><i class="bar"></i></div>
+  <div id="brand2">@yourhandle</div>
+
+  <div id="fx"></div>
+
+  <button class="ctl" id="replayBtn" aria-label="replay">&#8635;</button>
+  <button class="ctl" id="mute" aria-label="mute">&#128266;</button>
+
+  <div id="grain"></div>
+
+</div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),fx=$('#fx');
+
+/* ================= scaling ================= */
+let sc=1;
+function fit(){sc=Math.min(innerWidth/540,innerHeight/960);stage.style.transform=`scale(${sc})`;}
+addEventListener('resize',fit);fit();
+
+/* ================= AUDIO (synth SFX) ================= */
+let ctx=null,master=null,muted=false;
+function audioInit(){if(ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ctx=new AC();master=ctx.createGain();master.gain.value=.55;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;
+  master.connect(comp);comp.connect(ctx.destination);
+}
+const now=()=>ctx?ctx.currentTime:0;
+function tone(o={}){if(!ctx||muted)return;
+  const{type='sine',f=440,f2=null,dur=.12,vol=.18,at=0}=o,t0=now()+at;
+  const osc=ctx.createOscillator();osc.type=type;osc.frequency.setValueAtTime(f,t0);
+  if(f2)osc.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+dur+.06);
+}
+function noise(o={}){if(!ctx||muted)return;
+  const{dur=.4,vol=.2,at=0,f0=400,f1=2000,q=1.2}=o,t0=now()+at;
+  const len=Math.max(1,(dur+.05)*ctx.sampleRate|0),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=ctx.createBufferSource();n.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;
+  bp.frequency.setValueAtTime(f0,t0);bp.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  n.connect(bp);bp.connect(g);g.connect(master);n.start(t0);n.stop(t0+dur+.05);
+}
+const sfx={
+  thump(){tone({type:'sine',f:130,f2:38,dur:.4,vol:.6});tone({type:'triangle',f:520,f2:70,dur:.12,vol:.1})},
+  blip(f=760,at=0,vol=.12){tone({type:'square',f,dur:.07,vol,at})},
+  tick(){tone({type:'square',f:1150,dur:.045,vol:.07})},
+  pop(){tone({type:'sine',f:520,f2:150,dur:.13,vol:.28})},
+  ping(){tone({type:'sine',f:940,f2:1500,dur:.16,vol:.1})},
+  whoosh(dur=.45,rev=false,vol=.14){noise({dur,f0:rev?2600:300,f1:rev?350:2600,vol})},
+  zap(){tone({type:'sawtooth',f:2100,f2:160,dur:.18,vol:.18});noise({dur:.12,vol:.05,f0:3000,f1:600})},
+  riser(){tone({type:'sawtooth',f:180,f2:960,dur:.55,vol:.12});noise({dur:.55,vol:.06,f0:400,f1:2400})},
+  deny(){tone({type:'sawtooth',f:220,f2:110,dur:.25,vol:.18})},
+  alarm(){for(let i=0;i<3;i++){tone({type:'square',f:i%2?540:680,dur:.1,vol:.11,at:i*.14})}},
+  chord(){[261.6,311.1,392,466.2].forEach((f,i)=>tone({type:'triangle',f,dur:1.15,vol:.06,at:i*.03}));
+    tone({type:'sine',f:98,f2:49,dur:.5,vol:.26})},
+  ui(){tone({type:'sine',f:640,dur:.05,vol:.05})},
+};
+
+/* ================= timeline engine ================= */
+let gen=0,events=[],start=0,playing=false,raf=null;
+const later=(ms,fn)=>{const g=gen;setTimeout(()=>{g===gen&&fn()},ms)};
+function resetFx(){fx.innerHTML='';}
+function startPlay(){
+  gen++;resetFx();resetDom();
+  events=buildTimeline().sort((a,b)=>a.t-b.t);
+  start=performance.now();playing=true;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-start)/1000;
+  while(events.length&&events[0].t<=el)events.shift().fn();
+  if(playing)raf=requestAnimationFrame(tick);
+}
+
+/* ================= scene helpers ================= */
+function el(cls,html=''){const d=document.createElement('div');d.className=cls;d.innerHTML=html;return d;}
+function bump(sel,scale=1.35){const n=$(sel);n.animate(
+  [{transform:`scale(${scale})`,opacity:.75},{transform:'scale(1)',opacity:1}],
+  {duration:260,easing:'ease-out'});}
+
+/* --- caption (the narrator) --- */
+function setCaption(html){
+  const c=$('#cap');
+  c.innerHTML=html;
+  c.classList.add('show');
+  c.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});
+}
+/* --- document --- */
+const ESSAY={tag:'STUDENT ESSAY',lines:[
+  "Social media has changed how people",
+  "talk. Most people use simple safe",
+  "words. The fast news moves very fast",
+  "today. Everyone wants more views and",
+  "likes from the biggest people online.",
+  "The most *normal* thing keeps happening",
+  "again and again on every screen."]};
+const DIARY={tag:'REAL HUMAN DIARY',lines:[
+  "Dad *burned* the rice again. Mum",
+  "laughed until she *cried*. My sock",
+  "went missing. The dog is the *thief*.",
+  "I fixed the old fence. Nothing hurt.",
+  "Grandma sang. Her voice *cracked*. We",
+  "all *danced* badly in the small room.",
+  "It was the best day of the year."]};
+function buildDoc(data){
+  const d=$('#doc');
+  d.classList.remove('sd');
+  d.innerHTML='<div class="dtag" id="dtag">'+data.tag+'</div><div id="beam"></div><div id="flagX">&#10005;</div>';
+  const body=el('dbody');
+  data.lines.forEach(l=>{
+    const line=el('dline');
+    l.split(' ').forEach((tok,wi)=>{
+      const s=el('w');
+      if(tok.includes('*')){s.classList.add('s');tok=tok.replace(/\*/g,'');}
+      s.textContent=tok;
+      s.style.transitionDelay=(wi*0.055+0.12)+'s';
+      line.appendChild(s);
+    });
+    body.appendChild(line);
+  });
+  d.appendChild(body);
+}
+function activateLine(i){
+  const line=document.querySelectorAll('#doc .dline')[i];if(!line)return;
+  line.classList.add('sd');
+  const ws=line.children.length,sur=[...line.children].filter(w=>w.classList.contains('s')).length;
+  cp1+=ws-sur;cp2+=sur;
+  $('#c1').textContent=String(cp1);bump('#c1',1.12);sfx.tick();
+  if(sur){$('#c2').textContent=String(cp2);bump('#c2',1.35);sfx.blip(320,0,.09);}
+}
+let cp1=0,cp2=0;
+function scan(step){
+  const lines=document.querySelectorAll('#doc .dline').length;
+  const beam=$('#beam');
+  beam.classList.add('show');
+  beam.style.top='30px';
+  beam.animate([{top:'30px'},{top:'190px'}],{duration:lines*step*1000,easing:'linear'});
+  sfx.whoosh(lines*step*.95,false,.1);
+  for(let i=0;i<lines;i++)later(step*i*1000,()=>activateLine(i));
+}
+/* --- verdict --- */
+let pctTimer=null;
+function verdict(pct){
+  $('#needle').style.transform=`rotate(${-80+pct*1.6}deg)`;
+  if(pctTimer)clearInterval(pctTimer);
+  let k=0;const pv=$('#pctV');
+  pctTimer=setInterval(()=>{k++;pv.textContent=Math.min(pct,Math.round(pct*k/12))+'%';
+    if(k>=12)clearInterval(pctTimer);},62);
+  sfx.riser();
+  later(650,()=>sfx.zap());
+}
+
+/* ================= reset & timeline ================= */
+function resetDom(){
+  document.querySelectorAll('.rev').forEach(n=>n.classList.remove('show'));
+  $('#cap').textContent='';$('#cap').classList.remove('show');
+  $('#stepT').textContent='';$('#stepT').classList.remove('show');
+  $('#doc').classList.remove('show');
+  buildDoc(ESSAY);
+  $('#beam').classList.remove('show');$('#beam').style.top='30px';
+  $('#flagX').classList.remove('show');
+  cp1=0;cp2=0;$('#c1').textContent='0';$('#c2').textContent='0';
+  $('#needle').style.transform='rotate(-80deg)';
+  $('#pctV').textContent='0%';$('#pctV').style.color='';
+  $('#verdict').classList.remove('show');
+  $('#verdict span').textContent='FLAGGED AS AI-WRITTEN';
+  if(pctTimer){clearInterval(pctTimer);pctTimer=null;}
+  $('#punch').classList.remove('show');$('#brand2').classList.remove('show');
+  $('#replayBtn').classList.remove('show');
+}
+function stepTag(txt){const s=$('#stepT');s.textContent=txt;s.classList.add('show');sfx.blip(880,0,.07);}
+function buildTimeline(){
+  const ev=[];const A=(t,fn)=>ev.push({t,fn});
+  A(.20,()=>{$('#head .brand').classList.add('show');sfx.ui()});
+  A(.55,()=>{$('#head .title').classList.add('show');sfx.thump()});
+  A(.95,()=>{$('#head .sub').classList.add('show');sfx.ui()});
+  A(1.30,()=>{$('#head .chip').classList.add('show');sfx.blip(520)});
+
+  /* --- STEP 01: show the essay --- */
+  A(2.10,()=>{stepTag('STEP 01 &middot; THE TEST');
+    setCaption('Could you tell who wrote this essay?');
+    $('#doc').classList.add('show');
+    sfx.whoosh(.4,false,.12)});
+  /* reveal lines one by one so it reads like typing */
+  for(let i=0;i<7;i++)A(2.35+i*.14,()=>{const l=document.querySelectorAll('#doc .dline')[i];
+    if(l){l.animate([{opacity:0},{opacity:1}],{duration:220});}});
+  A(3.60,()=>sfx.blip(392,0,.07));
+
+  /* --- STEP 02: the scan --- */
+  A(5.70,()=>{stepTag('STEP 02 &middot; THE SCAN');
+    setCaption('<i>Predictable</i> = a word a machine would pick next. <u>Surprising</u> = a word a human chose.');
+    $('#pills').classList.add('show');
+    ['gauge','needleDot','pctV','mLabel'].forEach(id=>$('#'+id).classList.add('show'));
+    sfx.blip(659,0,.08)});
+  A(6.90,()=>{setCaption('The detector scans every word&hellip;');scan(.28)});
+
+  /* --- STEP 03: the verdict --- */
+  A(9.10,()=>{stepTag('STEP 03 &middot; THE VERDICT');
+    setCaption('Almost every word was <i>predictable</i>. Verdict:');
+    verdict(96)});
+  A(10.00,()=>{$('#verdict').classList.add('show');sfx.deny();
+    $('#doc').animate([{transform:'translate(-3px,0)'},{transform:'translate(3px,1px)'},
+      {transform:'translate(-2px,0)'},{transform:'translate(0,0)'}],{duration:320})});
+  A(11.30,()=>{setCaption('<u>96% "AI-written."</u> That student gets accused &mdash; for writing safely.');sfx.blip(392,0,.09)});
+
+  /* --- STEP 04: the twist --- */
+  A(13.30,()=>{stepTag('STEP 04 &middot; THE TWIST');
+    setCaption('Now the real test: a <b>human diary.</b>');
+    $('#doc').animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],
+      {duration:180,easing:'ease-in'});
+    later(190,()=>{
+      buildDoc(DIARY);
+      $('#doc').animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:180,easing:'ease-out'});
+    });
+    cp1=0;cp2=0;$('#c1').textContent='0';$('#c2').textContent='0';
+    $('#needle').style.transform='rotate(-80deg)';
+    $('#pctV').style.color='';
+    sfx.whoosh(.3,true,.1)});
+  A(14.90,()=>{setCaption('Scan it again&hellip; and watch the meter.');scan(.24)});
+
+  /* --- the human gets flagged anyway --- */
+  A(17.30,()=>{verdict(89)});
+  A(18.20,()=>{$('#verdict').classList.add('show');$('#flagX').classList.add('show');
+    sfx.alarm();bump('#pctV',1.2);
+    $('#pctV').style.color='var(--pink)';
+    $('#pctV').animate([{transform:'translate(-2px,0)'},{transform:'translate(2px,0)'},
+      {transform:'translate(-1px,0)'},{transform:'translate(0,0)'}],{duration:280})});
+  A(19.40,()=>{setCaption('<u>A human just failed the AI test.</u> The detector is only guessing.');
+    $('#verdict span').textContent='HUMAN &mdash; STILL FLAGGED 89%'});
+
+  /* --- punchline --- */
+  A(21.60,()=>{$('#cap').classList.remove('show');$('#punch').classList.add('show');sfx.chord()});
+  A(22.80,()=>{$('#brand2').classList.add('show');$('#replayBtn').classList.add('show')});
+  return ev;
+}
+
+/* ================= grain ================= */
+(function grain(){
+  try{
+    const c=document.createElement('canvas');c.width=c.height=120;
+    const g=c.getContext('2d'),im=g.createImageData(120,120);
+    for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;
+      im.data[i]=v;im.data[i+1]=v;im.data[i+2]=v;im.data[i+3]=30;}
+    g.putImageData(im,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`;
+  }catch(e){}
+})();
+
+/* ================= auto-start (video-friendly: no tap gate) ================= */
+audioInit();
+function tryUnlock(){
+  if(!ctx)return;
+  if(ctx.state==='suspended'){
+    ctx.resume().then(()=>{
+      const t=(performance.now()-start)/1000;
+      if(gen>0&&t<12)startPlay();
+    }).catch(()=>{});
+  }
+}
+addEventListener('pointerdown',tryUnlock);
+addEventListener('keydown',tryUnlock);
+$('#replayBtn').addEventListener('click',()=>{tryUnlock();startPlay()});
+$('#mute').addEventListener('click',()=>{
+  muted=!muted;if(master)master.gain.value=muted?0:.55;
+  $('#mute').innerHTML=muted?'&#128263;':'&#128266;';
+});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.key==='r'||e.key==='R'){e.preventDefault();startPlay();}
+  if(e.key==='m'||e.key==='M')$('#mute').click();
+});
+const AUTOLOOP=/[?&]loop=1/.test(location.search);
+if(AUTOLOOP)setInterval(()=>{if((performance.now()-start)/1000>23)startPlay()},500);
+setTimeout(startPlay,180);
+})();
+</script>
+</body>
+</html>

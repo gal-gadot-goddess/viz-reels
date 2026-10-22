@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0e15"/>
+<title>VIZ 16 — Why APIs Say 429</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REEL-VIZ FORMAT · 9:16 · 540x960 logical stage (auto-scaled)
+   Same engine/format as VIZ 01-15 · AUTOPLAYS (no play button)
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#5aa2ff; --purple:#b18cff; --lav:#c988fb; --pink:#ff7fa3;
+  --mint:#37e0b0; --amber:#ffb454; --txt:#e9eff8; --mut:#8492ab; --dim:#5e6c84;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Outfit',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%;background:#04060b;overflow:hidden;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center}
+#fit{width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;flex:none;width:540px;height:960px;transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -10%, #101a2c 0%, transparent 60%),
+    radial-gradient(80% 50% at 112% 112%, #191430 0%, transparent 60%),
+    radial-gradient(70% 45% at -10% 105%, #0e1a2e 0%, transparent 60%),
+    #0a0e15;}
+
+/* ---------- ambient ---------- */
+.grid{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);
+  background-size:45px 45px;
+  -webkit-mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);}
+.aur{position:absolute;width:430px;height:430px;border-radius:50%;filter:blur(75px);opacity:.15;z-index:0;pointer-events:none}
+.a1{background:#3d6bff;top:-170px;left:-130px;animation:drift 16s ease-in-out infinite alternate}
+.a2{background:#7a4bff;bottom:-150px;right:-130px;animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(42px,30px) scale(1.12)}}
+#grain{position:absolute;inset:0;z-index:40;opacity:.06;pointer-events:none;mix-blend-mode:overlay}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .65s cubic-bezier(.16,1,.3,1)}
+.rev.show{opacity:1;transform:none}
+.mint{color:var(--mint)} .pink{color:var(--pink)}
+.purple{color:var(--purple)} .blue{color:var(--blue)} .lav{color:var(--lav)}
+.amber{color:var(--amber)}
+
+/* ---------- header ---------- */
+#head{position:absolute;left:0;right:0;top:30px;text-align:center;z-index:6}
+.brand{font:500 11px/1 var(--mono);letter-spacing:.26em;color:var(--dim)}
+.title{margin-top:16px;font:800 36px/1.12 var(--sans);letter-spacing:.005em;color:var(--txt);
+  text-shadow:0 0 24px rgba(120,160,255,.16)}
+.sub{margin-top:8px;font:600 13px/1 var(--sans);color:#4c9aff}
+.chip{display:inline-block;margin-top:13px;background:#141b28;border:1px solid #212c3e;color:#93a0b8;
+  border-radius:9px;padding:7px 13px;font:italic 400 11.5px/1.25 var(--mono)}
+
+/* ---------- caption + step ---------- */
+#cap{position:absolute;left:44px;top:190px;width:452px;min-height:46px;text-align:center;z-index:7;
+  font:700 14px/1.35 var(--sans);color:#dbe4f2;background:rgba(17,24,38,.72);
+  border:1px solid #232f44;border-radius:11px;padding:9px 14px;opacity:0}
+#cap.show{opacity:1}
+#cap b{color:var(--amber)} #cap i{color:var(--mint);font-style:inherit}
+#cap u{color:var(--pink);text-decoration:none}
+#stepT{position:absolute;left:0;right:0;top:248px;text-align:center;z-index:6;
+  font:700 9px/1 var(--mono);letter-spacing:.26em;color:var(--lav);opacity:0;transition:opacity .4s}
+#stepT.show{opacity:1}
+
+/* ---------- counter pills ---------- */
+#cntw{position:absolute;left:50%;top:266px;transform:translateX(-50%);z-index:7;text-align:center;
+  white-space:nowrap;opacity:0;transition:opacity .4s}
+#cntw.show{opacity:1}
+.cnt{display:inline-block;padding:7px 13px;border-radius:9px;background:rgba(13,19,30,.88);
+  border:1px solid #243049;margin:0 5px;text-align:center;vertical-align:top}
+.cnt .cl{display:block;font:700 7.5px/1 var(--mono);letter-spacing:.2em;color:#6d7c96}
+.cnt b{display:block;margin-top:4px;font:800 19px/1 var(--sans)}
+#tkN{color:var(--mint)}#dnN{color:#ffb3c6}#svN{color:#93a2b9}
+#svN.go{color:var(--mint)}#dnN.hot{color:var(--pink)}
+
+/* ---------- scene: client / bucket / server ---------- */
+#you{position:absolute;left:48px;top:436px;width:112px;height:78px;border-radius:12px;background:#121927;
+  border:1.4px solid #243049;text-align:center;z-index:5;opacity:0;transform:scale(.9);
+  transition:opacity .45s,transform .55s cubic-bezier(.2,1.2,.3,1)}
+#you.show{opacity:1;transform:scale(1)}
+#you .di{display:block;margin-top:13px;font-size:22px;line-height:1}
+#you .dl{display:block;margin-top:6px;font:700 8px/1 var(--mono);letter-spacing:.18em;color:#9fc4ff}
+#srv{position:absolute;left:392px;top:436px;width:100px;height:78px;border-radius:12px;background:#121927;
+  border:1.4px solid #243049;text-align:center;z-index:5;opacity:0;transform:scale(.9);
+  transition:opacity .45s,transform .55s cubic-bezier(.2,1.2,.3,1)}
+#srv.show{opacity:1;transform:scale(1)}
+#srv .di{display:block;margin-top:13px;font-size:22px;line-height:1}
+#srv .dl{display:block;margin-top:6px;font:700 8px/1 var(--mono);letter-spacing:.16em;color:var(--mint)}
+#srv.melt{animation:meltf 1s ease infinite}
+@keyframes meltf{50%{box-shadow:0 0 30px rgba(255,127,163,.75);border-color:var(--pink)}}
+
+/* the bucket */
+#bkt{position:absolute;left:206px;top:384px;width:128px;height:172px;z-index:4;opacity:0;transition:opacity .6s;
+  background:linear-gradient(180deg,rgba(55,224,176,.07),rgba(55,224,176,.16));
+  clip-path:polygon(5% 0,95% 0,80% 100%,20% 100%)}
+#bkt.show{opacity:1}
+#bktln{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;opacity:0;transition:opacity .6s}
+#bktln.show{opacity:1}
+#capLbl{position:absolute;left:330px;top:388px;z-index:5;font:700 8px/1 var(--mono);letter-spacing:.14em;
+  color:#7d8ba4;background:#10172480;padding:4px 7px;border-radius:6px;opacity:0;transition:opacity .5s}
+#capLbl.show{opacity:1}
+#faucet{position:absolute;left:246px;top:340px;width:48px;height:26px;z-index:5;opacity:0;transition:opacity .5s;
+  background:#1a2436;border:1.4px solid #2c3b57;border-radius:7px;text-align:center}
+#faucet.show{opacity:1}
+#faucet span{font:700 7px/24px var(--mono);letter-spacing:.12em;color:#93a2b9}
+#flbl{position:absolute;left:206px;top:316px;width:130px;text-align:center;z-index:5;font:700 8px/1 var(--mono);
+  letter-spacing:.18em;color:var(--mint);opacity:0;transition:opacity .5s}
+#flbl.show{opacity:1}
+.tok{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;z-index:6;
+  background:#7fe0c0;box-shadow:0 0 8px 2px rgba(55,224,176,.55)}
+/* retry chip */
+#rtry{position:absolute;left:64px;top:524px;z-index:6;padding:6px 10px;border-radius:8px;text-align:left;
+  background:rgba(26,12,18,.92);border:1.4px solid rgba(255,127,163,.7);color:#ffb3c6;
+  font:700 9px/1.4 var(--mono);letter-spacing:.06em;opacity:0;transform:translateY(6px);
+  transition:opacity .45s,transform .45s}
+#rtry.show{opacity:1;transform:none}
+#rtry i{display:block;font:800 15px/1 var(--sans);font-style:normal;margin-top:3px;color:#fff}
+#rtry.gone{opacity:0;transform:translateY(-6px);transition:opacity .4s,transform .4s}
+
+/* ---------- fx ---------- */
+#fx{position:absolute;inset:0;z-index:8;pointer-events:none}
+.fly{position:absolute;left:0;top:0;width:0;height:0;z-index:9}
+.fly .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#8ab4ff;
+  box-shadow:0 0 10px 2px rgba(120,160,255,.6)}
+.fly.deny .dot{background:#ff9fb9;box-shadow:0 0 10px 2px rgba(255,127,163,.7)}
+.fly.mint .dot{background:#7fe0c0;box-shadow:0 0 10px 2px rgba(55,224,176,.6)}
+.fly .ftl{position:absolute;left:0;top:-27px;transform:translateX(-50%);white-space:nowrap;
+  font:700 8.5px/1 var(--mono);letter-spacing:.1em;padding:3px 8px;border-radius:6px;
+  background:rgba(28,12,18,.94);border:1.3px solid rgba(255,127,163,.8);color:#ffb3c6}
+.ring{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  border:2px solid rgba(255,138,170,.85);animation:ringX .55s ease-out forwards}
+.ring.m{border-color:rgba(55,224,176,.85)}
+.ring.g{border-color:rgba(255,180,84,.85)}
+@keyframes ringX{to{transform:scale(3.1);opacity:0}}
+
+/* ---------- scoreboard ---------- */
+.scw{position:absolute;top:700px;width:226px;text-align:center;z-index:6}
+#sc1{left:38px}#sc2{left:270px}
+.sc{border-radius:10px;padding:9px 8px 10px;background:#121927;border:1px solid #222d40}
+#sc1 .sc{border-color:rgba(255,127,163,.5)}
+#sc2 .sc{border-color:rgba(55,224,176,.5)}
+.sl{font:700 8px/1 var(--mono);letter-spacing:.18em;display:block}
+#sc1 .sl{color:var(--pink)}#sc2 .sl{color:var(--mint)}
+.sv{display:block;margin-top:6px;font:800 13px/1.3 var(--sans);color:#edf2fa}
+#sc1 .sv{color:#ffb3c6}#sc2 .sv{color:#7fe0c0}
+
+/* ---------- punchline ---------- */
+#punch{position:absolute;left:0;right:0;top:866px;text-align:center;z-index:6;opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.3,1)}
+#punch.show{opacity:1;transform:none}
+#punch .pt{font:800 21px/1.25 var(--sans);letter-spacing:.002em;color:#edf2fa}
+#punch .bar{display:block;margin:10px auto 0;width:116px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--pink),var(--mint));box-shadow:0 0 10px rgba(255,200,110,.45);
+  transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.9,.2,1) .3s}
+#punch.show .bar{transform:scaleX(1)}
+#brand2{position:absolute;left:0;right:0;top:928px;text-align:center;z-index:6;font:500 9.5px/1 var(--mono);
+  letter-spacing:.26em;color:#495870;opacity:0;transition:opacity .9s}
+#brand2.show{opacity:.9}
+
+/* ---------- controls ---------- */
+.ctl{position:absolute;z-index:45;width:40px;height:40px;border-radius:50%;border:1.4px solid rgba(140,165,215,.4);
+  background:rgba(16,23,38,.72);color:#9fb4d8;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation}
+.ctl:active{transform:scale(.93)}
+#mute{top:16px;right:16px}
+#replayBtn{top:16px;left:16px;opacity:0;pointer-events:none;transition:opacity .5s}
+#replayBtn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="aur a1"></div><div class="aur a2"></div>
+  <div class="grid"></div>
+
+  <header id="head">
+    <div class="brand rev">@yourhandle</div>
+    <h1 class="title rev">Why APIs Say <span class="pink">429</span></h1>
+    <div class="sub rev">rate limits, explained with a bucket of tokens</div>
+    <div class="chip rev">spend permission slowly &mdash; refill over time</div>
+  </header>
+
+  <div id="cap"></div>
+  <div id="stepT"></div>
+
+  <div id="cntw">
+    <span class="cnt"><span class="cl">TOKENS LEFT</span><b id="tkN">0</b></span>
+    <span class="cnt"><span class="cl">DENIED &middot; 429</span><b id="dnN">0</b></span>
+    <span class="cnt"><span class="cl">SERVED</span><b id="svN">0</b></span>
+  </div>
+
+  <div id="you"><span class="di">&#128241;</span><span class="dl">CLIENTS</span></div>
+  <div id="srv"><span class="di">&#128187;</span><span class="dl">API + DB</span></div>
+
+  <svg id="bktln" viewBox="0 0 540 960">
+    <path d="M216 388 L324 388 L310 556 L230 556 Z" fill="none" stroke="rgba(55,224,176,.6)" stroke-width="2.4" stroke-linejoin="round"/>
+  </svg>
+  <div id="bkt"></div>
+  <div id="faucet"><span>TOKENS</span></div>
+  <div id="flbl">REFILL 10 / SEC</div>
+  <div id="capLbl">BUCKET CAP &middot; 24</div>
+
+  <div id="rtry">429 &middot; RETRY-AFTER:<i>3s</i></div>
+
+  <div class="scw rev" id="sc1"><div class="sc"><span class="sl">WITHOUT A LIMIT</span>
+    <span class="sv">one spike melts the DB</span></div></div>
+  <div class="scw rev" id="sc2"><div class="sc"><span class="sl">WITH THE BUCKET</span>
+    <span class="sv">10 requests/sec &middot; forever</span></div></div>
+
+  <div id="punch"><div class="pt">A 429 isn&rsquo;t anger. It&rsquo;s a promise: wait, and you fit in.</div><i class="bar"></i></div>
+  <div id="brand2">@yourhandle</div>
+
+  <div id="fx"></div>
+
+  <button class="ctl" id="replayBtn" aria-label="replay">&#8635;</button>
+  <button class="ctl" id="mute" aria-label="mute">&#128266;</button>
+
+  <div id="grain"></div>
+
+</div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),fx=$('#fx');
+
+/* ================= scaling ================= */
+let sc=1;
+function fit(){sc=Math.min(innerWidth/540,innerHeight/960);stage.style.transform=`scale(${sc})`;}
+addEventListener('resize',fit);fit();
+
+/* ================= AUDIO (synth SFX) ================= */
+let ctx=null,master=null,muted=false;
+function audioInit(){if(ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ctx=new AC();master=ctx.createGain();master.gain.value=.55;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;
+  master.connect(comp);comp.connect(ctx.destination);
+}
+function tone(o={}){if(!ctx||muted)return;
+  const{type='sine',f=440,f2=null,dur=.12,vol=.18,at=0}=o,t0=ctx.currentTime+at;
+  const osc=ctx.createOscillator();osc.type=type;osc.frequency.setValueAtTime(f,t0);
+  if(f2)osc.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+dur+.06);
+}
+function noise(o={}){if(!ctx||muted)return;
+  const{dur=.4,vol=.2,at=0,f0=400,f1=2000,q=1.2}=o,t0=ctx.currentTime+at;
+  const len=Math.max(1,(dur+.05)*ctx.sampleRate|0),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=ctx.createBufferSource();n.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;
+  bp.frequency.setValueAtTime(f0,t0);bp.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  n.connect(bp);bp.connect(g);g.connect(master);n.start(t0);n.stop(t0+dur+.05);
+}
+const sfx={
+  thump(){tone({type:'sine',f:130,f2:38,dur:.4,vol:.6});tone({type:'triangle',f:520,f2:70,dur:.12,vol:.1})},
+  blip(f=760,at=0,vol=.12){tone({type:'square',f,dur:.07,vol,at})},
+  tick(){tone({type:'square',f:1150,dur:.045,vol:.07})},
+  plink(f=1320){tone({type:'sine',f,dur:.09,vol:.14})},
+  pop(){tone({type:'sine',f:520,f2:150,dur:.13,vol:.28})},
+  ping(){tone({type:'sine',f:940,f2:1500,dur:.16,vol:.1})},
+  whoosh(dur=.45,rev=false,vol=.14){noise({dur,f0:rev?2600:300,f1:rev?350:2600,vol})},
+  zap(){tone({type:'sawtooth',f:2100,f2:160,dur:.18,vol:.18});noise({dur:.12,vol:.05,f0:3000,f1:600})},
+  riser(){tone({type:'sawtooth',f:180,f2:960,dur:.55,vol:.12});noise({dur:.55,vol:.06,f0:400,f1:2400})},
+  deny(){tone({type:'sawtooth',f:220,f2:110,dur:.25,vol:.18})},
+  alarm(){for(let i=0;i<3;i++){tone({type:'square',f:i%2?540:680,dur:.1,vol:.12,at:i*.16})}},
+  chord(){[261.6,311.1,392,466.2].forEach((f,i)=>tone({type:'triangle',f,dur:1.15,vol:.06,at:i*.03}));
+    tone({type:'sine',f:98,f2:49,dur:.5,vol:.26})},
+  ui(){tone({type:'sine',f:640,dur:.05,vol:.05})},
+};
+
+/* ================= timeline engine ================= */
+let gen=0,events=[],start=0,playing=false,raf=null;
+const later=(ms,fn)=>{const g=gen;setTimeout(()=>{g===gen&&fn()},ms)};
+function resetFx(){fx.innerHTML='';}
+function startPlay(){
+  gen++;resetFx();resetDom();
+  events=buildTimeline().sort((a,b)=>a.t-b.t);
+  start=performance.now();playing=true;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-start)/1000;
+  while(events.length&&events[0].t<=el)events.shift().fn();
+  if(playing)raf=requestAnimationFrame(tick);
+}
+
+/* ================= scene helpers ================= */
+function bump(sel,scale=1.3){const n=$(sel);n.animate(
+  [{transform:`scale(${scale})`,opacity:.75},{transform:'scale(1)',opacity:1}],
+  {duration:260,easing:'ease-out'});}
+function setCaption(html){const c=$('#cap');c.innerHTML=html;c.classList.add('show');
+  c.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
+function stepTag(txt){const s=$('#stepT');s.innerHTML=txt;s.classList.add('show');sfx.blip(880,0,.07);}
+function ring(x,y,cls){const d=document.createElement('div');
+  d.className='ring'+(cls?' '+cls:'');d.style.left=x+'px';d.style.top=y+'px';
+  fx.appendChild(d);later(620,()=>d.remove());}
+function updPills(){const tk=$('#tkN');tk.textContent=String(TOKENS.length);bump('#tkN',1.12);}
+function setServed(n){const s=$('#svN');s.textContent=String(n);s.classList.add('go');bump('#svN',1.12);}
+function setDenied(n){const s=$('#dnN');s.textContent=String(n);s.classList.add('hot');bump('#dnN',1.12);}
+
+/* ---------- token bucket ---------- */
+let TOKENS=[];
+const CAP=24;
+const slotXY=n=>[219+(n%7)*15.5,538-Math.floor(n/7)*15];
+function addToken(){
+  const g=gen;
+  const n=TOKENS.length;
+  const[x,y]=slotXY(n);
+  const t=document.createElement('i');
+  t.className='tok';
+  t.style.left=x+'px';t.style.top=y+'px';
+  t.style.opacity='0';
+  fx.appendChild(t);
+  const dx=270-x,dy=352-y;
+  const a=t.animate([{transform:`translate(${dx}px,${dy}px) scale(.7)`,opacity:1},
+    {transform:'translate(0,0) scale(1)',opacity:1}],
+    {duration:360,easing:'cubic-bezier(.4,0,.9,.9)'});
+  a.finished&&a.finished.then(()=>{if(g===gen)t.style.opacity='1'}).catch(()=>{});
+  TOKENS.push(t);
+  updPills();sfx.plink(1180+Math.random()*260);
+  return t;
+}
+function addTokenOverflow(){ /* bucket full: drip wastes */
+  const t=document.createElement('i');
+  t.className='tok';t.style.left='270px';t.style.top='436px';t.style.opacity='1';
+  fx.appendChild(t);
+  t.animate([{transform:'translate(0,-40px) scale(1)',opacity:1},
+    {transform:'translate(0,-14px) scale(.6)',opacity:0}],{duration:420,easing:'ease-out'});
+  later(430,()=>t.remove());
+  sfx.plink(680);
+}
+function drip(){
+  if(TOKENS.length>=CAP)addTokenOverflow();else addToken();
+}
+function consumeToken(){
+  const t=TOKENS.pop();updPills();
+  if(t){
+    const a=t.animate([{transform:'scale(1)',opacity:1},{transform:'scale(0.2)',opacity:0}],
+      {duration:280,easing:'ease-in'});
+    a.finished&&a.finished.then(()=>t.remove()).catch(()=>{});
+  }
+}
+
+/* ---------- flights ---------- */
+const MOUTH=[268,402];
+function moveTo(pts,dur,color,chip,done,onStart){
+  later(0,()=>{
+    const g=gen,L=[0];
+    for(let i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+    const total=L[L.length-1],t0=performance.now();
+    const el=document.createElement('div');
+    el.className='fly '+(color||'');
+    el.innerHTML='<i class="dot"></i>'+(chip?'<span class="ftl">'+chip+'</span>':'');
+    fx.appendChild(el);
+    if(onStart)onStart(el);
+    const step=tt=>{
+      if(g!==gen){el.remove();return;}
+      const k=Math.min(1,(tt-t0)/dur),d=k*total;
+      let i=1;while(i<L.length-1&&L[i]<d)i++;
+      const s=(d-L[i-1])/(L[i]-L[i-1]||1);
+      const x=pts[i-1][0]+(pts[i][0]-pts[i-1][0])*s;
+      const y=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*s;
+      el.style.transform=`translate(${x}px,${y}px)`;
+      if(k<1)requestAnimationFrame(step);
+      else{el.remove();done&&done();}
+    };
+    requestAnimationFrame(step);
+  });
+}
+/* client -> bucket mouth (decision) */
+function reqFly(){
+  moveTo([[104,462],[196,414],[268,402]],620,'',null,()=>{
+    if(TOKENS.length>0){
+      consumeToken();ring(268,402,'m');sfx.plink(880);
+      serveBead();
+    }else{
+      sfx.deny();
+      moveTo([[268,402],[196,436],[108,470]],660,'deny','429',()=>{setDenied(curDeny+1);curDeny++;sfx.deny()});
+    }
+  });
+}
+function serveBead(){
+  moveTo([[268,402],[346,432],[436,468]],540,'mint',null,()=>{
+    setServed(curServed+1);curServed++;sfx.tick();
+    bump('#srv',1.04);
+  });
+}
+let curDeny=0,curServed=0;
+
+/* ================= reset & timeline ================= */
+function resetDom(){
+  document.querySelectorAll('.rev').forEach(n=>n.classList.remove('show'));
+  $('#cap').textContent='';$('#cap').classList.remove('show');
+  $('#stepT').textContent='';$('#stepT').classList.remove('show');
+  ['#you','#srv','#bkt','#bktln','#faucet','#flbl','#capLbl','#rtry',
+   '#sc1','#sc2','#punch','#brand2','#cntw'].forEach(s=>$(s).classList.remove('show'));
+  $('#srv').classList.remove('melt');
+  $('#tkN').textContent='0';$('#dnN').textContent='0';$('#svN').textContent='0';
+  $('#dnN').classList.remove('hot');$('#svN').classList.remove('go');
+  $('#rtry').classList.remove('gone');
+  document.querySelectorAll('.tok').forEach(t=>t.remove());
+  TOKENS=[];curDeny=0;curServed=0;
+  $('#replayBtn').classList.remove('show');
+}
+function buildTimeline(){
+  const ev=[];const A=(t,fn)=>ev.push({t,fn});
+
+  /* --- intro --- */
+  A(.20,()=>{$('#head .brand').classList.add('show');sfx.ui()});
+  A(.55,()=>{$('#head .title').classList.add('show');sfx.thump()});
+  A(.95,()=>{$('#head .sub').classList.add('show');sfx.ui()});
+  A(1.30,()=>{$('#head .chip').classList.add('show');sfx.blip(520)});
+  A(1.70,()=>{$('#cntw').classList.add('show')});
+
+  /* --- STEP 01 · the bucket --- */
+  A(2.20,()=>{stepTag('STEP 01 &middot; THE BUCKET');
+    setCaption('Every API holds a <b>bucket of permission tokens</b>. Requests must spend one.');
+    $('#bkt').classList.add('show');$('#bktln').classList.add('show');
+    $('#faucet').classList.add('show');$('#flbl').classList.add('show');
+    $('#capLbl').classList.add('show');
+    $('#you').classList.add('show');$('#srv').classList.add('show');
+    sfx.whoosh(.6,false,.12)});
+  for(let i=0;i<18;i++)A(2.6+i*.09,drip);
+
+  /* --- STEP 02 · calm traffic --- */
+  A(4.70,()=>{stepTag('STEP 02 &middot; CALM TRAFFIC');
+    setCaption('One request = <b>&minus;1 token</b>. The faucet refills behind it. Everyone&rsquo;s happy.')});
+  for(let i=0;i<4;i++){A(5.0+i*.8,reqFly);A(5.3+i*.8,drip);}
+
+  /* --- STEP 03 · the burst --- */
+  A(8.90,()=>{stepTag('STEP 03 &middot; THE BURST');
+    setCaption('A spike: <b>30+ clients</b> at once. Watch the bucket drain in real time.');sfx.riser()});
+  for(let k=0;k<34;k++)A(9.10+k*.07,reqFly);
+  for(let k=0;k<5;k++)A(9.4+k*.55,drip);
+  A(11.80,()=>{setCaption('Bucket empty. From here on: <u>429 Too Many Requests</u> &mdash; the DB behind the API is protected.');sfx.alarm()});
+
+  /* --- STEP 04 · retry-after --- */
+  A(13.40,()=>{stepTag('STEP 04 &middot; RETRY-AFTER');
+    setCaption('The API isn&rsquo;t just angry — it tells you <b>exactly when to come back</b>.');
+    $('#rtry').classList.add('show');sfx.blip(520,0,.08)});
+  const rver=$('#rtry i');
+  A(13.90,()=>{
+    /* countdown 3..2..1 while the bucket refills */
+    const g=gen;let n=3;
+    rver.textContent='3s';
+    const iv=setInterval(()=>{
+      if(g!==gen){clearInterval(iv);return;}
+      n--;if(n<0){clearInterval(iv);return;}rver.textContent=n+'s';
+      drip();sfx.plink(1200);
+    },1000);
+  });
+  for(let k=0;k<2;k++)A(14.4+k*1,drip);
+  A(17.00,()=>{$('#rtry').classList.add('gone');
+    setCaption('<b>3 seconds pass.</b> Tokens refilled. Now the polite retry:')});
+  A(17.60,()=>{reqFly(0)});
+  A(18.90,()=>{$('#rtry').classList.remove('gone','show');
+    setCaption('<i>Served.</i> Hammering would just collect more <u>429s</u>. Waiting is the hero move.')});
+
+  /* --- scoreboard + punch --- */
+  A(21.60,()=>{$('#sc1').classList.add('show');$('#sc2').classList.add('show');sfx.ping()});
+  A(23.40,()=>{$('#cap').classList.remove('show');$('#punch').classList.add('show');sfx.chord()});
+  A(24.60,()=>{$('#brand2').classList.add('show');$('#replayBtn').classList.add('show')});
+  return ev;
+}
+
+/* ================= grain ================= */
+(function grain(){
+  try{
+    const c=document.createElement('canvas');c.width=c.height=120;
+    const g=c.getContext('2d'),im=g.createImageData(120,120);
+    for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;
+      im.data[i]=v;im.data[i+1]=v;im.data[i+2]=v;im.data[i+3]=30;}
+    g.putImageData(im,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`;
+  }catch(e){}
+})();
+
+/* ================= auto-start (video-friendly: no tap gate) ================= */
+audioInit();
+function tryUnlock(){
+  if(!ctx)return;
+  if(ctx.state==='suspended'){
+    ctx.resume().then(()=>{
+      const t=(performance.now()-start)/1000;
+      if(gen>0&&t<13)startPlay();
+    }).catch(()=>{});
+  }
+}
+addEventListener('pointerdown',tryUnlock);
+addEventListener('keydown',tryUnlock);
+$('#replayBtn').addEventListener('click',()=>{tryUnlock();startPlay()});
+$('#mute').addEventListener('click',()=>{
+  muted=!muted;if(master)master.gain.value=muted?0:.55;
+  $('#mute').innerHTML=muted?'&#128263;':'&#128266;';
+});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.key==='r'||e.key==='R'){e.preventDefault();startPlay();}
+  if(e.key==='m'||e.key==='M')$('#mute').click();
+});
+const AUTOLOOP=/[?&]loop=1/.test(location.search);
+if(AUTOLOOP)setInterval(()=>{if((performance.now()-start)/1000>25.2)startPlay()},500);
+setTimeout(startPlay,180);
+})();
+</script>
+</body>
+</html>

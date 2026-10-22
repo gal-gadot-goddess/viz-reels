@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0e15"/>
+<title>VIZ 15 — Inside One Commit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REEL-VIZ FORMAT · 9:16 · 540x960 logical stage (auto-scaled)
+   Same engine/format as VIZ 01-14 · AUTOPLAYS (no play button)
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#5aa2ff; --purple:#b18cff; --lav:#c988fb; --pink:#ff7fa3;
+  --mint:#37e0b0; --amber:#ffb454; --txt:#e9eff8; --mut:#8492ab; --dim:#5e6c84;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Outfit',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%;background:#04060b;overflow:hidden;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center}
+#fit{width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;flex:none;width:540px;height:960px;transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -10%, #101a2c 0%, transparent 60%),
+    radial-gradient(80% 50% at 112% 112%, #191430 0%, transparent 60%),
+    radial-gradient(70% 45% at -10% 105%, #0e1a2e 0%, transparent 60%),
+    #0a0e15;}
+
+/* ---------- ambient ---------- */
+.grid{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);
+  background-size:45px 45px;
+  -webkit-mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);}
+.aur{position:absolute;width:430px;height:430px;border-radius:50%;filter:blur(75px);opacity:.15;z-index:0;pointer-events:none}
+.a1{background:#3d6bff;top:-170px;left:-130px;animation:drift 16s ease-in-out infinite alternate}
+.a2{background:#7a4bff;bottom:-150px;right:-130px;animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(42px,30px) scale(1.12)}}
+#grain{position:absolute;inset:0;z-index:40;opacity:.06;pointer-events:none;mix-blend-mode:overlay}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .65s cubic-bezier(.16,1,.3,1)}
+.rev.show{opacity:1;transform:none}
+.mint{color:var(--mint)} .pink{color:var(--pink)}
+.purple{color:var(--purple)} .blue{color:var(--blue)} .lav{color:var(--lav)}
+.amber{color:var(--amber)}
+
+/* ---------- header ---------- */
+#head{position:absolute;left:0;right:0;top:30px;text-align:center;z-index:6}
+.brand{font:500 11px/1 var(--mono);letter-spacing:.26em;color:var(--dim)}
+.title{margin-top:16px;font:800 36px/1.12 var(--sans);letter-spacing:.005em;color:var(--txt);
+  text-shadow:0 0 24px rgba(120,160,255,.16)}
+.sub{margin-top:8px;font:600 13px/1 var(--sans);color:#4c9aff}
+.chip{display:inline-block;margin-top:13px;background:#141b28;border:1px solid #212c3e;color:#93a0b8;
+  border-radius:9px;padding:7px 13px;font:italic 400 11.5px/1.25 var(--mono)}
+
+/* ---------- caption + step ---------- */
+#cap{position:absolute;left:44px;top:190px;width:452px;min-height:46px;text-align:center;z-index:7;
+  font:700 14px/1.35 var(--sans);color:#dbe4f2;background:rgba(17,24,38,.72);
+  border:1px solid #232f44;border-radius:11px;padding:9px 14px;opacity:0}
+#cap.show{opacity:1}
+#cap b{color:var(--amber)} #cap i{color:var(--mint);font-style:inherit}
+#cap u{color:var(--pink);text-decoration:none}
+#stepT{position:absolute;left:0;right:0;top:248px;text-align:center;z-index:6;
+  font:700 9px/1 var(--mono);letter-spacing:.26em;color:var(--lav);opacity:0;transition:opacity .4s}
+#stepT.show{opacity:1}
+
+/* ---------- counter pills ---------- */
+#cntw{position:absolute;left:50%;top:266px;transform:translateX(-50%);z-index:7;text-align:center;
+  white-space:nowrap;opacity:0;transition:opacity .4s}
+#cntw.show{opacity:1}
+.cnt{display:inline-block;padding:7px 13px;border-radius:9px;background:rgba(13,19,30,.88);
+  border:1px solid #243049;margin:0 5px;text-align:center;vertical-align:top}
+.cnt .cl{display:block;font:700 7.5px/1 var(--mono);letter-spacing:.2em;color:#6d7c96}
+.cnt b{display:block;margin-top:4px;font:800 19px/1 var(--sans)}
+#cpN{color:var(--amber)}#cbN{color:#93a2b9}
+#cpN.g{color:var(--mint)}
+#cbN.go{color:var(--lav)}
+
+/* ---------- file card + staging ---------- */
+#fc{position:absolute;left:56px;top:308px;width:204px;height:138px;z-index:4;border-radius:11px;
+  background:#121927;border:1.4px solid #243049;padding:9px 10px;opacity:0;transform:scale(.9);
+  transition:opacity .5s,transform .55s cubic-bezier(.2,1.2,.3,1)}
+#fc.show{opacity:1;transform:scale(1)}
+#fc .ftt{display:flex;align-items:center;gap:6px;font:700 9px/1 var(--mono);color:#9fc4ff;letter-spacing:.08em}
+#fc .ftt i{width:7px;height:7px;border-radius:50%;background:#3ddc84;display:inline-block}
+#fc .ln{font:500 8.6px/1.7 var(--mono);color:#8d9cb6;white-space:nowrap;border-radius:3px;padding:0 4px}
+#fc .ln.add{background:rgba(55,224,176,.16);color:#7fe0c0;opacity:0}
+#fc .ln.add.on{opacity:1;transition:opacity .3s}
+#fc .ln.del{background:rgba(255,127,163,.12);color:#ffb3c6;text-decoration:line-through;opacity:0}
+#fc .ln.del.on{opacity:1;transition:opacity .3s}
+#stg{position:absolute;left:292px;top:308px;width:196px;height:138px;z-index:4;border-radius:11px;
+  border:1.6px dashed rgba(177,140,255,.45);text-align:center;opacity:0;transition:opacity .5s}
+#stg.show{opacity:1}
+#stg .slb{display:block;margin-top:10px;font:700 7.5px/1 var(--mono);letter-spacing:.22em;color:#8f7cc2}
+#snap{position:absolute;left:390px;top:374px;transform:translate(-50%,6px) scale(.75);white-space:nowrap;
+  background:#141d2e;border:1.4px solid rgba(55,224,176,.7);color:#7fe0c0;border-radius:8px;
+  padding:7px 11px;font:700 9px/1 var(--mono);letter-spacing:.06em;opacity:0;
+  transition:opacity .45s,transform .5s cubic-bezier(.25,1.35,.35,1);box-shadow:0 0 14px rgba(55,224,176,.25)}
+#snap.show{opacity:1;transform:translate(-50%,0) scale(1)}
+#diffTag{position:absolute;left:262px;top:442px;z-index:5;font:800 8.5px/1 var(--mono);white-space:nowrap;
+  padding:4px 8px;border-radius:6px;background:#141d2e;border:1.2px solid #243049;color:#8d9cb6;
+  opacity:0;transform:translateY(5px);transition:opacity .4s,transform .4s}
+#diffTag.show{opacity:1;transform:none}
+#diffTag b.g{color:var(--mint)}#diffTag b.p{color:var(--pink)}
+
+/* ---------- commit graph ---------- */
+#gwrap{position:absolute;inset:0;z-index:4;pointer-events:none}
+.cnode{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+  background:#1a1408;border:2px solid var(--amber);box-shadow:0 0 16px rgba(255,180,84,.4);
+  z-index:6}
+.cnode::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;
+  border-radius:50%;background:var(--amber)}
+.hexl{position:absolute;width:64px;margin-left:-32px;text-align:center;font:700 8px/1 var(--mono);
+  letter-spacing:.12em;color:var(--amber);z-index:6;opacity:.95}
+.stik{position:absolute;transform:translate(0,0);z-index:7;white-space:nowrap;font:700 8.5px/1 var(--mono);
+  letter-spacing:.08em;padding:5px 9px;border-radius:8px;transition:left .65s cubic-bezier(.25,1.2,.3,1),opacity .45s}
+.stik::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-4px;border-left:4px solid transparent;
+  border-right:4px solid transparent;border-top:5px solid currentColor}
+.stik.main{background:#221735;border:1.4px solid var(--lav);color:var(--lav)}
+.stik.feat{background:#2a1520;border:1.4px solid var(--pink);color:var(--pink)}
+.stik.lane{background:rgba(178,140,255,.14);border:none;box-shadow:none;pointer-events:none}
+.plane{position:absolute;left:40px;right:40px;height:0;border-top:1.6px dashed rgba(177,140,255,.3);
+  opacity:0;transition:opacity .6s;text-align:right}
+.plane.show{opacity:1}
+.plane span{display:inline-block;position:relative;top:-15px;font:700 7px/1 var(--mono);letter-spacing:.18em;
+  color:#6d5a99;background:#0a0e15;padding:0 6px}
+
+/* ---------- fx ---------- */
+#fx{position:absolute;inset:0;z-index:8;pointer-events:none}
+.fly{position:absolute;left:0;top:0;width:0;height:0;z-index:9}
+.fly .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#8ab4ff;
+  box-shadow:0 0 10px 2px rgba(120,160,255,.6)}
+.fly.mint .dot{background:#7fe0c0;box-shadow:0 0 10px 2px rgba(55,224,176,.6)}
+.fly.gold .dot{background:#ffd08a;box-shadow:0 0 12px 3px rgba(255,205,120,.7)}
+.ring{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  border:2px solid rgba(255,138,170,.85);animation:ringX .55s ease-out forwards}
+.ring.m{border-color:rgba(55,224,176,.85)}
+.ring.g{border-color:rgba(255,180,84,.85)}
+.ring.l{border-color:rgba(177,140,255,.85)}
+@keyframes ringX{to{transform:scale(3.1);opacity:0}}
+
+/* ---------- scoreboard ---------- */
+.scw{position:absolute;top:700px;width:226px;text-align:center;z-index:6}
+#sc1{left:38px}#sc2{left:270px}
+.sc{border-radius:10px;padding:9px 8px 10px;background:#121927;border:1px solid #222d40}
+#sc1 .sc{border-color:rgba(255,127,163,.5)}
+#sc2 .sc{border-color:rgba(55,224,176,.5)}
+.sl{font:700 8px/1 var(--mono);letter-spacing:.18em;display:block}
+#sc1 .sl{color:var(--pink)}#sc2 .sl{color:var(--mint)}
+.sv{display:block;margin-top:6px;font:800 13px/1.3 var(--sans);color:#edf2fa}
+#sc2 .sv{color:#7fe0c0}
+
+/* ---------- punchline ---------- */
+#punch{position:absolute;left:0;right:0;top:866px;text-align:center;z-index:6;opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.3,1)}
+#punch.show{opacity:1;transform:none}
+#punch .pt{font:800 21px/1.25 var(--sans);letter-spacing:.002em;color:#edf2fa}
+#punch .bar{display:block;margin:10px auto 0;width:116px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--lav),var(--mint));box-shadow:0 0 10px rgba(255,200,110,.45);
+  transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.9,.2,1) .3s}
+#punch.show .bar{transform:scaleX(1)}
+#brand2{position:absolute;left:0;right:0;top:928px;text-align:center;z-index:6;font:500 9.5px/1 var(--mono);
+  letter-spacing:.26em;color:#495870;opacity:0;transition:opacity .9s}
+#brand2.show{opacity:.9}
+
+/* ---------- controls ---------- */
+.ctl{position:absolute;z-index:45;width:40px;height:40px;border-radius:50%;border:1.4px solid rgba(140,165,215,.4);
+  background:rgba(16,23,38,.72);color:#9fb4d8;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation}
+.ctl:active{transform:scale(.93)}
+#mute{top:16px;right:16px}
+#replayBtn{top:16px;left:16px;opacity:0;pointer-events:none;transition:opacity .5s}
+#replayBtn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="aur a1"></div><div class="aur a2"></div>
+  <div class="grid"></div>
+
+  <header id="head">
+    <div class="brand rev">@yourhandle</div>
+    <h1 class="title rev">Inside One <span class="mint">Commit</span></h1>
+    <div class="sub rev">and why branches cost 41 bytes</div>
+    <div class="chip rev">snapshots, fingerprints &amp; sticker magic</div>
+  </header>
+
+  <div id="cap"></div>
+  <div id="stepT"></div>
+
+  <div id="cntw">
+    <span class="cnt"><span class="cl">FILES COPIED</span><b id="cpN">0</b></span>
+    <span class="cnt"><span class="cl">COMMITS</span><b id="cbN">0</b></span>
+  </div>
+
+  <!-- the edited file -->
+  <div id="fc"><span class="ftt"><i></i>app.py</span>
+    <div class="ln">def greet(name):</div>
+    <div class="ln">&nbsp;&nbsp;return "hi " + name</div>
+    <div class="ln del" id="dl1">print(greet("bob"))</div>
+    <div class="ln add" id="al1">&nbsp;&nbsp;lang = name.upper()</div>
+    <div class="ln add" id="al2">&nbsp;&nbsp;return "HELLO " + lang</div>
+  </div>
+  <div id="diffTag">+2 <b class="g">added</b> &nbsp;&middot;&nbsp; &minus;1 <b class="p">removed</b></div>
+
+  <!-- staging -->
+  <div id="stg"><span class="slb">STAGING AREA</span></div>
+  <div id="snap">app.py &middot; SNAPSHOT &#10003;</div>
+
+  <!-- commit graph (populated dynamically) -->
+  <div id="gwrap"></div>
+
+  <div class="scw rev" id="sc1"><div class="sc"><span class="sl">COPY-THE-FOLDER WORKFLOW</span>
+    <span class="sv">1,000 files re-copied each time</span></div></div>
+  <div class="scw rev" id="sc2"><div class="sc"><span class="sl">GIT'S WAY</span>
+    <span class="sv">0 copies &middot; branch = 41 bytes</span></div></div>
+
+  <div id="punch"><div class="pt">A commit is a named snapshot. A branch is just a sticker on it.</div><i class="bar"></i></div>
+  <div id="brand2">@yourhandle</div>
+
+  <div id="fx"></div>
+
+  <button class="ctl" id="replayBtn" aria-label="replay">&#8635;</button>
+  <button class="ctl" id="mute" aria-label="mute">&#128266;</button>
+
+  <div id="grain"></div>
+
+</div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),fx=$('#fx'),gw=$('#gwrap');
+
+/* ================= scaling ================= */
+let sc=1;
+function fit(){sc=Math.min(innerWidth/540,innerHeight/960);stage.style.transform=`scale(${sc})`;}
+addEventListener('resize',fit);fit();
+
+/* ================= AUDIO (synth SFX) ================= */
+let ctx=null,master=null,muted=false;
+function audioInit(){if(ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ctx=new AC();master=ctx.createGain();master.gain.value=.55;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;
+  master.connect(comp);comp.connect(ctx.destination);
+}
+function tone(o={}){if(!ctx||muted)return;
+  const{type='sine',f=440,f2=null,dur=.12,vol=.18,at=0}=o,t0=ctx.currentTime+at;
+  const osc=ctx.createOscillator();osc.type=type;osc.frequency.setValueAtTime(f,t0);
+  if(f2)osc.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+dur+.06);
+}
+function noise(o={}){if(!ctx||muted)return;
+  const{dur=.4,vol=.2,at=0,f0=400,f1=2000,q=1.2}=o,t0=ctx.currentTime+at;
+  const len=Math.max(1,(dur+.05)*ctx.sampleRate|0),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=ctx.createBufferSource();n.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;
+  bp.frequency.setValueAtTime(f0,t0);bp.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  n.connect(bp);bp.connect(g);g.connect(master);n.start(t0);n.stop(t0+dur+.05);
+}
+const sfx={
+  thump(){tone({type:'sine',f:130,f2:38,dur:.4,vol:.6});tone({type:'triangle',f:520,f2:70,dur:.12,vol:.1})},
+  blip(f=760,at=0,vol=.12){tone({type:'square',f,dur:.07,vol,at})},
+  tick(){tone({type:'square',f:1150,dur:.045,vol:.07})},
+  pop(){tone({type:'sine',f:520,f2:150,dur:.13,vol:.28})},
+  ping(){tone({type:'sine',f:940,f2:1500,dur:.16,vol:.1})},
+  whoosh(dur=.45,rev=false,vol=.14){noise({dur,f0:rev?2600:300,f1:rev?350:2600,vol})},
+  zap(){tone({type:'sawtooth',f:2100,f2:160,dur:.18,vol:.18});noise({dur:.12,vol:.05,f0:3000,f1:600})},
+  riser(){tone({type:'sawtooth',f:180,f2:960,dur:.55,vol:.12});noise({dur:.55,vol:.06,f0:400,f1:2400})},
+  deny(){tone({type:'sawtooth',f:220,f2:110,dur:.25,vol:.18})},
+  chord(){[261.6,311.1,392,466.2].forEach((f,i)=>tone({type:'triangle',f,dur:1.15,vol:.06,at:i*.03}));
+    tone({type:'sine',f:98,f2:49,dur:.5,vol:.26})},
+  ui(){tone({type:'sine',f:640,dur:.05,vol:.05})},
+};
+
+/* ================= timeline engine ================= */
+let gen=0,events=[],start=0,playing=false,raf=null;
+const later=(ms,fn)=>{const g=gen;setTimeout(()=>{g===gen&&fn()},ms)};
+function resetFx(){fx.innerHTML='';}
+function startPlay(){
+  gen++;resetFx();resetDom();
+  events=buildTimeline().sort((a,b)=>a.t-b.t);
+  start=performance.now();playing=true;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-start)/1000;
+  while(events.length&&events[0].t<=el)events.shift().fn();
+  if(playing)raf=requestAnimationFrame(tick);
+}
+
+/* ================= scene helpers ================= */
+function bump(sel,scale=1.3){const n=$(sel);n.animate(
+  [{transform:`scale(${scale})`,opacity:.75},{transform:'scale(1)',opacity:1}],
+  {duration:260,easing:'ease-out'});}
+function setCaption(html){const c=$('#cap');c.innerHTML=html;c.classList.add('show');
+  c.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
+function stepTag(txt){const s=$('#stepT');s.innerHTML=txt;s.classList.add('show');sfx.blip(880,0,.07);}
+function ring(x,y,cls){const d=document.createElement('div');
+  d.className='ring'+(cls?' '+cls:'');d.style.left=x+'px';d.style.top=y+'px';
+  fx.appendChild(d);later(620,()=>d.remove());}
+function setCopiesBump(mint){const c=$('#cpN');bump('#cpN',1.25);if(mint)c.classList.add('g');}
+function setCommits(n){$('#cbN').textContent=String(n);$('#cbN').classList.add('go');bump('#cbN')}
+
+/* makeQ arc helper */
+function makeQ(x0,y0,x1,y1,ctlY,n){
+  const pts=[],cx=(x0+x1)/2;
+  for(let i=0;i<=n;i++){const t=i/n,u=1-t;
+    pts.push([u*u*x0+2*u*t*cx+t*t*x1, u*u*y0+2*u*t*ctlY+t*t*y1]);}
+  return pts;
+}
+/* flight (dot only or with chip) */
+function fly(pts,dur,color,txt,done){
+  later(0,()=>{
+    const g=gen,L=[0];
+    for(let i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+    const total=L[L.length-1],t0=performance.now();
+    const el=document.createElement('div');
+    el.className='fly '+(color||'');
+    el.innerHTML='<i class="dot"></i>'+(txt?'<span style="position:absolute;left:0;top:-27px;transform:translateX(-50%);white-space:nowrap;font:700 8.5px/1 var(--mono);padding:3px 8px;border-radius:6px;background:rgba(12,18,29,.92);border:1.3px solid rgba(177,140,255,.6);color:var(--lav)"></span>':'');
+    if(txt)el.lastChild.textContent=txt;
+    fx.appendChild(el);
+    const step=tt=>{
+      if(g!==gen){el.remove();return;}
+      const k=Math.min(1,(tt-t0)/dur),d=k*total;
+      let i=1;while(i<L.length-1&&L[i]<d)i++;
+      const s=(d-L[i-1])/(L[i]-L[i-1]||1);
+      const x=pts[i-1][0]+(pts[i][0]-pts[i-1][0])*s;
+      const y=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*s;
+      el.style.transform=`translate(${x}px,${y}px)`;
+      if(k<1)requestAnimationFrame(step);
+      else{el.remove();done&&done();}
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+/* ---------- git graph primitives ---------- */
+const NODES=[[118,612],[186,612],[252,578],[318,578],[386,612]];
+const HEXL=['e4c39a','9f13b7','c0de51','f00db7','e5c01a'];
+let gsvg=null,STK={};
+function ensureSvg(){
+  if(gsvg&&document.body.contains(gsvg))return;
+  gsvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  gsvg.setAttribute('viewBox','0 0 540 960');
+  gsvg.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  gw.appendChild(gsvg);
+}
+function drawConn(x1,y1,x2,y2,dash){
+  ensureSvg();
+  const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  pl.setAttribute('points',x1+','+y1+' '+x2+','+y2);
+  pl.setAttribute('pathLength','100');
+  pl.setAttribute('stroke',dash?'rgba(177,140,255,.35)':'rgba(199,136,251,.85)');
+  pl.setAttribute('stroke-width','2.2');
+  pl.setAttribute('fill','none');
+  if(!dash){
+    pl.style.strokeDasharray='100';
+    pl.style.strokeDashoffset='100';
+  }
+  gsvg.appendChild(pl);
+  if(!dash)pl.animate([{strokeDashoffset:100},{strokeDashoffset:0}],
+    {duration:420,easing:'ease-out',fill:'forwards'});
+}
+function addNode(i){
+  const g0=gen,[x,y]=NODES[i];
+  const n=document.createElement('i');
+  n.className='cnode';
+  n.style.left=x+'px';n.style.top=y+'px';
+  n.animate([{transform:'scale(0)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],
+    {duration:340,easing:'cubic-bezier(.3,1.4,.4,1)'});
+  gw.appendChild(n);
+  ring(x,y,'g');sfx.pop();
+  /* hex label typing */
+  const h=document.createElement('div');
+  h.className='hexl';h.style.left=x+'px';h.style.top=(y+21)+'px';
+  gw.appendChild(h);
+  for(let c=1;c<=HEXL[i].length;c++){
+    const cc=c;
+    later(120+cc*38,()=>{if(g0!==gen)return;
+      h.textContent=HEXL[i].slice(0,cc);if(cc<HEXL[i].length)sfx.tick();});
+  }
+}
+function ensureSticker(key,cls,x,y){
+  if(STK[key])return STK[key];
+  const s=document.createElement('div');
+  s.className='stik '+cls;
+  s.textContent=key==='main'?'main \u25be':'feature \u25be';
+  s.style.left=(x-(key==='main'?28:36))+'px';s.style.top=y+'px';
+  s.animate([{opacity:0},{opacity:1}],{duration:340});
+  gw.appendChild(s);STK[key]=s;
+  return s;
+}
+function moveSticker(key,x){
+  const s=STK[key];if(!s)return;
+  s.style.left=(x-(key==='main'?28:36))+'px';
+}
+
+/* ================= reset & timeline ================= */
+function resetDom(){
+  document.querySelectorAll('.rev').forEach(n=>n.classList.remove('show'));
+  $('#cap').textContent='';$('#cap').classList.remove('show');
+  $('#stepT').textContent='';$('#stepT').classList.remove('show');
+  ['#fc','#stg','#snap','#diffTag','#sc1','#sc2','#punch','#brand2'].forEach(s=>$(s).classList.remove('show'));
+  ['al1','al2','dl1'].forEach(id=>$('#'+id).classList.remove('on'));
+  $('#cpN').textContent='0';$('#cpN').classList.remove('g');
+  $('#cbN').textContent='0';$('#cbN').classList.remove('go');
+  gw.innerHTML='';gsvg=null;STK={};
+  $('#replayBtn').classList.remove('show');
+}
+function buildTimeline(){
+  const ev=[];const A=(t,fn)=>ev.push({t,fn});
+  STK={};
+
+  /* --- intro --- */
+  A(.20,()=>{$('#head .brand').classList.add('show');sfx.ui()});
+  A(.55,()=>{$('#head .title').classList.add('show');sfx.thump()});
+  A(.95,()=>{$('#head .sub').classList.add('show');sfx.ui()});
+  A(1.30,()=>{$('#head .chip').classList.add('show');sfx.blip(520)});
+  A(1.80,()=>{$('#cntw').classList.add('show')});
+
+  /* --- STEP 01 · the edit --- */
+  A(2.30,()=>{stepTag('STEP 01 &middot; THE EDIT');
+    setCaption('Here&rsquo;s <b>app.py</b>. About to change a few lines of it.');
+    $('#fc').classList.add('show');sfx.whoosh(.5,false,.1)});
+  A(3.70,()=>{$('#dl1').classList.add('on');sfx.zap();
+    $('#diffTag').classList.add('show')});
+  A(4.30,()=>{$('#al1').classList.add('on');sfx.blip(980,0,.08)});
+  A(4.80,()=>{$('#al2').classList.add('on');sfx.blip(1040,0,.08);
+    setCaption('An edit is just <b>+ lines</b> and <b>&minus; lines</b>. Now commit it.')});
+
+  /* --- STEP 02 · the commit --- */
+  A(6.20,()=>{stepTag('STEP 02 &middot; THE COMMIT');
+    setCaption('<b>git add</b> stages a snapshot of the whole file&hellip; it&rsquo;s waiting here.');
+    $('#stg').classList.add('show');sfx.whoosh(.4,false,.08)});
+  A(6.80,()=>{$('#snap').classList.add('show');sfx.pop();ring(390,378,'m')});
+  A(8.10,()=>{$('#cap').classList.remove('show');});
+  A(8.30,()=>{stepTag('STEP 02 &middot; THE COMMIT');
+    setCaption('<b>git commit</b> writes an object: snapshot + parent + author + time&hellip; then <b>names it by its checksum</b>.');
+    fly(makeQ(372,372,NODES[0][0],NODES[0][1],452,10),820,'gold','COMMIT',()=>{
+      addNode(0);setCommits(1);setCopiesBump(false);
+    })});
+  A(10.60,()=>{fly(makeQ(372,372,NODES[1][0],NODES[1][1],452,10),820,'gold',null,()=>{
+      drawConn(NODES[0][0],NODES[0][1],NODES[1][0],NODES[1][1]);addNode(1);setCommits(2);
+    })});
+  A(11.90,()=>{setCaption('A second commit? Unchanged files already exist as objects &mdash; Git <b>reuses them</b>: <u>0 files copied</u>.')});
+
+  /* --- STEP 03 · the sticker --- */
+  A(13.60,()=>{stepTag('STEP 03 &middot; THE STICKER');
+    setCaption('A branch is <b>not a copy</b>. It&rsquo;s a tiny file containing one long number &mdash; 41 bytes.');
+    ensureSticker('main','main',NODES[1][0],532);sfx.thump();
+    ring(NODES[1][0],548,'l')});
+  A(15.10,()=>{ensureSticker('feature','feat',NODES[1][0],560);sfx.pop();
+    setCopiesBump(true);
+    setCaption('<b>git branch feature</b>: a new sticker &mdash; on the <i>same commit</i>. Zero files moved.')});
+
+  /* --- STEP 04 · parallel lives --- */
+  A(16.80,()=>{stepTag('STEP 04 &middot; PARALLEL LIVES');
+    setCaption('Commit on the feature: the <b>sticker slides</b> &mdash; main doesn&rsquo;t move.');
+    fly(makeQ(372,372,NODES[2][0],NODES[2][1],448,10),780,'gold',null,()=>{
+      drawConn(NODES[1][0],NODES[1][1],NODES[2][0],NODES[2][1]);addNode(2);setCommits(3);
+      moveSticker('feature',NODES[2][0]);
+    })});
+  A(18.60,()=>{fly(makeQ(372,372,NODES[3][0],NODES[3][1],448,10),780,'gold',null,()=>{
+      drawConn(NODES[2][0],NODES[2][1],NODES[3][0],NODES[3][1]);addNode(3);setCommits(4);
+      moveSticker('feature',NODES[3][0]);
+    })});
+  A(20.10,()=>{setCaption('Two lanes in one folder. <i>Nothing was ever copied.</i>')});
+  A(21.40,()=>{fly(makeQ(372,372,NODES[4][0],NODES[4][1],470,10),780,'gold',null,()=>{
+      drawConn(NODES[3][0],NODES[3][1],NODES[4][0],NODES[4][1]);addNode(4);setCommits(5);
+      moveSticker('main',NODES[4][0]);sfx.thump();sfx.chord();
+    })});
+  A(22.90,()=>{setCaption('Merge = <b>one new commit</b> with two parents. Stickers move. Files were never copied.')});
+
+  /* --- scoreboard + punch --- */
+  A(24.80,()=>{$('#sc1').classList.add('show');$('#sc2').classList.add('show');sfx.ping()});
+  A(26.60,()=>{$('#cap').classList.remove('show');$('#punch').classList.add('show');sfx.chord()});
+  A(27.80,()=>{$('#brand2').classList.add('show');$('#replayBtn').classList.add('show')});
+  return ev;
+}
+
+/* ================= grain ================= */
+(function grain(){
+  try{
+    const c=document.createElement('canvas');c.width=c.height=120;
+    const g=c.getContext('2d'),im=g.createImageData(120,120);
+    for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;
+      im.data[i]=v;im.data[i+1]=v;im.data[i+2]=v;im.data[i+3]=30;}
+    g.putImageData(im,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`;
+  }catch(e){}
+})();
+
+/* ================= auto-start (video-friendly: no tap gate) ================= */
+audioInit();
+function tryUnlock(){
+  if(!ctx)return;
+  if(ctx.state==='suspended'){
+    ctx.resume().then(()=>{
+      const t=(performance.now()-start)/1000;
+      if(gen>0&&t<16)startPlay();
+    }).catch(()=>{});
+  }
+}
+addEventListener('pointerdown',tryUnlock);
+addEventListener('keydown',tryUnlock);
+$('#replayBtn').addEventListener('click',()=>{tryUnlock();startPlay()});
+$('#mute').addEventListener('click',()=>{
+  muted=!muted;if(master)master.gain.value=muted?0:.55;
+  $('#mute').innerHTML=muted?'&#128263;':'&#128266;';
+});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.key==='r'||e.key==='R'){e.preventDefault();startPlay();}
+  if(e.key==='m'||e.key==='M')$('#mute').click();
+});
+const AUTOLOOP=/[?&]loop=1/.test(location.search);
+if(AUTOLOOP)setInterval(()=>{if((performance.now()-start)/1000>28.5)startPlay()},500);
+setTimeout(startPlay,180);
+})();
+</script>
+</body>
+</html>
