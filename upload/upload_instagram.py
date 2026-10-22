@@ -2,6 +2,7 @@
 Instagram Reels Upload for kreggscode
 Uploads Reels to Instagram Professional Account (@kreggscode: 17841452339411557).
 Uses official Meta Graph API Resumable Upload Protocol (direct byte streaming to rupload.facebook.com).
+Applies custom cover photo / thumbnail (via cover_url & thumb_offset) captured from the near-end of the animation.
 """
 
 import os
@@ -43,7 +44,40 @@ def get_instagram_credentials():
     )
     return user_id, access_token
 
-def upload_via_public_url(video_path: Path, user_id: str, access_token: str, caption: str) -> dict:
+def get_video_duration(video_path: Path) -> float:
+    """
+    Gets exact video duration in seconds via ffprobe.
+    """
+    try:
+        cmd = [
+            "ffprobe", "-v", "error", "-show_entries",
+            "format=duration", "-of", "default=noprint_wrappers=1:nokey=1",
+            str(video_path)
+        ]
+        return float(subprocess.check_output(cmd, text=True).strip())
+    except Exception:
+        return 19.5
+
+def upload_image_to_tmpfiles(image_path: Path) -> str:
+    """
+    Uploads custom cover image to tmpfiles.org and returns direct download URL.
+    """
+    try:
+        with open(image_path, 'rb') as f:
+            res = requests.post(
+                'https://tmpfiles.org/api/v1/upload',
+                files={'file': (image_path.name, f, 'image/jpeg')},
+                timeout=30
+            )
+        if res.status_code == 200:
+            raw_url = res.json().get('data', {}).get('url', '')
+            if raw_url:
+                return raw_url.replace('tmpfiles.org/', 'tmpfiles.org/dl/').replace('http://', 'https://')
+    except Exception as e:
+        print(f"[instagram] ⚠️ Cover host notice: {e}")
+    return None
+
+def upload_via_public_url(video_path: Path, user_id: str, access_token: str, caption: str, cover_url: str = None, thumb_offset_ms: int = None) -> dict:
     """
     Fallback method: Uploads video to tmpfiles.org and creates container using video_url.
     """
@@ -74,6 +108,11 @@ def upload_via_public_url(video_path: Path, user_id: str, access_token: str, cap
         'share_to_feed': 'false',
         'access_token': access_token
     }
+    if thumb_offset_ms:
+        container_params['thumb_offset'] = str(thumb_offset_ms)
+    if cover_url:
+        container_params['cover_url'] = cover_url
+
     c_res = requests.post(container_url, data=container_params, timeout=60)
     if c_res.status_code != 200:
         raise Exception(f"Container creation failed with URL: {c_res.text}")
@@ -133,9 +172,9 @@ def wait_and_publish_container(container_id: str, user_id: str, access_token: st
         err_msg = pub_res.json() if pub_res.text else pub_res.text
         raise Exception(f"Media publish failed: {err_msg}")
 
-def upload_to_instagram(video_path, caption, is_story=False):
+def upload_to_instagram(video_path, caption, is_story=False, thumbnail_path=None):
     """
-    Uploads vertical video to Instagram (@kreggscode) as a Reel.
+    Uploads vertical video to Instagram (@kreggscode) as a Reel with custom cover photo.
     """
     print("\n" + "=" * 60)
     print(f"📸 INSTAGRAM REEL UPLOAD (@{ACCOUNT_NAME}) STARTING")
@@ -160,9 +199,23 @@ def upload_to_instagram(video_path, caption, is_story=False):
     file_size_mb = file_size / (1024 * 1024)
     caption_limited = caption[:2200] if len(caption) > 2200 else caption
 
+    # Auto-detect or use provided cover image
+    active_thumb = Path(thumbnail_path) if thumbnail_path else video_path_obj.with_suffix(".jpg")
+    duration_sec = get_video_duration(video_path_obj)
+    # Target frame 1.2s before end (where the full diagram is illuminated and completely visible)
+    thumb_offset_ms = int(max(1.0, duration_sec - 1.2) * 1000)
+
+    cover_url = None
+    if active_thumb.exists():
+        print(f"[instagram] 🖼️ Custom cover photo detected: {active_thumb.name}")
+        cover_url = upload_image_to_tmpfiles(active_thumb)
+        if cover_url:
+            print(f"[instagram] ✅ Direct cover image URL ready: {cover_url}")
+
     print(f"[instagram] Target Account: @{ACCOUNT_NAME} (ID: {user_id})")
     print(f"[instagram] Token: {mask(access_token)}")
     print(f"[instagram] Video: {video_path_obj.name} ({file_size_mb:.2f} MB)")
+    print(f"[instagram] Cover Frame: {thumb_offset_ms}ms ({thumb_offset_ms / 1000:.2f}s)")
     print(f"[instagram] Caption Length: {len(caption_limited)} characters")
 
     # Primary Method: Direct Meta Resumable Upload
@@ -174,8 +227,12 @@ def upload_to_instagram(video_path, caption, is_story=False):
             'media_type': 'REELS',
             'caption': caption_limited,
             'share_to_feed': 'false',
+            'thumb_offset': str(thumb_offset_ms),
             'access_token': access_token
         }
+        if cover_url:
+            init_data['cover_url'] = cover_url
+
         init_res = requests.post(init_url, data=init_data, timeout=60)
 
         if init_res.status_code == 200:
@@ -204,12 +261,12 @@ def upload_to_instagram(video_path, caption, is_story=False):
         else:
             print(f"[instagram] ⚠️ Resumable init failed ({init_res.status_code}): {init_res.text}")
             print("[instagram] Switching to fallback public URL upload method...")
-            return upload_via_public_url(video_path_obj, user_id, access_token, caption_limited)
+            return upload_via_public_url(video_path_obj, user_id, access_token, caption_limited, cover_url=cover_url, thumb_offset_ms=thumb_offset_ms)
 
     except Exception as e:
         print(f"[instagram] ⚠️ Resumable upload error: {e}")
         try:
-            return upload_via_public_url(video_path_obj, user_id, access_token, caption_limited)
+            return upload_via_public_url(video_path_obj, user_id, access_token, caption_limited, cover_url=cover_url, thumb_offset_ms=thumb_offset_ms)
         except Exception as fe:
             print(f"[instagram] ❌ Fallback upload also failed: {fe}")
             return {'status': 'failed', 'platform': 'instagram', 'error': str(e)}

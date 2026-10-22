@@ -329,6 +329,25 @@ def convert_html_to_video(
     except Exception:
         pass
 
+    # Extract high-clarity cover thumbnail from the near-end of the animation (e.g. duration - 1.2s)
+    # At this timestamp, the entire architectural diagram, comparison, and labels are fully rendered.
+    thumb_time = max(1.0, duration - 1.2)
+    thumb_path = output_mp4.with_suffix(".jpg")
+    thumb_cmd = [
+        "ffmpeg", "-y",
+        "-ss", f"{thumb_time:.2f}",
+        "-i", str(output_mp4),
+        "-frames:v", "1",
+        "-update", "1",
+        "-q:v", "2",
+        str(thumb_path)
+    ]
+    try:
+        subprocess.check_call(thumb_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(f"🖼️ Cover thumbnail generated: {thumb_path.name} (at {thumb_time:.2f}s)")
+    except Exception as e:
+        print(f"⚠️ Thumbnail generation notice: {e}")
+
     size_mb = output_mp4.stat().st_size / (1024 * 1024)
     print(f"🎉 Complete! Saved to: {output_mp4.name}")
     print(f"📦 Size: {size_mb:.2f} MB | Duration: {duration:.2f}s | Resolution: {width}x{height} @ {fps}fps")

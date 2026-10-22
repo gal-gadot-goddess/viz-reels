@@ -48,6 +48,10 @@ def upload_to_facebook(video_path, description, title="Tech Short", thumbnail_pa
     Uploads vertical video to Facebook Page as a Reel.
     """
     active_thumb = thumbnail_path or thumb_path
+    if not active_thumb:
+        cand = Path(video_path).with_suffix(".jpg")
+        if cand.exists():
+            active_thumb = cand
 
     print("\n" + "=" * 60)
     print(f"📘 FACEBOOK REEL UPLOAD ({PAGE_NAME}) STARTING")
@@ -122,6 +126,26 @@ def upload_to_facebook(video_path, description, title="Tech Short", thumbnail_pa
 
             if fin_res.status_code == 200 and fin_json.get('success'):
                 print(f"[facebook] ✅ SUCCESS! Reel published to '{PAGE_NAME}'! Video ID: {video_id}")
+
+                # Attach preferred custom cover thumbnail
+                if active_thumb and Path(active_thumb).exists():
+                    try:
+                        print(f"[facebook] 🖼️ Setting preferred custom cover: {Path(active_thumb).name}...")
+                        thumb_edge_url = f"https://graph.facebook.com/v21.0/{video_id}/thumbnails"
+                        with open(active_thumb, 'rb') as tf:
+                            t_res = requests.post(
+                                thumb_edge_url,
+                                data={'access_token': access_token, 'is_preferred': 'true'},
+                                files={'source': tf},
+                                timeout=30
+                            )
+                        if t_res.status_code == 200:
+                            print(f"[facebook] ✅ Custom cover thumbnail set successfully!")
+                        else:
+                            print(f"[facebook] ⚠️ Custom thumbnail response: {t_res.status_code} {t_res.text}")
+                    except Exception as te:
+                        print(f"[facebook] ⚠️ Custom thumbnail attachment error: {te}")
+
                 print("=" * 60)
                 return {'id': video_id, 'page': PAGE_NAME, 'status': 'success'}
             else:
