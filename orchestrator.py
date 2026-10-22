@@ -156,7 +156,7 @@ def run_pipeline(publish: bool = True, force: bool = False, use_bgm: bool = Fals
 
     # 3. Generate AI Metadata with Pollinations AI
     print("\n🧠 [Step 3] Generating AI metadata via Pollinations AI...")
-    metadata = generate_ai_metadata(topic_title)
+    metadata = generate_ai_metadata(topic_title, html_file_path=target_file)
     METADATA_FILE.write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"✅ Metadata saved to metadata.json (Title: '{metadata.get('title')}')")
 

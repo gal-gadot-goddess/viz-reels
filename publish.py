@@ -32,14 +32,28 @@ def publish_video(video_path: Path, metadata: dict) -> dict:
         raise FileNotFoundError(f"Video file not found at: {video_path}")
 
     title = metadata.get("title", video_path.stem)
-    hashtags = metadata.get("hashtags", ["#SystemDesign", "#SoftwareEngineering", "#Coding"])
-    if isinstance(hashtags, list):
-        hashtags_str = " ".join(hashtags)
+    raw_hashtags = metadata.get("hashtags", ["#systemdesign", "#backend", "#softwareengineering", "#coding", "#tech"])
+    clean_tags = []
+    if isinstance(raw_hashtags, list):
+        for t in raw_hashtags:
+            ct = str(t).strip().lower()
+            if not ct.startswith("#"):
+                ct = f"#{ct}"
+            if ct not in clean_tags:
+                clean_tags.append(ct)
     else:
-        hashtags_str = str(hashtags)
+        clean_tags = [t.lower() for t in str(raw_hashtags).split() if t.startswith("#")]
+    clean_tags = clean_tags[:5]
+    hashtags_str = " ".join(clean_tags)
 
-    ig_caption = metadata.get("ig_caption", f"{title}\n\n{hashtags_str}")
-    fb_caption = metadata.get("fb_caption", f"{title}\n\n{hashtags_str}")
+    ig_caption = metadata.get("ig_caption", f"{title}")
+    if clean_tags and clean_tags[0] not in ig_caption.lower():
+        ig_caption = f"{ig_caption}\n\n.\n.\n{hashtags_str}"
+
+    fb_caption = metadata.get("fb_caption", f"{title}")
+    if clean_tags and clean_tags[0] not in fb_caption.lower():
+        fb_caption = f"{fb_caption}\n\n{hashtags_str}"
+
     threads_caption = metadata.get("threads_caption", f"{title}\n\n{hashtags_str}")
 
     results = {}
