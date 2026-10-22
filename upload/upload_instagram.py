@@ -71,7 +71,7 @@ def upload_via_public_url(video_path: Path, user_id: str, access_token: str, cap
         'media_type': 'REELS',
         'video_url': video_url,
         'caption': caption[:2200],
-        'share_to_feed': 'true',
+        'share_to_feed': 'false',
         'access_token': access_token
     }
     c_res = requests.post(container_url, data=container_params, timeout=60)
@@ -111,7 +111,7 @@ def wait_and_publish_container(container_id: str, user_id: str, access_token: st
             print(f"[instagram] Status query notice: {e}")
 
     # Publish
-    print("[instagram] 🚀 Step 3: Publishing Reel to profile & Reels tab...")
+    print("[instagram] 🚀 Step 3: Publishing Reel to Reels tab only (main grid excluded)...")
     publish_url = f"https://graph.facebook.com/v21.0/{user_id}/media_publish"
     publish_data = {
         "creation_id": container_id,
@@ -173,7 +173,7 @@ def upload_to_instagram(video_path, caption, is_story=False):
             'upload_type': 'resumable',
             'media_type': 'REELS',
             'caption': caption_limited,
-            'share_to_feed': 'true',
+            'share_to_feed': 'false',
             'access_token': access_token
         }
         init_res = requests.post(init_url, data=init_data, timeout=60)
