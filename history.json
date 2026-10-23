@@ -65,5 +65,28 @@
         "status": "skipped"
       }
     }
+  },
+  {
+    "file": "06-ai-detectors.html",
+    "title": "🕵️‍♂️ Can AI Detectors Really Know Who Wrote It?",
+    "video": "06-ai-detectors.mp4",
+    "music": null,
+    "timestamp": "2026-10-23T07:09:31Z",
+    "publish": {
+      "instagram": {
+        "id": "17989458291118307",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "3182294245309565",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      }
+    }
   }
 ]
