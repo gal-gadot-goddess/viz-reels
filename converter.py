@@ -348,6 +348,27 @@ def convert_html_to_video(
     except Exception as e:
         print(f"⚠️ Thumbnail generation notice: {e}")
 
+    # Inject high-clarity completed diagram into Frame 0 of output_mp4 (2 frames / ~0.033s)
+    # This guarantees that any platform (Instagram, Facebook) defaulting to Frame 0 automatically captures the completed diagram.
+    if thumb_path.exists():
+        try:
+            temp_injected = output_mp4.with_name(f"{output_mp4.stem}_injected.mp4")
+            inject_cmd = [
+                "ffmpeg", "-y",
+                "-loop", "1", "-t", "0.04", "-i", str(thumb_path),
+                "-i", str(output_mp4),
+                "-filter_complex", "[0:v]settb=AVTB,setpts=N/60/TB[v0]; [1:v]settb=AVTB,setpts=PTS-STARTPTS[v1]; [v0][v1]concat=n=2:v=1:a=0[outv]",
+                "-map", "[outv]", "-map", "1:a:0?",
+                "-c:v", "libx264", "-preset", "fast", "-crf", str(crf), "-pix_fmt", "yuv420p", "-r", str(fps),
+                "-c:a", "copy",
+                str(temp_injected)
+            ]
+            subprocess.check_call(inject_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            temp_injected.replace(output_mp4)
+            print(f"🖼️ Injected completed diagram into Frame 0 (thumbnail guaranteed at t=0s)")
+        except Exception as ie:
+            print(f"⚠️ Frame 0 injection notice: {ie}")
+
     size_mb = output_mp4.stat().st_size / (1024 * 1024)
     print(f"🎉 Complete! Saved to: {output_mp4.name}")
     print(f"📦 Size: {size_mb:.2f} MB | Duration: {duration:.2f}s | Resolution: {width}x{height} @ {fps}fps")
