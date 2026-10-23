@@ -9,12 +9,14 @@
       "instagram": {
         "id": "17866645455677463",
         "platform": "instagram",
-        "status": "success"
+        "status": "success",
+        "permalink": "https://www.instagram.com/reel/DewaFWejbR1/"
       },
       "facebook": {
         "id": "4440588659537972",
         "page": "kreggscode",
-        "status": "success"
+        "status": "success",
+        "permalink": "https://facebook.com/4440588659537972"
       },
       "threads": {
         "status": "skipped",
@@ -37,11 +39,30 @@
       "facebook": {
         "id": "4409294096002902",
         "page": "kreggscode",
-        "status": "success"
+        "status": "success",
+        "permalink": "https://facebook.com/4409294096002902"
       },
       "threads": {
         "status": "skipped",
         "reason": "Failed to create container with all API versions"
+      }
+    }
+  },
+  {
+    "file": "01-kafka-vs-rabbitmq.html",
+    "title": "Kafka vs RabbitMQ: Where Do Messages Go After Read? 🧠",
+    "video": "01-kafka-vs-rabbitmq.mp4",
+    "music": null,
+    "timestamp": "2026-10-23T06:49:19Z",
+    "publish": {
+      "instagram": {
+        "id": "18427402894145018",
+        "platform": "instagram",
+        "status": "success",
+        "permalink": "https://www.instagram.com/reel/De0829tDCDt/"
+      },
+      "facebook": {
+        "status": "skipped"
       }
     }
   }
