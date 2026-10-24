@@ -111,5 +111,28 @@
         "reason": "Failed to create container with all API versions"
       }
     }
+  },
+  {
+    "file": "15-optimizers-racing.html",
+    "title": "Who Wins the Race? SGD vs Momentum vs Adam 🏁",
+    "video": "15-optimizers-racing.mp4",
+    "music": null,
+    "timestamp": "2026-10-24T13:16:15Z",
+    "publish": {
+      "instagram": {
+        "id": "17972721006168748",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1112787168136028",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      }
+    }
   }
 ]

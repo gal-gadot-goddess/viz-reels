@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0e15"/>
+<title>VIZ 22 — Torn QR Codes, Decoded</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   REEL-VIZ FORMAT · 9:16 · 540x960 logical stage (auto-scaled)
+   Same engine/format as VIZ 01-21 · AUTOPLAYS (no play button)
+   5-FRAME CINEMATIC: pattern → scan → tear → rebuild → message.
+   New grammar: 21x21 module grid + scan sweep + torn squares.
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#5aa2ff; --purple:#b18cff; --lav:#c988fb; --pink:#ff7fa3;
+  --mint:#37e0b0; --amber:#ffb454; --txt:#e9eff8; --mut:#8492ab; --dim:#5e6c84;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Outfit',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%;background:#04060b;overflow:hidden;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center}
+#fit{width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;flex:none;width:540px;height:960px;transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -10%, #101a2c 0%, transparent 60%),
+    radial-gradient(80% 50% at 112% 112%, #191430 0%, transparent 60%),
+    radial-gradient(70% 45% at -10% 105%, #0e1a2e 0%, transparent 60%),
+    #0a0e15;}
+
+/* ---------- ambient ---------- */
+.grid{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);
+  background-size:45px 45px;
+  -webkit-mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(95% 85% at 50% 42%,#000 35%,transparent 100%);}
+.aur{position:absolute;width:430px;height:430px;border-radius:50%;filter:blur(75px);opacity:.15;z-index:0;pointer-events:none}
+.a1{background:#3d6bff;top:-170px;left:-130px;animation:drift 16s ease-in-out infinite alternate}
+.a2{background:#7a4bff;bottom:-150px;right:-130px;animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(42px,30px) scale(1.12)}}
+#grain{position:absolute;inset:0;z-index:40;opacity:.06;pointer-events:none;mix-blend-mode:overlay}
+
+/* ---------- reveal ---------- */
+.rev{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .65s cubic-bezier(.16,1,.3,1)}
+.rev.show{opacity:1;transform:none}
+.mint{color:var(--mint)} .pink{color:var(--pink)}
+.purple{color:var(--purple)} .blue{color:var(--blue)} .lav{color:var(--lav)}
+.amber{color:var(--amber)}
+
+/* ---------- header ---------- */
+#head{position:absolute;left:0;right:0;top:30px;text-align:center;z-index:6}
+.brand{font:500 11px/1 var(--mono);letter-spacing:.26em;color:var(--dim)}
+.title{margin-top:16px;font:800 36px/1.12 var(--sans);letter-spacing:.005em;color:var(--txt);
+  text-shadow:0 0 24px rgba(120,160,255,.16)}
+.sub{margin-top:8px;font:600 13px/1 var(--sans);color:#4c9aff}
+.chip{display:inline-block;margin-top:13px;background:#141b28;border:1px solid #212c3e;color:#93a0b8;
+  border-radius:9px;padding:7px 13px;font:italic 400 11.5px/1.25 var(--mono)}
+
+/* ---------- caption + step ---------- */
+#cap{position:absolute;left:40px;top:186px;width:460px;min-height:52px;text-align:center;z-index:7;
+  font:700 15px/1.4 var(--sans);color:#e6edf7;background:rgba(17,24,38,.80);
+  border:1px solid #232f44;border-radius:12px;padding:10px 15px;opacity:0}
+#cap.show{opacity:1}
+#cap b{color:var(--amber)} #cap i{color:var(--mint);font-style:inherit}
+#cap u{color:var(--pink);text-decoration:none}
+#stepT{position:absolute;left:0;right:0;top:250px;text-align:center;z-index:6;
+  font:700 10px/1 var(--mono);letter-spacing:.26em;color:var(--lav);opacity:0;transition:opacity .4s}
+#stepT.show{opacity:1}
+
+/* ---------- counter pills ---------- */
+#cntw{position:absolute;left:50%;top:272px;transform:translateX(-50%);z-index:7;text-align:center;
+  white-space:nowrap;opacity:0;transition:opacity .4s}
+#cntw.show{opacity:1}
+.cnt{display:inline-block;padding:7px 13px;border-radius:9px;background:rgba(13,19,30,.92);
+  border:1px solid #243049;margin:0 5px;text-align:center;vertical-align:top}
+.cnt .cl{display:block;font:700 7.5px/1 var(--mono);letter-spacing:.2em;color:#6d7c96}
+.cnt b{display:block;margin-top:4px;font:800 18px/1 var(--sans)}
+#rdN{color:#93a2b9}#ecN{color:var(--pink)}
+#rdN.fin{color:var(--blue)}#ecN.ok{color:var(--mint)}
+
+/* ---------- frame containers (labels) ---------- */
+.fz{position:absolute;inset:0;z-index:6;opacity:0;transition:opacity .5s;pointer-events:none}
+.fz.show{opacity:1}
+.fz .fwl{opacity:0;transform:translateY(5px);transition:opacity .45s,transform .45s}
+.fz.show .fwl.show{opacity:1;transform:none}
+.fwl{position:absolute;z-index:6;font:700 8.5px/1.35 var(--mono);letter-spacing:.06em;color:#9fb0ca;
+  background:rgba(13,19,30,.92);border:1.2px solid #243049;border-radius:7px;padding:6px 9px;text-align:center}
+.fwl.pin{color:#ffb3c8;border-color:rgba(255,127,163,.5)}
+.fwl.mintb{color:#7fe0c0;border-color:rgba(55,224,176,.5)}
+.fwl.amb{color:#ffd9a1;border-color:rgba(255,180,84,.5)}
+.fwl.wht{color:#edf2fa;border-color:rgba(230,238,247,.55)}
+
+/* ---------- QR grid ---------- */
+#qr{position:absolute;left:0;top:292px;width:540px;height:372px;z-index:4}
+.mod{opacity:0;transition:opacity .35s,transform .55s cubic-bezier(.2,1.2,.3,1);
+  fill:rgba(140,160,205,.07)}
+.mod.show{opacity:1}
+.mod.onv{fill:#e8eefb}
+.mod.fnd{fill:#5aa2ff}
+.mod.fnd.onv{fill:#9cc4ff}
+.mod.gone{opacity:.07 !important;transform:translate(-24px,-38px) rotate(-22deg)}
+.mod.ghost{opacity:1 !important;fill:none;stroke:#37e0b0 !important;stroke-width:1.4;
+  stroke-dasharray:3 3;transform:none !important}
+#sweep{position:absolute;left:144px;top:350px;width:3px;height:256px;z-index:5;opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(90,162,255,.95),transparent);
+  box-shadow:0 0 16px rgba(90,162,255,.5)}
+#sweep.show{opacity:1}
+
+/* ---------- zoom bubble ---------- */
+.bz{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;z-index:9;
+  border:2px solid rgba(255,127,163,.85);pointer-events:none;
+  animation:bzP 1.1s ease-out forwards}
+@keyframes bzP{0%{transform:scale(.4);opacity:0}25%{transform:scale(1);opacity:1}
+  100%{transform:scale(1.5);opacity:0}}
+
+/* ---------- url bar / silence chip ---------- */
+#urlb{position:absolute;left:88px;top:618px;width:364px;z-index:6;border-radius:9px;background:#101a15;
+  border:1.5px solid rgba(55,224,176,.6);padding:11px 12px;text-align:center;opacity:0;transform:scale(.9);
+  transition:opacity .45s,transform .5s cubic-bezier(.2,1.2,.3,1)}
+#urlb.show{opacity:1;transform:scale(1)}
+#urls{font:700 12.5px/1 var(--mono);color:#7fe0c0;white-space:nowrap}
+#urls i{display:inline-block;width:8px;height:14px;background:var(--mint);vertical-align:-2px;
+  animation:cblink .8s steps(2) infinite}
+@keyframes cblink{50%{opacity:0}}
+.bigchip{position:absolute;left:50%;top:652px;transform:translateX(-50%);z-index:6;padding:8px 17px;border-radius:9px;
+  background:#0f1a15;border:1.6px solid rgba(55,224,176,.75);color:#7fe0c0;font:800 14.5px/1 var(--mono);
+  opacity:0;transform:translateX(-50%) scale(.7);transition:opacity .4s,transform .45s cubic-bezier(.25,1.4,.35,1)}
+.bigchip.show{opacity:1;transform:translateX(-50%) scale(1)}
+
+/* ---------- recap card ---------- */
+#recap{position:absolute;left:70px;top:496px;width:400px;z-index:7;border-radius:12px;
+  background:rgba(14,19,30,.94);border:1.5px solid #2b3a52;padding:13px 15px 15px;opacity:0;
+  transform:translateY(10px);transition:opacity .5s,transform .55s cubic-bezier(.2,1.2,.3,1)}
+#recap.show{opacity:1;transform:none}
+#recap .rt{display:block;text-align:center;font:700 8px/1 var(--mono);letter-spacing:.24em;color:var(--lav)}
+#recap .it{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font:700 11.5px/1.35 var(--sans);
+  color:#dbe4f2;opacity:0;transform:translateX(-6px);transition:opacity .45s,transform .45s}
+#recap .it.show{opacity:1;transform:none}
+#recap .it i{flex:none;width:18px;height:18px;border-radius:6px;background:#221735;color:var(--lav);
+  font:800 11px/18px var(--sans);font-style:normal;text-align:center}
+
+/* ---------- fx ---------- */
+#fx{position:absolute;inset:0;z-index:8;pointer-events:none}
+.ringx{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  border:2px solid rgba(255,138,170,.85);animation:ringX .55s ease-out forwards}
+.ringx.m{border-color:rgba(55,224,176,.85)}
+.ringx.b{border-color:rgba(90,162,255,.9)}
+@keyframes ringX{to{transform:scale(3.1);opacity:0}}
+
+/* ---------- scoreboard ---------- */
+.scw{position:absolute;top:724px;width:226px;text-align:center;z-index:6}
+#sc1{left:38px}#sc2{left:270px}
+.sc{border-radius:10px;padding:9px 8px 10px;background:#121927;border:1px solid #222d40}
+#sc1 .sc{border-color:rgba(255,127,163,.5)}
+#sc2 .sc{border-color:rgba(55,224,176,.5)}
+.sl{font:700 8px/1 var(--mono);letter-spacing:.18em;display:block}
+#sc1 .sl{color:var(--pink)}#sc2 .sl{color:var(--mint)}
+.sv{display:block;margin-top:6px;font:800 13px/1.3 var(--sans);color:#edf2fa}
+#sc2 .sv{color:#7fe0c0}
+
+/* ---------- punchline ---------- */
+#punch{position:absolute;left:0;right:0;top:866px;text-align:center;z-index:6;opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.3,1)}
+#punch.show{opacity:1;transform:none}
+#punch .pt{font:800 21px/1.25 var(--sans);letter-spacing:.002em;color:#edf2fa}
+#punch .bar{display:block;margin:10px auto 0;width:116px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--lav),var(--mint));box-shadow:0 0 10px rgba(255,200,110,.45);
+  transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.9,.2,1) .3s}
+#punch.show .bar{transform:scaleX(1)}
+#brand2{position:absolute;left:0;right:0;top:928px;text-align:center;z-index:6;font:500 9.5px/1 var(--mono);
+  letter-spacing:.26em;color:#495870;opacity:0;transition:opacity .9s}
+#brand2.show{opacity:.9}
+
+/* ---------- controls ---------- */
+.ctl{position:absolute;z-index:45;width:40px;height:40px;border-radius:50%;border:1.4px solid rgba(140,165,215,.4);
+  background:rgba(16,23,38,.72);color:#9fb4d8;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation}
+.ctl:active{transform:scale(.93)}
+#mute{top:16px;right:16px}
+#replayBtn{top:16px;left:16px;opacity:0;pointer-events:none;transition:opacity .5s}
+#replayBtn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="aur a1"></div><div class="aur a2"></div>
+  <div class="grid"></div>
+
+  <header id="head">
+    <div class="brand rev">@yourhandle</div>
+    <h1 class="title rev">Torn QR Codes, <span class="mint">Decoded</span></h1>
+    <div class="sub rev">why broken codes still scan perfectly</div>
+    <div class="chip rev">five frames &middot; coffee-proof by design</div>
+  </header>
+
+  <div id="cap"></div>
+  <div id="stepT"></div>
+
+  <div id="cntw">
+    <span class="cnt"><span class="cl">SQUARES READ</span><b id="rdN">0</b></span>
+    <span class="cnt"><span class="cl">SQUARES LOST</span><b id="ecN">0</b></span>
+  </div>
+
+  <!-- QR grid + scan sweep -->
+  <svg id="qr" viewBox="0 0 540 372"></svg>
+  <div id="sweep"></div>
+
+  <!-- FRAME 1 labels -->
+  <div class="fz" id="f1">
+    <div class="fwl wht" id="fwl1" style="left:118px;top:614px;width:260px">3 FINDER CORNERS &mdash; which way is up</div>
+  </div>
+  <!-- FRAME 2 labels -->
+  <div class="fz" id="f2">
+    <div class="fwl amb" id="fwl2" style="left:110px;top:316px;width:230px">SCAN LINE &mdash; square by square</div>
+  </div>
+  <!-- FRAME 3 labels -->
+  <div class="fz" id="f3">
+    <div class="fwl pin" id="fwl3" style="left:346px;top:340px;width:152px">TEAR &larr; 6 squares vanish</div>
+  </div>
+  <!-- FRAME 4 labels -->
+  <div class="fz" id="f4">
+    <div class="fwl mintb" id="fwl4" style="left:118px;top:614px;width:260px">REBUILT FROM THE SURVIVORS</div>
+  </div>
+  <!-- FRAME 5 labels -->
+  <div class="fz" id="f5">
+    <div class="fwl mintb" id="fwl5" style="left:88px;top:592px;width:80px">DECODED &darr;</div>
+  </div>
+
+  <div class="bigchip" id="bigchip">LOST 30% &rarr; STILL SCANS &#10003;</div>
+
+  <div id="urlb"><span id="urls"></span></div>
+
+  <!-- recap -->
+  <div id="recap"><span class="rt">THE WHOLE TRICK &mdash; RECAP</span>
+    <div class="it" id="rc1"><i>1</i><span>A QR is <b>441 squares</b> &mdash; literally 441 bits.</span></div>
+    <div class="it" id="rc2"><i>2</i><span>Three <b>finder corners</b> anchor the way it&rsquo;s read.</span></div>
+    <div class="it" id="rc3"><i>3</i><span>Error correction <b>rebuilds</b> lost squares &mdash; up to 30%.</span></div>
+  </div>
+
+  <div class="scw rev" id="sc1"><div class="sc"><span class="sl">WITHOUT ERROR CORRECTION</span>
+    <span class="sv">one tear &middot; unreadable</span></div></div>
+  <div class="scw rev" id="sc2"><div class="sc"><span class="sl">WITH ERROR CORRECTION</span>
+    <span class="sv">30% gone &middot; still scans</span></div></div>
+
+  <div id="punch"><div class="pt">A QR code isn&rsquo;t a picture.<br>It&rsquo;s a message wearing armor.</div><i class="bar"></i></div>
+  <div id="brand2">@yourhandle</div>
+
+  <div id="fx"></div>
+
+  <button class="ctl" id="replayBtn" aria-label="replay">&#8635;</button>
+  <button class="ctl" id="mute" aria-label="mute">&#128266;</button>
+
+  <div id="grain"></div>
+
+</div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const stage=$('#stage'),fx=$('#fx');
+
+/* ================= scaling ================= */
+let sc=1;
+function fit(){sc=Math.min(innerWidth/540,innerHeight/960);stage.style.transform=`scale(${sc})`;}
+addEventListener('resize',fit);fit();
+
+/* ================= AUDIO (synth SFX) ================= */
+let ctx=null,master=null,muted=false;
+function audioInit(){if(ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ctx=new AC();master=ctx.createGain();master.gain.value=.55;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;
+  master.connect(comp);comp.connect(ctx.destination);
+}
+function tone(o={}){if(!ctx||muted)return;
+  const{type='sine',f=440,f2=null,dur=.12,vol=.18,at=0}=o,t0=ctx.currentTime+at;
+  const osc=ctx.createOscillator();osc.type=type;osc.frequency.setValueAtTime(f,t0);
+  if(f2)osc.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+dur+.06);
+}
+function noise(o={}){if(!ctx||muted)return;
+  const{dur=.4,vol=.2,at=0,f0=400,f1=2000,q=1.2}=o,t0=ctx.currentTime+at;
+  const len=Math.max(1,(dur+.05)*ctx.sampleRate|0),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=ctx.createBufferSource();n.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=q;
+  bp.frequency.setValueAtTime(f0,t0);bp.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+dur*.2);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  n.connect(bp);bp.connect(g);g.connect(master);n.start(t0);n.stop(t0+dur+.05);
+}
+const sfx={
+  thump(){tone({type:'sine',f:130,f2:38,dur:.4,vol:.6});tone({type:'triangle',f:520,f2:70,dur:.12,vol:.1})},
+  blip(f=760,at=0,vol=.12){tone({type:'square',f,dur:.07,vol,at})},
+  pop(){tone({type:'sine',f:520,f2:150,dur:.13,vol:.28})},
+  ping(){tone({type:'sine',f:940,f2:1500,dur:.16,vol:.1})},
+  whoosh(dur=.45,vol=.14){noise({dur,f0:300,f1:2600,vol})},
+  rewind(){noise({dur:.5,f0:2600,f1:400,vol:.14});tone({type:'triangle',f:900,f2:220,dur:.3,vol:.08})},
+  riser(){tone({type:'sawtooth',f:180,f2:960,dur:.55,vol:.12});noise({dur:.55,vol:.06,f0:400,f1:2400})},
+  deny(){tone({type:'sawtooth',f:300,f2:130,dur:.2,vol:.2})},
+  chord(){[261.6,311.1,392,466.2].forEach((f,i)=>tone({type:'triangle',f,dur:1.15,vol:.06,at:i*.03}));
+    tone({type:'sine',f:98,f2:49,dur:.5,vol:.26})},
+  ui(){tone({type:'sine',f:640,dur:.05,vol:.05})},
+};
+
+/* ================= timeline engine ================= */
+let gen=0,events=[],start=0,playing=false,raf=null;
+const later=(ms,fn)=>{const g=gen;setTimeout(()=>{g===gen&&fn()},ms)};
+const ANIMS=[];
+function anim(el,kf,opt){try{const a=el.animate(kf,opt);ANIMS.push(a);return a;}catch(e){return null}}
+function resetFx(){fx.innerHTML='';}
+function startPlay(){
+  gen++;resetFx();resetDom();
+  events=buildTimeline().sort((a,b)=>a.t-b.t);
+  start=performance.now();playing=true;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-start)/1000;
+  while(events.length&&events[0].t<=el)events.shift().fn();
+  if(playing)raf=requestAnimationFrame(tick);
+}
+
+/* ================= scene helpers ================= */
+function bump(sel,scale=1.3){const n=$(sel);n.animate(
+  [{transform:`scale(${scale})`,opacity:.75},{transform:'scale(1)',opacity:1}],
+  {duration:260,easing:'ease-out'});}
+function setCaption(html){const c=$('#cap');c.innerHTML=html;c.classList.add('show');
+  c.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
+function stepTag(txt){const s=$('#stepT');s.innerHTML=txt;s.classList.add('show');sfx.blip(880,0,.07);}
+function ringAt(x,y,cls){const d=document.createElement('div');
+  d.className='ringx'+(cls?' '+cls:'');d.style.left=x+'px';d.style.top=y+'px';
+  fx.appendChild(d);later(620,()=>d.remove());}
+function zoomAt(x,y){const d=document.createElement('div');
+  d.className='bz';d.style.left=x+'px';d.style.top=y+'px';
+  fx.appendChild(d);later(1150,()=>d.remove());}
+
+/* ---------- QR geometry ---------- */
+const SVGNS='http://www.w3.org/2000/svg';
+const M=12,GX=144,GY=60,N=21;
+const TORN=[[15,3],[16,3],[17,3],[15,4],[16,4],[17,4]];
+const MODS=[];
+(function buildGrid(){
+  const svg=$('#qr');
+  /* finder origins */
+  const FN=[[0,0],[14,0],[0,14]];
+  function finderOn(cx,cy){
+    for(const[ox,oy]of FN){
+      const rx=cx-ox,ry=cy-oy;
+      if(rx>=0&&rx<7&&ry>=0&&ry<7)
+        return(rx===0||rx===6||ry===0||ry===6||(rx>=2&&rx<=4&&ry>=2&&ry<=4));
+    }
+    return null;
+  }
+  const pat=(x,y)=>((x*73+y*151+((x+y)*(x+y))%37)*13)%5<2;
+  for(let cy=0;cy<N;cy++)for(let cx=0;cx<N;cx++){
+    const r=document.createElementNS(SVGNS,'rect');
+    r.setAttribute('x',GX+cx*M+0.8);r.setAttribute('y',GY+cy*M+0.8);
+    r.setAttribute('width',10.4);r.setAttribute('height',10.4);
+    r.setAttribute('rx','2.4');r.setAttribute('class','mod');
+    const f=finderOn(cx,cy);
+    if(f){r.classList.add('onv','fnd');}
+    else if((cx===6&&cy>=8&&cy<=12)||(cy===6&&cx>=8&&cx<=12)){
+      /* timing strip */ if((cx+cy)%2===0)r.classList.add('onv');
+    }
+    else if(pat(cx,cy))r.classList.add('onv');
+    svg.appendChild(r);MODS.push(r);
+  }
+})();
+const tornIdx=TORN.map(([cx,cy])=>cy*N+cx);
+
+/* ================= reset & timeline ================= */
+const URL_MSG='https://yourhandle.com/menu';
+function resetDom(){
+  document.querySelectorAll('.rev').forEach(n=>n.classList.remove('show'));
+  $('#cap').textContent='';$('#cap').classList.remove('show');
+  $('#stepT').textContent='';$('#stepT').classList.remove('show');
+  ['#cntw','#bigchip','#urlb','#recap','#sc1','#sc2','#punch','#brand2','#sweep']
+    .forEach(s=>$(s).classList.remove('show'));
+  $('#sweep').style.transform='';
+  ['f1','f2','f3','f4','f5'].forEach(s=>$('#'+s).classList.remove('show'));
+  $$('.fwl').forEach(n=>n.classList.remove('show'));
+  MODS.forEach(m=>m.classList.remove('show','gone','ghost'));
+  $('#rdN').textContent='0';$('#rdN').classList.remove('fin');
+  $('#ecN').textContent='0';$('#ecN').classList.remove('ok');
+  $('#urls').innerHTML='<i></i>';
+  ['rc1','rc2','rc3'].forEach(s=>$('#'+s).classList.remove('show'));
+  $('#replayBtn').classList.remove('show');
+  ANIMS.forEach(a=>{try{a.cancel()}catch(e){}});ANIMS.length=0;
+}
+function buildTimeline(){
+  const ev=[];const A=(t,fn)=>ev.push({t,fn});
+
+  /* --- intro --- */
+  A(.20,()=>{$('#head .brand').classList.add('show');sfx.ui()});
+  A(.55,()=>{$('#head .title').classList.add('show');sfx.thump()});
+  A(.95,()=>{$('#head .sub').classList.add('show');sfx.ui()});
+  A(1.30,()=>{$('#head .chip').classList.add('show');sfx.blip(520)});
+  A(1.70,()=>{$('#cntw').classList.add('show')});
+
+  /* --- FRAME 1 · the pattern --- */
+  A(2.30,()=>{stepTag('STEP 1 / 5');
+    setCaption('A QR code is <b>441 tiny squares</b> &mdash; each one is a 1 or a 0.');
+    $('#f1').classList.add('show');});
+  A(3.10,()=>{
+    for(let i=0;i<MODS.length;i++)later(i*2,()=>{MODS[i].classList.add('show');
+      if(i%27===0)sfx.blip(560+(i%7)*40,0,.045)});
+  });
+  A(4.60,()=>{ringAt(186,394,'b');ringAt(354,394,'b');ringAt(186,562,'b');sfx.ping()});
+  A(5.20,()=>{$('#fwl1').classList.add('show');sfx.blip(640,0,.07)});
+  A(5.90,()=>{setCaption('Three <b>blue finder corners</b> tell the camera which way is up.')});
+
+  /* --- FRAME 2 · the scan --- */
+  A(7.90,()=>{$('#f1').classList.remove('show')});
+  A(8.80,()=>{stepTag('STEP 2 / 5');
+    setCaption('Your camera reads it <b>row by row</b> &mdash; like a barcode, but in 2D.');
+    $('#f2').classList.add('show');$('#sweep').classList.add('show');
+    sfx.whoosh(1.2,.12);
+    anim($('#sweep'),[{transform:'translateX(-6px)'},{transform:'translateX(252px)'}],
+      {duration:1800,easing:'linear'});});
+  A(9.00,()=>{$('#fwl2').classList.add('show')});
+  [[73,9.2],[146,9.5],[219,9.8],[292,10.1],[365,10.4],[441,10.7]].forEach(([n,t])=>
+    A(t,()=>{$('#rdN').textContent=n;if(n===441)$('#rdN').classList.add('fin');
+      bump('#rdN',1.12);sfx.blip(760+n*0.6,0,.05)}));
+  A(11.30,()=>{setCaption('It doesn&rsquo;t see a picture. It sees <b>440+ raw bits</b>.')});
+
+  /* --- FRAME 3 · the tear --- */
+  A(13.40,()=>{
+    $('#f2').classList.remove('show');$('#sweep').classList.remove('show')});
+  A(14.30,()=>{stepTag('STEP 3 / 5');
+    setCaption('Then life happens: <u>coffee, stickers, crumpled pockets</u>.');
+    $('#f3').classList.add('show');zoomAt(GX+16*M+6.2,GY+3.5*M+292);
+    ringAt(GX+16*M+6.2,GY+3.5*M+292);sfx.deny()});
+  A(14.40,()=>{$('#fwl3').classList.add('show')});
+  tornIdx.forEach((idx,i)=>A(15.10+i*.16,((i)=>()=>{
+    MODS[idx].classList.add('gone');
+    $('#ecN').textContent=i+1;bump('#ecN',1.2);sfx.deny();
+  })(i)));
+  A(16.55,()=>{setCaption('Six squares <b>gone</b>. A fragile picture would be dead here.')});
+
+  /* --- FRAME 4 · the rebuild --- */
+  A(18.40,()=>{$('#f3').classList.remove('show')});
+  A(19.30,()=>{stepTag('STEP 4 / 5');
+    setCaption('But the pattern carries <b>redundant math</b> &mdash; survivors rebuild the lost bits.');
+    $('#f4').classList.add('show');sfx.riser()});
+  tornIdx.forEach((idx,i)=>A(20.10+i*.12,((i)=>()=>{
+    MODS[idx].classList.remove('gone');MODS[idx].classList.add('ghost');
+    sfx.blip(700+i*70,0,.06);
+  })(i)));
+  A(21.35,()=>{$('#ecN').textContent='6 REBUILT \u2713';$('#ecN').classList.add('ok');
+    bump('#ecN',1.25);$('#bigchip').classList.add('show');sfx.chord();
+    ringAt(GX+16*M+6.2,GY+3.5*M+292,'m')});
+  A(22.20,()=>{$('#fwl4').classList.add('show')});
+  A(23.00,()=>{setCaption('ECC level H shrugs off losing <b>up to 30% of its squares</b>.')});
+
+  /* --- FRAME 5 · the message --- */
+  A(24.90,()=>{$('#f4').classList.remove('show');
+    $('#bigchip').classList.remove('show')});
+  A(25.80,()=>{stepTag('STEP 5 / 5');
+    setCaption('Survivors &rarr; bits &rarr; <b>the exact same message</b>, every single time.');
+    $('#f5').classList.add('show');$('#urlb').classList.add('show');sfx.whoosh(.5,.1)});
+  A(26.00,()=>{$('#fwl5').classList.add('show')});
+  for(let i=1;i<=URL_MSG.length;i++)
+    A(26.5+(i-1)*.07,((n)=>()=>{const g=gen,t=$('#urls');
+      t.innerHTML=URL_MSG.slice(0,n)+'<i></i>';sfx.blip(1020,0,.04)})(i));
+  A(28.30,()=>{ringAt(270,636,'m');sfx.ping()});
+
+  /* --- recap + cards + punch --- */
+  A(30.40,()=>{$('#recap').classList.add('show');sfx.ping()});
+  A(31.40,()=>{$('#rc1').classList.add('show');sfx.blip(760)});
+  A(32.40,()=>{$('#rc2').classList.add('show');sfx.blip(860)});
+  A(33.40,()=>{$('#rc3').classList.add('show');sfx.blip(960)});
+  A(35.00,()=>{$('#recap').classList.remove('show');$('#f5').classList.remove('show');
+    $('#urlb').classList.remove('show');
+    $('#sc1').classList.add('show');$('#sc2').classList.add('show');sfx.ping()});
+  A(36.70,()=>{$('#cap').classList.remove('show');$('#punch').classList.add('show');sfx.chord()});
+  A(37.90,()=>{$('#brand2').classList.add('show');$('#replayBtn').classList.add('show')});
+  return ev;
+}
+
+/* ================= grain ================= */
+(function grain(){
+  try{
+    const c=document.createElement('canvas');c.width=c.height=120;
+    const g=c.getContext('2d'),im=g.createImageData(120,120);
+    for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255|0;
+      im.data[i]=v;im.data[i+1]=v;im.data[i+2]=v;im.data[i+3]=30;}
+    g.putImageData(im,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`;
+  }catch(e){}
+})();
+
+/* ================= auto-start (video-friendly: no tap gate) ================= */
+audioInit();
+function tryUnlock(){
+  if(!ctx)return;
+  if(ctx.state==='suspended'){
+    ctx.resume().then(()=>{
+      const t=(performance.now()-start)/1000;
+      if(gen>0&&t<25)startPlay();
+    }).catch(()=>{});
+  }
+}
+addEventListener('pointerdown',tryUnlock);
+addEventListener('keydown',tryUnlock);
+$('#replayBtn').addEventListener('click',()=>{tryUnlock();startPlay()});
+$('#mute').addEventListener('click',()=>{
+  muted=!muted;if(master)master.gain.value=muted?0:.55;
+  $('#mute').innerHTML=muted?'&#128263;':'&#128266;';
+});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.key==='r'||e.key==='R'){e.preventDefault();startPlay();}
+  if(e.key==='m'||e.key==='M')$('#mute').click();
+});
+const AUTOLOOP=/[?&]loop=1/.test(location.search);
+if(AUTOLOOP)setInterval(()=>{if((performance.now()-start)/1000>39.6)startPlay()},500);
+setTimeout(startPlay,180);
+})();
+</script>
+</body>
+</html>
