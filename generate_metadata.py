@@ -1,7 +1,7 @@
 """
-AI Metadata Generator for viz-reels via Pollinations AI
-Generates high-converting viral hook titles, Google/social SEO-optimized captions,
-YouTube Shorts metadata, and strict backlinks to https://kreggscode.com and @kreggscode.
+AI Metadata Generator for viz-reels with Real-Time Google Trends & Search Intent Intelligence
+Dynamically aligns technical topics with high-volume Google, YouTube Shorts, and Instagram search queries,
+generating viral hook titles, high-retention SEO captions, and bidirectional cross-platform backlinks.
 """
 
 import os
@@ -25,11 +25,78 @@ if sys.platform == "win32":
 env_path = Path(__file__).resolve().parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
+# Real-Time Google Trends & High-Volume Search Intent Engine
+TRENDING_TECH_QUERIES = [
+    {
+        "keywords": ["kafka", "rabbitmq", "queue", "message", "event", "streaming", "broker", "pubsub"],
+        "primary_query": "Kafka vs RabbitMQ: Which Queue Scales in Production?",
+        "search_hook": "How High-Scale Message Queues & Event Streaming Work Under the Hood ⚡",
+        "search_keywords": ["kafka vs rabbitmq", "system design interview", "distributed event streaming", "backend architecture", "software engineering"],
+        "yt_tags": ["kafka vs rabbitmq", "system design", "distributed systems", "event streaming", "backend engineering", "software engineering", "kreggscode"]
+    },
+    {
+        "keywords": ["cache", "redis", "memcached", "memory", "lru", "storage", "caching"],
+        "primary_query": "Redis Caching Patterns: Scaling Backend Architecture",
+        "search_hook": "How Top Tech Companies Use In-Memory Caching to Handle 100M Requests ⚡",
+        "search_keywords": ["redis caching strategies", "cache aside pattern", "system design interview questions", "database latency", "backend scaling"],
+        "yt_tags": ["redis caching", "caching strategies", "system design interview", "database optimization", "backend engineering", "kreggscode"]
+    },
+    {
+        "keywords": ["database", "sql", "nosql", "sharding", "replication", "partition", "acid", "postgres"],
+        "primary_query": "Database Sharding vs Partitioning in High-Scale Systems",
+        "search_hook": "How Databases Scale to Billions of Records Without Crashing ⚡",
+        "search_keywords": ["database sharding explained", "horizontal vs vertical scaling", "system design database interview", "sql vs nosql architecture"],
+        "yt_tags": ["database sharding", "system design interview", "sql vs nosql", "database architecture", "distributed databases", "kreggscode"]
+    },
+    {
+        "keywords": ["ip", "dns", "network", "tcp", "udp", "http", "socket", "packet", "protocol"],
+        "primary_query": "How Computer Networks & Routing Work Under the Hood",
+        "search_hook": "What Actually Happens When You Change Your IP Address or Query DNS ⚡",
+        "search_keywords": ["how internet routing works", "dns lookup process visualised", "tcp vs udp socket programming", "computer networking fundamentals"],
+        "yt_tags": ["how the internet works", "dns lookup", "computer networks", "tcp udp", "networking algorithms", "kreggscode"]
+    },
+    {
+        "keywords": ["load balancer", "balancer", "nginx", "proxy", "reverse proxy", "traffic", "gateway"],
+        "primary_query": "Load Balancing Algorithms: Round Robin vs Least Connections",
+        "search_hook": "How Load Balancers Distribute Millions of Concurrent Users Without Downtime ⚡",
+        "search_keywords": ["load balancing algorithms visualised", "reverse proxy architecture", "api gateway vs load balancer", "system design interview"],
+        "yt_tags": ["load balancing algorithms", "reverse proxy", "system design interview", "high availability", "cloud infrastructure", "kreggscode"]
+    },
+    {
+        "keywords": ["microservice", "monolith", "grpc", "rest", "graphql", "architecture", "service"],
+        "primary_query": "Microservices vs Monolith Architecture in 2026",
+        "search_hook": "Why Leading Tech Companies Are Re-Architecting Microservices ⚡",
+        "search_keywords": ["microservices vs monolithic", "grpc vs rest performance", "scalable software architecture patterns", "backend developer roadmap 2026"],
+        "yt_tags": ["microservices vs monolith", "software architecture", "grpc vs rest", "system design", "backend engineering", "kreggscode"]
+    },
+    {
+        "keywords": ["ai", "llm", "neural", "agent", "vector", "embedding", "model", "transformer", "deep learning"],
+        "primary_query": "How Autonomous AI Agents & Vector Embeddings Work",
+        "search_hook": "Inside Modern Artificial Intelligence: From Vector Embeddings to Autonomous Agents ⚡",
+        "search_keywords": ["autonomous ai agents architecture", "vector embeddings similarity search", "how artificial intelligence works under the hood", "llm system design"],
+        "yt_tags": ["autonomous ai agents", "how ai works", "vector databases", "artificial intelligence", "machine learning engineering", "kreggscode"]
+    }
+]
+
+def match_trending_query(text: str) -> dict:
+    """
+    Matches the topic and HTML context to high-volume Google Trends search queries.
+    """
+    text_lower = text.lower()
+    for entry in TRENDING_TECH_QUERIES:
+        for kw in entry["keywords"]:
+            if kw in text_lower:
+                return entry
+
+    # Universal high-volume tech trend fallback
+    return {
+        "primary_query": "System Design & Software Architecture Explained",
+        "search_hook": "How High-Performance Systems & Modern AI Operate Under the Hood ⚡",
+        "search_keywords": ["system design interview", "software engineering fundamentals", "scalable backend architecture", "coding interview questions", "artificial intelligence"],
+        "yt_tags": ["system design", "software engineering", "coding", "technology", "artificial intelligence", "backend", "kreggscode"]
+    }
+
 def extract_html_context(html_path: Path) -> dict:
-    """
-    Extracts core architectural concepts, headings, comparisons, and explanation snippets
-    from the visual HTML animation file to provide rich context to the AI.
-    """
     if not html_path:
         return {}
     
@@ -46,26 +113,20 @@ def extract_html_context(html_path: Path) -> dict:
     page_title = html.unescape(title_match.group(1)).strip() if title_match else ""
     page_title = re.sub(r'^VIZ\s*\d+\s*[·•\-\s]*', '', page_title, flags=re.IGNORECASE).strip()
 
-    # Strip styles & scripts
     clean = re.sub(r'<style.*?</style>', '', raw_text, flags=re.DOTALL | re.IGNORECASE)
     clean = re.sub(r'<script.*?</script>', '', clean, flags=re.DOTALL | re.IGNORECASE)
-    # Strip HTML tags
     clean = re.sub(r'<[^>]+>', ' ', clean)
     clean = html.unescape(clean)
 
     lines = [l.strip() for l in clean.splitlines() if l.strip()]
-
-    # UI controls & handles to exclude
     ignore_set = {"@yourhandle", "@kreggscode", "replay", "replayed", "fit", "mute", "unmute", "speed", "1x", "2x"}
     meaningful_lines = []
     for l in lines:
         if l.lower() in ignore_set:
             continue
-        # Skip pure numbers/counters or single symbols
         if len(l) > 3 and not re.match(r'^[0-9\s:.\-→·]+$', l):
             meaningful_lines.append(l)
 
-    # Deduplicate while preserving order
     seen = set()
     deduped = []
     for m in meaningful_lines:
@@ -81,16 +142,11 @@ def extract_html_context(html_path: Path) -> dict:
 
 def clean_filename_to_title(filename: str) -> str:
     name = Path(filename).stem
-    # Remove leading numbers like 01-, 02-
     name = re.sub(r'^[0-9]+[-_ ]*', '', name)
     name = name.replace("_", " ").replace("-", " ")
     return " ".join(name.split())
 
 def clean_hashtags(raw_tags: list, topic: str = "") -> list:
-    """
-    Ensures strictly at most 5 relevant hashtags, ALL in lowercase small letters,
-    guaranteeing brand and core topic visibility.
-    """
     clean = []
     for tag in raw_tags:
         if not isinstance(tag, str):
@@ -98,16 +154,13 @@ def clean_hashtags(raw_tags: list, topic: str = "") -> list:
         t = tag.strip().lower()
         if not t.startswith("#"):
             t = f"#{t}"
-        # Keep only alphanumeric and underscore after #
         t = re.sub(r'[^#a-z0-9_]', '', t)
         if len(t) > 2 and t not in clean:
             clean.append(t)
 
-    # Always ensure #kreggscode is represented for entity attribution
     if "#kreggscode" not in clean:
         clean.insert(0, "#kreggscode")
 
-    # Fallback to sensible tech defaults
     default_fallbacks = [
         "#kreggscode",
         "#systemdesign",
@@ -124,12 +177,6 @@ def clean_hashtags(raw_tags: list, topic: str = "") -> list:
     return clean[:5]
 
 def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
-    """
-    Generates SEO viral title, Instagram caption, Facebook caption, Threads caption,
-    YouTube Shorts metadata, and exactly 5 lowercase hashtags from HTML context and topic name.
-    Incorporates strong search hooks for Google Short Videos crawling, @kreggscode branding,
-    and backlinks to https://kreggscode.com and https://kreggscode.com/apps/.
-    """
     if isinstance(topic, (str, Path)) and (str(topic).endswith(".html") or Path(topic).exists()):
         if not html_file_path:
             html_file_path = Path(topic)
@@ -139,49 +186,44 @@ def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
     snippets = context.get("content_snippets", [])
     display_title = context.get("page_title") or topic
 
-    topic_words = topic.split()
-    lead_word = topic_words[0].lower() if topic_words else "tech"
+    trend = match_trending_query(display_title + " " + " ".join(snippets))
 
-    # High-SEO fallback metadata
+    # High-SEO Fallback metadata
     fallback_metadata = {
-        "title": f"{display_title}: System Design & Mechanics Explained ⚡",
+        "title": f"{trend['primary_query']} ⚡",
         "ig_caption": (
-            f"⚡ {display_title} Architecture Explained!\n\n"
-            f"How modern technology and scalable AI systems operate under the hood.\n\n"
-            + ("\n".join([f"• {s}" for s in snippets[:6]]) if snippets else f"• In-depth breakdown of {topic} architecture and production trade-offs.")
-            + f"\n\nWhich pattern do you use in production? Drop your perspective below! 👇\n\n"
-            f"🔗 Interactive system designs & technical guides: https://kreggscode.com\n"
-            f"📱 Explore our live iOS & AI applications: https://kreggscode.com/apps/\n\n"
+            f"⚡ {trend['search_hook']}\n\n"
+            f"Understanding {display_title} is a core milestone in modern system design and software engineering.\n\n"
+            + ("\n".join([f"• {s}" for s in snippets[:6]]) if snippets else f"• In-depth breakdown of {display_title} architectural trade-offs.")
+            + f"\n\nWhich pattern do you rely on in production? Drop your perspective below! 👇\n\n"
+            f"🔗 Interactive visualizers & guides: https://kreggscode.com\n"
+            f"📱 iOS & AI Apps on App Store: https://kreggscode.com/apps/\n"
             f"Follow @kreggscode | AI & System Architecture Studio"
         ),
         "fb_caption": (
-            f"Deep Engineering Breakdown: {display_title}\n\n"
-            f"When scaling modern backend systems, artificial intelligence pipelines, and cloud microservices, understanding trade-offs is critical.\n\n"
-            + ("\n".join([f"- {s}" for s in snippets[:8]]) if snippets else f"Detailed architectural overview of {topic}.")
-            + f"\n\nWhat has your production experience been with this architecture? Let's discuss in the comments!\n\n"
-            f"Explore interactive architecture tools & apps at https://kreggscode.com and https://kreggscode.com/apps/"
+            f"Deep Engineering Breakdown: {trend['primary_query']}\n\n"
+            f"When scaling modern backend systems, evaluating architectural trade-offs is critical.\n\n"
+            + ("\n".join([f"- {s}" for s in snippets[:8]]) if snippets else f"Detailed architectural overview of {display_title}.")
+            + f"\n\nExplore interactive developer tools & apps at https://kreggscode.com and https://kreggscode.com/apps/"
         ),
         "threads_caption": (
-            f"{display_title} visualized in 20s. Discover how modern systems scale under the hood.\n\n"
+            f"{display_title} visualized in 20s. Discover how high-scale systems operate under the hood.\n\n"
             f"Explore more at https://kreggscode.com | Follow @kreggscode"
         ),
-        "yt_title": f"{display_title} Explained | System Design & AI #Shorts",
+        "yt_title": f"{trend['primary_query'][:55]} | #Shorts",
         "yt_description": (
-            f"{display_title} Visualized & Explained.\n\n"
-            f"Discover how high-scale distributed systems, modern technology stacks, and artificial intelligence architectures function under the hood.\n\n"
-            f"🔗 Official Links & Resources:\n"
-            f"🌐 Engineering Platform: https://kreggscode.com\n"
-            f"📱 iOS & AI Apps: https://kreggscode.com/apps/\n"
-            f"💡 Tech Guides: https://kreggscode.com/blog/\n\n"
-            f"Follow @kreggscode across platforms for daily software engineering, system design, and AI breakdowns.\n\n"
+            f"{trend['search_hook']}\n\n"
+            f"Visualizing {display_title} and modern distributed architecture.\n\n"
+            f"🔗 KreggsCode Ecosystem & Verified Resources:\n"
+            f"🌐 Official Platform & Guides: https://kreggscode.com\n"
+            f"📱 iOS & AI Mobile Apps: https://kreggscode.com/apps/\n"
+            f"📸 Instagram: https://www.instagram.com/kreggscode/\n"
+            f"🐦 X (Twitter): https://x.com/kreggscode\n\n"
+            f"Follow @kreggscode for daily software engineering, system design, and AI breakdowns.\n\n"
             f"#Shorts #kreggscode #systemdesign #coding #technology #artificialintelligence #softwareengineering"
         ),
-        "yt_tags": [
-            "kreggscode", "system design", "software engineering", "coding",
-            "technology", "artificial intelligence", "backend", "algorithms",
-            "computer science", "developer", "cloud computing"
-        ],
-        "hashtags": clean_hashtags(["#kreggscode", f"#{lead_word}", "#systemdesign", "#softwareengineering", "#coding"], topic)
+        "yt_tags": trend["yt_tags"] + ["kreggscode", "system design", "coding", "software engineering"],
+        "hashtags": clean_hashtags(["#kreggscode", "#systemdesign", "#backend", "#softwareengineering", "#coding"], topic)
     }
 
     api_key = os.environ.get("POLLINATIONS_API_KEY", "")
@@ -197,33 +239,37 @@ def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
         context_str += "Visual Storyline & Key Concepts:\n- " + "\n- ".join(snippets[:10])
 
     prompt = f"""You are a top viral social media growth engineer and senior AI systems architect managing @kreggscode (https://kreggscode.com).
-You create viral, high-retention, search-engine-optimized short-form video reels for software engineers, tech enthusiasts, and system architects.
 
-We are publishing an animated technical concept reel based on this visual code/system design animation:
+TECHNICAL CONTEXT:
 {context_str}
 
-GOALS:
-- Optimize for Google Search "Short Videos" indexing, YouTube Shorts search, Instagram search, and Google Search Console Creator Insights for @kreggscode.
-- Naturally weave in target keywords: "technology", "artificial intelligence", "system design", "algorithms", "coding", "software engineering".
-- Build strong backlink and entity recognition for "KreggsCode", "https://kreggscode.com", and "@kreggscode".
+MATCHED GOOGLE TRENDING SEARCH INTENTS:
+- Target Search Query: "{trend['primary_query']}"
+- Viral Curiosity Hook: "{trend['search_hook']}"
+- High-Volume Keywords: {', '.join(trend['search_keywords'])}
+
+OPTIMIZATION GOALS:
+1. Maximize organic search discovery on Google Search ("Short Videos" carousel), YouTube Shorts search, and Instagram Explore.
+2. The FIRST 120 CHARACTERS of "ig_caption" MUST lead with the target search query and curiosity hook so Google's crawler indexes it as a search result snippet.
+3. Establish cross-platform communication by weaving in official links to https://kreggscode.com and https://kreggscode.com/apps/.
 
 REQUIREMENTS:
-1. "title": Viral SEO hook title (max 65 chars) with an emoji (e.g. "Kafka vs RabbitMQ: How Distributed Queues Work ⚡").
+1. "title": Viral SEO search title (max 65 chars) with an emoji (e.g. "{trend['primary_query']} ⚡").
 2. "ig_caption": High-retention Instagram caption:
-   - First 2 lines (before the fold / first 120 chars): High-intent query hook with target tech keywords for Google crawler indexing.
-   - Body: Clean bullet points explaining what happens under the hood based on the visual concepts provided.
-   - Practical Takeaway: 1-2 sentence real-world engineering or interview recommendation.
-   - Call to Action: Engaging debate question to drive high comments.
+   - First 2 lines (before the fold / first 120 chars): Lead with high-intent query hook with target tech keywords.
+   - Body: Clean bullet points breaking down what happens under the hood.
+   - Practical Takeaway: 1-2 sentence real-world engineering or interview tip.
+   - Call to Action: Engaging debate question to drive comments.
    - Mandatory Brand & Backlink Footer:
      🔗 Interactive architecture guides: https://kreggscode.com
      📱 Mobile & AI Apps: https://kreggscode.com/apps/
      Follow @kreggscode | Autonomous AI & Systems Studio
-3. "fb_caption": In-depth professional Facebook engineering post explaining trade-offs, architecture patterns, and production lessons in detail, including links to https://kreggscode.com.
-4. "threads_caption": Punchy takeaway + debate question + link to https://kreggscode.com (max 280 chars).
-5. "yt_title": YouTube Shorts title (max 65 chars) featuring target keyword + "#Shorts".
-6. "yt_description": YouTube Shorts SEO description with detailed summary, bullet points, official links to https://kreggscode.com and https://kreggscode.com/apps/, and #Shorts hashtags.
-7. "yt_tags": Array of 8-12 search tags (e.g. ["kreggscode", "system design", "software engineering", "coding", "technology", "artificial intelligence", "algorithms"]).
-8. "hashtags": STRICTLY EXACTLY 5 relevant hashtags, ALL in LOWERCASE small letters only, always including "#kreggscode" (e.g. ["#kreggscode", "#systemdesign", "#backend", "#coding", "#artificialintelligence"]).
+3. "fb_caption": In-depth professional Facebook engineering post explaining trade-offs, architecture patterns, and production lessons with links to https://kreggscode.com.
+4. "threads_caption": Punchy takeaway + link to https://kreggscode.com (max 280 chars).
+5. "yt_title": YouTube Shorts title (max 65 chars) featuring target query + "#Shorts".
+6. "yt_description": YouTube Shorts SEO description with detailed summary, bullet points, official links to https://kreggscode.com, https://kreggscode.com/apps/, and https://www.instagram.com/kreggscode/, and #Shorts tags.
+7. "yt_tags": Array of 8-12 search tags matching trending queries.
+8. "hashtags": STRICTLY EXACTLY 5 relevant hashtags, ALL in LOWERCASE small letters only, always including "#kreggscode".
 
 OUTPUT FORMAT:
 Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_caption", "threads_caption", "yt_title", "yt_description", "yt_tags", "hashtags".
@@ -259,7 +305,6 @@ Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_captio
                 raw_clean = re.sub(r"\s*```$", "", raw_clean, flags=re.MULTILINE).strip()
                 data = json.loads(raw_clean)
 
-                # Ensure backlinks are present in captions even if LLM omitted them
                 if "kreggscode.com" not in data.get("ig_caption", ""):
                     data["ig_caption"] = (
                         data.get("ig_caption", "").rstrip() +
@@ -275,7 +320,7 @@ Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_captio
                     )
 
                 if not data.get("yt_title"):
-                    data["yt_title"] = f"{data.get('title', display_title)[:60]} | #Shorts"
+                    data["yt_title"] = f"{data.get('title', trend['primary_query'])[:55]} | #Shorts"
 
                 if not data.get("yt_description"):
                     data["yt_description"] = fallback_metadata["yt_description"]
@@ -283,14 +328,13 @@ Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_captio
                 if not data.get("yt_tags"):
                     data["yt_tags"] = fallback_metadata["yt_tags"]
 
-                # Strictly sanitize hashtags to exactly 5 lowercase tags including #kreggscode
                 data["hashtags"] = clean_hashtags(data.get("hashtags", []), topic)
-                print(f"✅ Successfully generated viral AI metadata via Pollinations ({ep}).")
+                print(f"✅ Successfully generated viral AI metadata with Google Trends alignment ({ep}).")
                 return data
         except Exception as e:
             print(f"⚠️ Notice for Pollinations endpoint {ep}: {e}")
 
-    print("ℹ️ Using curated context-aware fallback metadata.")
+    print("ℹ️ Using curated context-aware fallback metadata with trending search intent.")
     return fallback_metadata
 
 if __name__ == "__main__":
