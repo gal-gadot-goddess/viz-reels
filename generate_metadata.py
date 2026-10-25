@@ -1,7 +1,7 @@
 """
 AI Metadata Generator for viz-reels via Pollinations AI
-Extracts deep context from HTML animation files (headings, comparisons, mechanics)
-and generates high-converting viral hook titles, SEO captions, and strictly 5 lowercase hashtags.
+Generates high-converting viral hook titles, Google/social SEO-optimized captions,
+YouTube Shorts metadata, and strict backlinks to https://kreggscode.com and @kreggscode.
 """
 
 import os
@@ -88,7 +88,8 @@ def clean_filename_to_title(filename: str) -> str:
 
 def clean_hashtags(raw_tags: list, topic: str = "") -> list:
     """
-    Ensures strictly at most 5 relevant hashtags, ALL in lowercase small letters.
+    Ensures strictly at most 5 relevant hashtags, ALL in lowercase small letters,
+    guaranteeing brand and core topic visibility.
     """
     clean = []
     for tag in raw_tags:
@@ -102,29 +103,33 @@ def clean_hashtags(raw_tags: list, topic: str = "") -> list:
         if len(t) > 2 and t not in clean:
             clean.append(t)
 
-    # Fallback to sensible defaults if too few
+    # Always ensure #kreggscode is represented for entity attribution
+    if "#kreggscode" not in clean:
+        clean.insert(0, "#kreggscode")
+
+    # Fallback to sensible tech defaults
     default_fallbacks = [
-        f"#{topic.split()[0].lower()}" if topic and topic.split() else "#systemdesign",
+        "#kreggscode",
         "#systemdesign",
-        "#backend",
         "#softwareengineering",
+        "#artificialintelligence",
         "#coding"
     ]
     for d in default_fallbacks:
-        d_clean = d.lower()
         if len(clean) >= 5:
             break
-        if d_clean not in clean:
-            clean.append(d_clean)
+        if d not in clean:
+            clean.append(d)
 
     return clean[:5]
 
 def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
     """
     Generates SEO viral title, Instagram caption, Facebook caption, Threads caption,
-    and exactly 5 lowercase hashtags from the HTML content and topic name.
+    YouTube Shorts metadata, and exactly 5 lowercase hashtags from HTML context and topic name.
+    Incorporates strong search hooks for Google Short Videos crawling, @kreggscode branding,
+    and backlinks to https://kreggscode.com and https://kreggscode.com/apps/.
     """
-    # If topic is actually a Path or filename, normalize it
     if isinstance(topic, (str, Path)) and (str(topic).endswith(".html") or Path(topic).exists()):
         if not html_file_path:
             html_file_path = Path(topic)
@@ -134,22 +139,49 @@ def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
     snippets = context.get("content_snippets", [])
     display_title = context.get("page_title") or topic
 
-    # Build curated fallback metadata in case API is offline
     topic_words = topic.split()
     lead_word = topic_words[0].lower() if topic_words else "tech"
+
+    # High-SEO fallback metadata
     fallback_metadata = {
-        "title": f"{display_title}: What Actually Happens? ⚡",
-        "ig_caption": f"⚡ {display_title} Visualized!\n\n"
-                      f"Understanding the core mechanics is key to scalable system architecture.\n\n"
-                      + ("\n".join([f"• {s}" for s in snippets[:6]]) if snippets else f"• Deep dive into {topic} mechanical trade-offs.")
-                      + f"\n\nWhich architecture pattern do you rely on in production? Drop your take below! 👇\n\n"
-                      f"Follow @kreggscode for daily visual system design & backend reels.",
-        "fb_caption": f"Deep Engineering Breakdown: {display_title}.\n\n"
-                      f"When scaling backend infrastructure, evaluating trade-offs is critical.\n\n"
-                      + ("\n".join([f"- {s}" for s in snippets[:8]]) if snippets else f"Detailed architectural overview of {topic}.")
-                      + f"\n\nWhat has your production experience been with this approach? Let's discuss in the comments!",
-        "threads_caption": f"{display_title} visualized in 20s. What's your go-to architecture choice? #{lead_word} #systemdesign",
-        "hashtags": clean_hashtags([f"#{lead_word}", "#systemdesign", "#backend", "#softwareengineering", "#coding"], topic)
+        "title": f"{display_title}: System Design & Mechanics Explained ⚡",
+        "ig_caption": (
+            f"⚡ {display_title} Architecture Explained!\n\n"
+            f"How modern technology and scalable AI systems operate under the hood.\n\n"
+            + ("\n".join([f"• {s}" for s in snippets[:6]]) if snippets else f"• In-depth breakdown of {topic} architecture and production trade-offs.")
+            + f"\n\nWhich pattern do you use in production? Drop your perspective below! 👇\n\n"
+            f"🔗 Interactive system designs & technical guides: https://kreggscode.com\n"
+            f"📱 Explore our live iOS & AI applications: https://kreggscode.com/apps/\n\n"
+            f"Follow @kreggscode | AI & System Architecture Studio"
+        ),
+        "fb_caption": (
+            f"Deep Engineering Breakdown: {display_title}\n\n"
+            f"When scaling modern backend systems, artificial intelligence pipelines, and cloud microservices, understanding trade-offs is critical.\n\n"
+            + ("\n".join([f"- {s}" for s in snippets[:8]]) if snippets else f"Detailed architectural overview of {topic}.")
+            + f"\n\nWhat has your production experience been with this architecture? Let's discuss in the comments!\n\n"
+            f"Explore interactive architecture tools & apps at https://kreggscode.com and https://kreggscode.com/apps/"
+        ),
+        "threads_caption": (
+            f"{display_title} visualized in 20s. Discover how modern systems scale under the hood.\n\n"
+            f"Explore more at https://kreggscode.com | Follow @kreggscode"
+        ),
+        "yt_title": f"{display_title} Explained | System Design & AI #Shorts",
+        "yt_description": (
+            f"{display_title} Visualized & Explained.\n\n"
+            f"Discover how high-scale distributed systems, modern technology stacks, and artificial intelligence architectures function under the hood.\n\n"
+            f"🔗 Official Links & Resources:\n"
+            f"🌐 Engineering Platform: https://kreggscode.com\n"
+            f"📱 iOS & AI Apps: https://kreggscode.com/apps/\n"
+            f"💡 Tech Guides: https://kreggscode.com/blog/\n\n"
+            f"Follow @kreggscode across platforms for daily software engineering, system design, and AI breakdowns.\n\n"
+            f"#Shorts #kreggscode #systemdesign #coding #technology #artificialintelligence #softwareengineering"
+        ),
+        "yt_tags": [
+            "kreggscode", "system design", "software engineering", "coding",
+            "technology", "artificial intelligence", "backend", "algorithms",
+            "computer science", "developer", "cloud computing"
+        ],
+        "hashtags": clean_hashtags(["#kreggscode", f"#{lead_word}", "#systemdesign", "#softwareengineering", "#coding"], topic)
     }
 
     api_key = os.environ.get("POLLINATIONS_API_KEY", "")
@@ -164,32 +196,43 @@ def generate_ai_metadata(topic: str, html_file_path: Path = None) -> dict:
     if snippets:
         context_str += "Visual Storyline & Key Concepts:\n- " + "\n- ".join(snippets[:10])
 
-    prompt = f"""You are a top viral social media growth engineer and senior backend architect managing @kreggscode.
-You create viral, high-retention, high-SEO short-form reels for software engineers, backend developers, and system architects.
+    prompt = f"""You are a top viral social media growth engineer and senior AI systems architect managing @kreggscode (https://kreggscode.com).
+You create viral, high-retention, search-engine-optimized short-form video reels for software engineers, tech enthusiasts, and system architects.
 
 We are publishing an animated technical concept reel based on this visual code/system design animation:
 {context_str}
 
+GOALS:
+- Optimize for Google Search "Short Videos" indexing, YouTube Shorts search, Instagram search, and Google Search Console Creator Insights for @kreggscode.
+- Naturally weave in target keywords: "technology", "artificial intelligence", "system design", "algorithms", "coding", "software engineering".
+- Build strong backlink and entity recognition for "KreggsCode", "https://kreggscode.com", and "@kreggscode".
+
 REQUIREMENTS:
-1. "title": Viral SEO hook title (max 65 chars) with an emoji. Make it provocative, curious, or high-value (e.g. "Why Changing Your IP Isn't Instant ⚡", "Kafka vs RabbitMQ: What Actually Happens? 📨").
+1. "title": Viral SEO hook title (max 65 chars) with an emoji (e.g. "Kafka vs RabbitMQ: How Distributed Queues Work ⚡").
 2. "ig_caption": High-retention Instagram caption:
-   - First 2 lines: Killer curiosity hook before the fold.
+   - First 2 lines (before the fold / first 120 chars): High-intent query hook with target tech keywords for Google crawler indexing.
    - Body: Clean bullet points explaining what happens under the hood based on the visual concepts provided.
-   - Practical Takeaway: 1-2 sentence real-world engineering recommendation or interview tip.
-   - Call to Action: Ask a thought-provoking debate question to drive comments.
-   - Sign-off: "Follow @kreggscode for daily visual system design & architecture breakdowns."
-3. "fb_caption": In-depth professional Facebook engineering post explaining the trade-offs, architecture, and production lessons in detail.
-4. "threads_caption": Short, punchy summary + debate starter (max 280 chars).
-5. "hashtags": STRICTLY EXACTLY 5 relevant hashtags, ALL in LOWERCASE small letters only (e.g. ["#systemdesign", "#backend", "#networking", "#webdev", "#coding"]).
+   - Practical Takeaway: 1-2 sentence real-world engineering or interview recommendation.
+   - Call to Action: Engaging debate question to drive high comments.
+   - Mandatory Brand & Backlink Footer:
+     🔗 Interactive architecture guides: https://kreggscode.com
+     📱 Mobile & AI Apps: https://kreggscode.com/apps/
+     Follow @kreggscode | Autonomous AI & Systems Studio
+3. "fb_caption": In-depth professional Facebook engineering post explaining trade-offs, architecture patterns, and production lessons in detail, including links to https://kreggscode.com.
+4. "threads_caption": Punchy takeaway + debate question + link to https://kreggscode.com (max 280 chars).
+5. "yt_title": YouTube Shorts title (max 65 chars) featuring target keyword + "#Shorts".
+6. "yt_description": YouTube Shorts SEO description with detailed summary, bullet points, official links to https://kreggscode.com and https://kreggscode.com/apps/, and #Shorts hashtags.
+7. "yt_tags": Array of 8-12 search tags (e.g. ["kreggscode", "system design", "software engineering", "coding", "technology", "artificial intelligence", "algorithms"]).
+8. "hashtags": STRICTLY EXACTLY 5 relevant hashtags, ALL in LOWERCASE small letters only, always including "#kreggscode" (e.g. ["#kreggscode", "#systemdesign", "#backend", "#coding", "#artificialintelligence"]).
 
 OUTPUT FORMAT:
-Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_caption", "threads_caption", "hashtags".
+Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_caption", "threads_caption", "yt_title", "yt_description", "yt_tags", "hashtags".
 """
 
     payload = {
         "model": "openai",
         "messages": [
-            {"role": "system", "content": "You are a professional system design content creator. You output strictly valid JSON without markdown wrapping."},
+            {"role": "system", "content": "You are a professional system design and AI content creator. You output strictly valid JSON without markdown wrapping."},
             {"role": "user", "content": prompt}
         ],
         "response_format": {"type": "json_object"}
@@ -216,7 +259,31 @@ Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_captio
                 raw_clean = re.sub(r"\s*```$", "", raw_clean, flags=re.MULTILINE).strip()
                 data = json.loads(raw_clean)
 
-                # Strictly sanitize hashtags to exactly 5 lowercase tags
+                # Ensure backlinks are present in captions even if LLM omitted them
+                if "kreggscode.com" not in data.get("ig_caption", ""):
+                    data["ig_caption"] = (
+                        data.get("ig_caption", "").rstrip() +
+                        "\n\n🔗 Deep-dive engineering guides: https://kreggscode.com\n"
+                        "📱 Mobile & AI Apps: https://kreggscode.com/apps/\n"
+                        "Follow @kreggscode | AI & Systems Studio"
+                    )
+
+                if "kreggscode.com" not in data.get("fb_caption", ""):
+                    data["fb_caption"] = (
+                        data.get("fb_caption", "").rstrip() +
+                        "\n\nExplore interactive system architecture & apps at https://kreggscode.com"
+                    )
+
+                if not data.get("yt_title"):
+                    data["yt_title"] = f"{data.get('title', display_title)[:60]} | #Shorts"
+
+                if not data.get("yt_description"):
+                    data["yt_description"] = fallback_metadata["yt_description"]
+
+                if not data.get("yt_tags"):
+                    data["yt_tags"] = fallback_metadata["yt_tags"]
+
+                # Strictly sanitize hashtags to exactly 5 lowercase tags including #kreggscode
                 data["hashtags"] = clean_hashtags(data.get("hashtags", []), topic)
                 print(f"✅ Successfully generated viral AI metadata via Pollinations ({ep}).")
                 return data

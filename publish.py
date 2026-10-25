@@ -1,12 +1,14 @@
 """
 Social Media Publishing Module for viz-reels
-Publishes rendered vertical videos to Facebook Page (kreggscode) and Instagram (@kreggscode).
+Publishes rendered vertical videos to Instagram (@kreggscode), Facebook Page (kreggscode), Threads, and YouTube Shorts.
+Ensures comprehensive SEO backlinking to https://kreggscode.com and proper entity tagging.
 """
 
 import os
 import sys
 import json
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Ensure UTF-8 output on Windows console
 if sys.platform == "win32":
@@ -19,6 +21,9 @@ if sys.platform == "win32":
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR))
 
+env_path = BASE_DIR / '.env'
+load_dotenv(dotenv_path=env_path)
+
 try:
     from upload.upload_facebook import upload_to_facebook
     from upload.upload_instagram import upload_to_instagram
@@ -26,13 +31,19 @@ try:
 except ImportError as e:
     print(f"⚠️ Import warning in publish.py: {e}")
 
+try:
+    from upload.upload_to_youtube import upload_to_youtube
+except ImportError as e:
+    upload_to_youtube = None
+    print(f"⚠️ YouTube upload import notice: {e}")
+
 def publish_video(video_path: Path, metadata: dict) -> dict:
     video_path = Path(video_path).resolve()
     if not video_path.exists():
         raise FileNotFoundError(f"Video file not found at: {video_path}")
 
     title = metadata.get("title", video_path.stem)
-    raw_hashtags = metadata.get("hashtags", ["#systemdesign", "#backend", "#softwareengineering", "#coding", "#tech"])
+    raw_hashtags = metadata.get("hashtags", ["#kreggscode", "#systemdesign", "#backend", "#softwareengineering", "#coding"])
     clean_tags = []
     if isinstance(raw_hashtags, list):
         for t in raw_hashtags:
@@ -56,7 +67,7 @@ def publish_video(video_path: Path, metadata: dict) -> dict:
 
     threads_caption = metadata.get("threads_caption", f"{title}\n\n{hashtags_str}")
 
-    # Ensure high-clarity cover thumbnail exists (captured from the final complete state of the animation)
+    # Ensure high-clarity cover thumbnail exists
     thumb_path = video_path.with_suffix(".jpg")
     if not thumb_path.exists():
         try:
@@ -116,6 +127,41 @@ def publish_video(video_path: Path, metadata: dict) -> dict:
     except Exception as e:
         print(f"⚠️ [Threads] Note: {e}")
         results["threads"] = {"status": "skipped", "reason": str(e)}
+
+    # 4. YouTube Shorts
+    yt_client_id = (os.getenv('YOUTUBE_CLIENT_ID') or os.getenv('YT_CLIENT_ID', '')).strip()
+    if upload_to_youtube and yt_client_id:
+        try:
+            print("\n🎥 [YouTube] Publishing YouTube Short...")
+            yt_title = metadata.get("yt_title", f"{title[:55]} | #Shorts")
+            yt_desc = metadata.get("yt_description", (
+                f"{title}\n\n"
+                f"Explore interactive software engineering & system design:\n"
+                f"🌐 Website: https://kreggscode.com\n"
+                f"📱 iOS & AI Apps: https://kreggscode.com/apps/\n\n"
+                f"Follow @kreggscode for daily software architecture & AI engineering.\n\n"
+                f"#Shorts #kreggscode #systemdesign #coding #technology #artificialintelligence"
+            ))
+            yt_tags = metadata.get("yt_tags", [
+                "kreggscode", "system design", "software engineering", "coding",
+                "technology", "artificial intelligence", "backend", "algorithms"
+            ])
+            res_yt = upload_to_youtube(
+                str(video_path),
+                yt_title[:100],
+                yt_desc,
+                yt_tags,
+                thumbnail_path=str(thumb_path) if thumb_path.exists() else None
+            )
+            results["youtube"] = res_yt
+            vid_id = res_yt.get("id") if isinstance(res_yt, dict) else res_yt
+            print(f"✅ [YouTube] Published successfully! Video ID: {vid_id}")
+        except Exception as e:
+            print(f"⚠️ [YouTube] Upload notice: {e}")
+            results["youtube"] = {"status": "error", "error": str(e)}
+    else:
+        print("\nℹ️ [YouTube] Skipped (YOUTUBE_CLIENT_ID not found in environment).")
+        results["youtube"] = {"status": "skipped", "reason": "No credentials configured"}
 
     print(f"\n{'=' * 65}")
     print("🏁 Publishing cycle finished.")
