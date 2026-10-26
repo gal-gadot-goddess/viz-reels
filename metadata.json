@@ -1,27 +1,29 @@
 {
-  "title": "One Packet’s World Tour: 250ms of System Design ✈️",
-  "ig_caption": "What happens in 250ms after you press Enter? packet routing, tech + AI system design + algorithms.\n\nFollow one envelope across the map—every hop, timed:\n• 0 ms: RUNNING PING — latency check before “real” work\n• 0 ocean crossings: direct path vs reroute decision logic\n• You → New York: DNS/route selection + handshake start\n• New York → London: packetization + congestion-aware hops\n• London → Mumbai: sequencing, retransmits, and delivery guarantees\n• Website → Singapore: final ack/confirm and response assembly\n\nUnder the hood: networking + coding patterns meet system design—buffers, timeouts, and fault-tolerant algorithms.\n\nPractical takeaway: In interviews, describe the full path (DNS → routing → transport → ACKs) and explicitly call out latency, retries, and failure modes.\n\nBe honest: would you optimize for lowest latency, highest throughput, or strongest reliability first—and why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "A single “press Enter” turns into a tight 250ms control loop—especially if you model the journey as “one packet, many hops.” This reel is essentially a system design walkthrough of end-to-end delivery: \n\nWhat the animation captures (packet-level thinking):\n• RUNNING PING (0 ms): a latency/health probe that informs whether to proceed immediately or wait/retry. In production, this mirrors lightweight health checks, circuit breakers, and early timeout strategies.\n• Route selection: decisions based on path availability and measured conditions—think dynamic routing, policy routing, and load-aware forwarding.\n• Hops with timing: each hop introduces processing + transmission delays; the design problem is to keep tail latency bounded while still maximizing throughput.\n• Transport behaviors: sequencing, acknowledgements (ACKs), and retransmissions when packets are lost or delayed. This is where reliability vs speed trade-offs show up.\n• 0 ocean crossings: a reminder that “topology matters.” In real architectures (multi-region microservices, CDNs, edge compute), geography and link quality determine whether you incur additional RTT and failure exposure.\n\nArchitecture patterns you should recognize:\n• Observability-first loops: measure RTT, loss, and queueing delay (not just average latency).\n• Backpressure + congestion awareness: avoid blindly blasting packets/requests; use bounded queues and adaptive sending.\n• Fault tolerance: timeouts, retries with jitter, idempotency, and fallback routing.\n• Consistency of delivery semantics: at the system level, decide what “delivered” means (at-most-once, at-least-once, exactly-once via dedupe).\n\nProduction lesson: the “fast path” is not enough—design for the slow path. Your system should degrade gracefully when RTT spikes or packets are lost mid-flight.\n\nWant more system design breakdowns and coding-friendly architectures? Explore: https://kreggscode.com\n",
-  "threads_caption": "One packet → many hops → 250ms control loop. What would you prioritize first: lowest latency, max throughput, or strongest reliability? Follow @kreggscode for packet-level system design. https://kreggscode.com",
-  "yt_title": "Packet Routing Explained (250ms) | #Shorts",
-  "yt_description": "What happens in the 250ms after you press Enter? Follow one packet’s world tour across regions—every hop timed—while we connect networking to system design.\n\nIn this Short:\n• RUNNING PING (0ms) and health/latency probing\n• Packet routing + handshake flow\n• Sequencing, ACKs, and retransmission logic\n• Congestion-aware hopping across New York → London → Mumbai → Singapore\n• Why geography/topology changes latency and reliability\n\nLearn more at:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n\n#Shorts",
+  "title": "Microservices vs Monolith Architecture in 2026 ⚡",
+  "ig_caption": "Microservices vs Monolith Architecture in 2026 ⚡ — why top teams re-architect\nwhen one bug hits, which design stays up?\n\n• Same 6 features, same change\n• Monolith: one bug → everything fails together\n• Microservices: one bug → only the impacted service degrades\n• Goal: 100% uptime with 0 failed blast radius\n• Side effect: more moving parts (deploys, contracts, observability)\n\nPractical takeaway: If you can’t define clear service boundaries (and SLOs), don’t split yet—start with a “modular monolith” and carve based on traffic + failure domains.\n\nWhat’s your real-world pick: microservices for resilience, or monoliths for simplicity? Drop your reasoning 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Monolith vs Microservices (VIZ 06): same functionality, different failure modes.\n\nWhen you ship the “same 6 features” and a single bug lands:\n- Monolith: one defect can cascade through the whole process → higher blast radius → “all down” risk.\n- Microservices: isolate the fault to the service that owns the capability → other services can keep serving → “app stayed up.”\n\nTrade-offs you should actually plan for:\n1) Reliability & blast radius\n- Microservices win when services map to failure domains and you have clear dependency boundaries.\n- Monolith wins when the system is small, tightly coupled, and you already have strong test/rollout discipline.\n\n2) Communication overhead (grpc vs rest)\n- Faster, typed calls (e.g., gRPC) can reduce latency and schema drift.\n- REST is simpler operationally, but teams often pay more in versioning and contract management.\n\n3) Delivery & operational complexity\n- Microservices add: service discovery, configuration, distributed tracing, alerting, deployment coordination, and resilience patterns (timeouts, retries, circuit breakers).\n- A production-ready “backend developer roadmap 2026” should include observability and SLOs, not just frameworks.\n\nProduction lesson: Don’t split architecture for vibes.\n- Start with modularity first (modular monolith).\n- Extract services based on traffic hotspots, organizational boundaries, and measurable failure impact.\n- Define contracts + SLIs/SLOs before you scale out.\n\nFor more architecture patterns and practical guides:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
+  "threads_caption": "Monolith vs microservices in one sentence: same bug, different blast radius. Microservices can keep the app up—if service boundaries, contracts, and observability are real. Debate: which would you choose for 2026? https://kreggscode.com",
+  "yt_title": "Microservices vs Monolith Architecture in 2026 #Shorts",
+  "yt_description": "Microservices vs Monolith Architecture in 2026 ⚡ (Shorts)\n\nIn this VIZ 06 reel, we show how the SAME “6 features” behave when a bug hits:\n- Monolith: one bug can take everything down\n- Microservices: one bug impacts one service (smaller blast radius)\n\nKey takeaways (under the hood):\n• Failure isolation matters more than dogma\n• Contracts + observability determine real resilience\n• Communication choices (gRPC vs REST) affect latency & versioning\n• Start with modularity; split based on SLOs and failure domains\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nIG: https://www.instagram.com/kreggscode/\n\n#Shorts\n#microservices\n#monolith\n#architecture\n#backend\n#grpc\n#rest\n#scalability\n#sre\n#softwareengineering",
   "yt_tags": [
-    "kreggscode",
-    "system design",
-    "software engineering",
-    "coding",
-    "technology",
-    "artificial intelligence",
-    "algorithms",
-    "networking",
-    "packet routing",
-    "distributed systems"
+    "microservices vs monolith",
+    "microservices architecture",
+    "monolith architecture",
+    "backend developer roadmap 2026",
+    "grpc vs rest performance",
+    "scalable software architecture",
+    "distributed systems",
+    "sre",
+    "observability",
+    "software engineering patterns",
+    "architecture tradeoffs",
+    "system design"
   ],
   "hashtags": [
-    "#kreggscode",
+    "#microservices",
+    "#monolith",
     "#systemdesign",
-    "#softwareengineering",
-    "#coding",
-    "#artificialintelligence"
+    "#kreggscode",
+    "#softwarearchitecture"
   ]
 }

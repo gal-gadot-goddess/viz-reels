@@ -161,5 +161,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "06-monolith-vs-microservices.html",
+    "title": "Microservices vs Monolith Architecture in 2026 ⚡",
+    "video": "06-monolith-vs-microservices.mp4",
+    "music": null,
+    "timestamp": "2026-10-26T16:48:34Z",
+    "publish": {
+      "instagram": {
+        "id": "18336478270279130",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1666686021834984",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
