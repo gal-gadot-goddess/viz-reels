@@ -188,5 +188,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "08-ddos-attack.html",
+    "title": "System Design & Software Architecture Explained ⚡",
+    "video": "08-ddos-attack.mp4",
+    "music": null,
+    "timestamp": "2026-10-27T15:18:20Z",
+    "publish": {
+      "instagram": {
+        "id": "18111287969237294",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1450301420377635",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

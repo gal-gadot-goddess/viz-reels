@@ -1,29 +1,29 @@
 {
-  "title": "Microservices vs Monolith Architecture in 2026 ⚡",
-  "ig_caption": "Microservices vs Monolith Architecture in 2026 ⚡ — why top teams re-architect\nwhen one bug hits, which design stays up?\n\n• Same 6 features, same change\n• Monolith: one bug → everything fails together\n• Microservices: one bug → only the impacted service degrades\n• Goal: 100% uptime with 0 failed blast radius\n• Side effect: more moving parts (deploys, contracts, observability)\n\nPractical takeaway: If you can’t define clear service boundaries (and SLOs), don’t split yet—start with a “modular monolith” and carve based on traffic + failure domains.\n\nWhat’s your real-world pick: microservices for resilience, or monoliths for simplicity? Drop your reasoning 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Monolith vs Microservices (VIZ 06): same functionality, different failure modes.\n\nWhen you ship the “same 6 features” and a single bug lands:\n- Monolith: one defect can cascade through the whole process → higher blast radius → “all down” risk.\n- Microservices: isolate the fault to the service that owns the capability → other services can keep serving → “app stayed up.”\n\nTrade-offs you should actually plan for:\n1) Reliability & blast radius\n- Microservices win when services map to failure domains and you have clear dependency boundaries.\n- Monolith wins when the system is small, tightly coupled, and you already have strong test/rollout discipline.\n\n2) Communication overhead (grpc vs rest)\n- Faster, typed calls (e.g., gRPC) can reduce latency and schema drift.\n- REST is simpler operationally, but teams often pay more in versioning and contract management.\n\n3) Delivery & operational complexity\n- Microservices add: service discovery, configuration, distributed tracing, alerting, deployment coordination, and resilience patterns (timeouts, retries, circuit breakers).\n- A production-ready “backend developer roadmap 2026” should include observability and SLOs, not just frameworks.\n\nProduction lesson: Don’t split architecture for vibes.\n- Start with modularity first (modular monolith).\n- Extract services based on traffic hotspots, organizational boundaries, and measurable failure impact.\n- Define contracts + SLIs/SLOs before you scale out.\n\nFor more architecture patterns and practical guides:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
-  "threads_caption": "Monolith vs microservices in one sentence: same bug, different blast radius. Microservices can keep the app up—if service boundaries, contracts, and observability are real. Debate: which would you choose for 2026? https://kreggscode.com",
-  "yt_title": "Microservices vs Monolith Architecture in 2026 #Shorts",
-  "yt_description": "Microservices vs Monolith Architecture in 2026 ⚡ (Shorts)\n\nIn this VIZ 06 reel, we show how the SAME “6 features” behave when a bug hits:\n- Monolith: one bug can take everything down\n- Microservices: one bug impacts one service (smaller blast radius)\n\nKey takeaways (under the hood):\n• Failure isolation matters more than dogma\n• Contracts + observability determine real resilience\n• Communication choices (gRPC vs REST) affect latency & versioning\n• Start with modularity; split based on SLOs and failure domains\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nIG: https://www.instagram.com/kreggscode/\n\n#Shorts\n#microservices\n#monolith\n#architecture\n#backend\n#grpc\n#rest\n#scalability\n#sre\n#softwareengineering",
+  "title": "System Design & Software Architecture Explained ⚡",
+  "ig_caption": "System Design & Software Architecture Explained ⚡ DDoS Attack under the hood!\nHow high-performance systems stop fake robots at scale\n\n• VIZ 08 — DDoS Attack: millions of fake requests hit one entry point\n• FAKE REQUESTS 0: request validation + WAF rules drop garbage fast\n• FIZZLED AT SHIELD 0: edge filtering + rate limits absorb spikes\n• 100% · OVERLOADED: load ramps, queues fill, autoscaling kicks in\n• CALM · CPU 14%: cache hits + connection pooling keep cores cool\n• BUSY × REFUSED: backpressure + admission control prevent collapse\n• SERVED ✓: real users still get responses (degraded mode)\n\nPractical takeaway: In interviews, describe the “defense-in-depth” path (edge → WAF → rate limit → queue → autoscaling → graceful degradation), not just one tool.\n\nWhat matters more in DDoS resilience: faster filtering at the edge or smarter admission control inside the service? Reply with your take.\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "A DDoS attack is rarely just “too many requests” — it’s a systems-design stress test that exposes where your architecture assumes normal traffic.\n\nUnder the hood, a resilient setup typically follows a defense-in-depth flow:\n\n1) Edge triage (before your app exists)\n- CDN/WAF drops malformed or known-bad patterns\n- Geo/IP reputation + bot detection helps reject obvious fakes\n- The goal: reduce attacker work without spending your backend budget\n\n2) Rate limiting & request shaping\n- Per-IP / per-route limits prevent “one noisy neighbor” from dominating\n- Token bucket / leaky bucket semantics maintain predictable behavior\n\n3) Admission control & backpressure\n- When you’re at risk of collapse, refuse quickly (BUSY × REFUSED)\n- Protect downstream dependencies via circuit breakers and bounded concurrency\n\n4) Load absorption + graceful degradation\n- Queue-based buffering absorbs short spikes\n- Caches keep CPU steady (e.g., CALM · CPU 14%) by serving hot content\n- In overload, switch to degraded responses so real users are still served (SERVE ✓)\n\nTrade-offs to call out in production design + interviews:\n- Edge filtering reduces backend load, but false positives can harm real traffic.\n- Aggressive rate limiting improves stability, but can create user-visible throttling.\n- Queues prevent immediate failure, but you must cap queue growth to avoid memory/latency death spirals.\n\nIf you’re preparing for “System Design & Software Architecture Explained” style questions: diagram the full path from the first SYN/HTTP request to the final response, including what happens during overload.\n\nMore details & architecture patterns: https://kreggscode.com and https://kreggscode.com/apps/\n\nQuestion: Would you rather spend effort on edge filtering accuracy or on internal admission control and graceful degradation? Why?",
+  "threads_caption": "DDoS resilience is defense-in-depth: edge filtering → rate limits → admission control → graceful degradation. Where would you invest first: edge or backend? Debate in replies. https://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained DDoS #Shorts",
+  "yt_description": "System Design & Software Architecture Explained ⚡ How do high-performance systems stop a DDoS attack under the hood?\n\nIn this Shorts breakdown, we walk through the defense-in-depth flow:\n- VIZ 08 — DDoS Attack: millions of fake robots hit one endpoint\n- FAKE REQUESTS 0 via WAF + validation at the edge\n- FIZZLED AT SHIELD 0 with CDN filtering + rate limiting\n- 100% · OVERLOADED when spikes hit capacity\n- CALM · CPU 14% through caching + connection pooling\n- BUSY × REFUSED using admission control/backpressure\n- SERVED ✓ real users still get responses (degraded mode)\n\nOfficial links:\n- Interactive architecture guides: https://kreggscode.com\n- Mobile & AI Apps: https://kreggscode.com/apps/\n- Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "microservices vs monolith",
-    "microservices architecture",
-    "monolith architecture",
-    "backend developer roadmap 2026",
-    "grpc vs rest performance",
-    "scalable software architecture",
+    "system design interview",
+    "software engineering fundamentals",
+    "scalable backend architecture",
+    "backend engineering",
     "distributed systems",
-    "sre",
-    "observability",
-    "software engineering patterns",
-    "architecture tradeoffs",
-    "system design"
+    "high performance systems",
+    "ddos attack",
+    "waf",
+    "rate limiting",
+    "admission control",
+    "graceful degradation",
+    "cloud architecture"
   ],
   "hashtags": [
-    "#microservices",
-    "#monolith",
-    "#systemdesign",
     "#kreggscode",
-    "#softwarearchitecture"
+    "#systemdesign",
+    "#softwarearchitecture",
+    "#ddos",
+    "#shorts"
   ]
 }
