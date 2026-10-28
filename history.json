@@ -215,5 +215,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "03-rest-vs-graphql.html",
+    "title": "Microservices vs Monolith Architecture in 2026 ⚡ (REST vs GraphQL)",
+    "video": "03-rest-vs-graphql.mp4",
+    "music": null,
+    "timestamp": "2026-10-28T15:55:35Z",
+    "publish": {
+      "instagram": {
+        "id": "18351884701270242",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "2079912926030873",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
