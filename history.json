@@ -242,5 +242,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "10-http-vs-https.html",
+    "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+    "video": "10-http-vs-https.mp4",
+    "music": null,
+    "timestamp": "2026-10-29T16:02:31Z",
+    "publish": {
+      "instagram": {
+        "id": "17897349486414731",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1439208175086377",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

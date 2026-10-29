@@ -1,28 +1,27 @@
 {
-  "title": "Microservices vs Monolith Architecture in 2026 ⚡ (REST vs GraphQL)",
-  "ig_caption": "Microservices vs Monolith Architecture in 2026 ⚡ REST vs GraphQL: ask once, waste less.\nSame screen: user + posts + likes—watch how APIs differ.\n\n• REST: /user, /posts, /likes → you “ask” multiple times (N+1 vibes)\n• Over-fetching: endpoints return extra data you don’t need\n• Under-fetching: you end up calling again to fill gaps\n\n• GraphQL: /graphql → one query for exactly the fields required\n• Fewer round trips: “REST asks many times; GraphQL asks once”\n• Client-driven shape: compose results per UI needs\n• Server control: use resolvers + batching to keep it fast\n\nPractical takeaway: For interviews and production, describe the real bottleneck—round trips, payload size, and resolver/database batching—not just “schema vs endpoints.”\n\nDebate question: Which would you bet on for microservices in 2026—REST with smart aggregation, or GraphQL with disciplined resolver performance?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Microservices vs Monolith Architecture in 2026 ⚡ — REST vs GraphQL is a practical trade-off you’ll feel in microservice-heavy systems.\n\nScenario: one screen needs a user, their posts, and their likes.\n\nREST approach:\n- Call multiple endpoints (e.g., /user, /posts, /likes)\n- Typical pain points:\n  • More round trips (latency compounds)\n  • Over-fetching (payload includes unused fields)\n  • Under-fetching (you re-call to fill missing data)\n- In production, teams often introduce a backend-for-frontend (BFF) or API gateway aggregation layer to reduce chatter.\n\nGraphQL approach:\n- Single endpoint (/graphql) with one query that requests exactly the fields needed by the UI.\n- Benefits:\n  • “Ask once” reduces network chatter for composed views\n  • Better control of response shape per client\n- Production lessons:\n  • Resolver design matters: avoid classic N+1 database queries\n  • Use batching/caching patterns (e.g., DataLoader-style) and strict query complexity limits\n  • Apply authentication/authorization at the field level when needed\n\nArchitecture guidance (how to choose in 2026):\n- If your system already has strong API composition (BFF/gateway), REST can stay clean and fast.\n- If your product is UI-driven with many different client shapes, GraphQL can reduce over/under-fetching.\n- Regardless of choice: measure p95 latency, payload size, query counts, and resolver/db fan-out.\n\nMore patterns at: https://kreggscode.com\nApps + mobile deployment considerations: https://kreggscode.com/apps/",
-  "threads_caption": "REST asks many times; GraphQL asks once—so for microservices in 2026, compose your data intentionally. Which approach wins for your team: REST+gateway/BFF or GraphQL+resolvers? 🔥 https://kreggscode.com",
-  "yt_title": "Microservices vs Monolith in 2026: REST vs GraphQL #Shorts",
-  "yt_description": "Microservices vs Monolith Architecture in 2026 ⚡ REST vs GraphQL: one screen needs user + posts + likes—here’s why “ask once” can cut wasted calls.\n\nIn this Short:\n• REST pattern: /user, /posts, /likes → multiple requests + potential over/under-fetching\n• GraphQL pattern: /graphql → one query returns the exact shape\n• Production reminder: resolvers + batching (avoid N+1) matter more than the buzzword\n\nLinks:\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\n📸 Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts #RESTvsGraphQL #Microservices #GraphQL #BackendEngineering #SoftwareArchitecture #kreggscode",
+  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+  "ig_caption": "⚡ What Actually Happens When You Change Your IP Address or Query DNS ⚡\n\nUnderstanding — HTTP vs HTTPS is a core milestone in modern system design and software engineering.\n\n• VIZ 10 — HTTP vs HTTPS\n• @yourhandle · VIZ 10\n• HTTP  vs  HTTPS\n• someone is listening in.\n• 0  SECRETS LEAKED  PASSWORD STOLEN ✗\n• 0  SECRETS LEAKED  ENCRYPTED ✓\n\nWhich pattern do you rely on in production? Drop your perspective below! 👇\n\n🔗 Interactive visualizers & guides: https://kreggscode.com\n📱 iOS & AI Apps on App Store: https://kreggscode.com/apps/\nFollow @kreggscode | AI & System Architecture Studio",
+  "fb_caption": "Deep Engineering Breakdown: How Computer Networks & Routing Work Under the Hood\n\nWhen scaling modern backend systems, evaluating architectural trade-offs is critical.\n\n- VIZ 10 — HTTP vs HTTPS\n- @yourhandle · VIZ 10\n- HTTP  vs  HTTPS\n- someone is listening in.\n- 0  SECRETS LEAKED  PASSWORD STOLEN ✗\n- 0  SECRETS LEAKED  ENCRYPTED ✓\n- HTTP: everyone can read it.  HTTPS: only the two ends can.\n- 🔊 Sound  ♪ Music  ↻ Replay  Safe zones\n\nExplore interactive developer tools & apps at https://kreggscode.com and https://kreggscode.com/apps/",
+  "threads_caption": "— HTTP vs HTTPS visualized in 20s. Discover how high-scale systems operate under the hood.\n\nExplore more at https://kreggscode.com | Follow @kreggscode",
+  "yt_title": "How Computer Networks & Routing Work Under the Hood | #Shorts",
+  "yt_description": "What Actually Happens When You Change Your IP Address or Query DNS ⚡\n\nVisualizing — HTTP vs HTTPS and modern distributed architecture.\n\n🔗 KreggsCode Ecosystem & Verified Resources:\n🌐 Official Platform & Guides: https://kreggscode.com\n📱 iOS & AI Mobile Apps: https://kreggscode.com/apps/\n📸 Instagram: https://www.instagram.com/kreggscode/\n🐦 X (Twitter): https://x.com/kreggscode\n\nFollow @kreggscode for daily software engineering, system design, and AI breakdowns.\n\n#Shorts #kreggscode #systemdesign #coding #technology #artificialintelligence #softwareengineering",
   "yt_tags": [
-    "microservices vs monolith",
-    "rest vs graphql",
-    "grpc vs rest performance",
-    "software architecture patterns",
-    "backend developer roadmap 2026",
-    "api design",
-    "graphql",
-    "rest api",
+    "how the internet works",
+    "dns lookup",
+    "computer networks",
+    "tcp udp",
+    "networking algorithms",
+    "kreggscode",
+    "kreggscode",
     "system design",
-    "backend engineering",
-    "shorts"
+    "coding",
+    "software engineering"
   ],
   "hashtags": [
     "#kreggscode",
     "#systemdesign",
+    "#backend",
     "#softwareengineering",
-    "#artificialintelligence",
     "#coding"
   ]
 }
