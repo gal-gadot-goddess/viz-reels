@@ -269,5 +269,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "14-db-index.html",
+    "title": "System Design & Software Architecture Explained ⚡ db index",
+    "video": "14-db-index.mp4",
+    "music": null,
+    "timestamp": "2026-10-30T15:55:11Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'type': 'OAuthException', 'code': 9007, 'error_subcode': 2207027, 'is_transient': False, 'error_user_title': 'Cannot Publish', 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'fbtrace_id': 'AW8DTCCU2OlXpA4yjbQVFuu'}}"
+      },
+      "facebook": {
+        "id": "1446200907692890",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

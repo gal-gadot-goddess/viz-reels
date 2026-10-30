@@ -1,27 +1,29 @@
 {
-  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
-  "ig_caption": "⚡ What Actually Happens When You Change Your IP Address or Query DNS ⚡\n\nUnderstanding — HTTP vs HTTPS is a core milestone in modern system design and software engineering.\n\n• VIZ 10 — HTTP vs HTTPS\n• @yourhandle · VIZ 10\n• HTTP  vs  HTTPS\n• someone is listening in.\n• 0  SECRETS LEAKED  PASSWORD STOLEN ✗\n• 0  SECRETS LEAKED  ENCRYPTED ✓\n\nWhich pattern do you rely on in production? Drop your perspective below! 👇\n\n🔗 Interactive visualizers & guides: https://kreggscode.com\n📱 iOS & AI Apps on App Store: https://kreggscode.com/apps/\nFollow @kreggscode | AI & System Architecture Studio",
-  "fb_caption": "Deep Engineering Breakdown: How Computer Networks & Routing Work Under the Hood\n\nWhen scaling modern backend systems, evaluating architectural trade-offs is critical.\n\n- VIZ 10 — HTTP vs HTTPS\n- @yourhandle · VIZ 10\n- HTTP  vs  HTTPS\n- someone is listening in.\n- 0  SECRETS LEAKED  PASSWORD STOLEN ✗\n- 0  SECRETS LEAKED  ENCRYPTED ✓\n- HTTP: everyone can read it.  HTTPS: only the two ends can.\n- 🔊 Sound  ♪ Music  ↻ Replay  Safe zones\n\nExplore interactive developer tools & apps at https://kreggscode.com and https://kreggscode.com/apps/",
-  "threads_caption": "— HTTP vs HTTPS visualized in 20s. Discover how high-scale systems operate under the hood.\n\nExplore more at https://kreggscode.com | Follow @kreggscode",
-  "yt_title": "How Computer Networks & Routing Work Under the Hood | #Shorts",
-  "yt_description": "What Actually Happens When You Change Your IP Address or Query DNS ⚡\n\nVisualizing — HTTP vs HTTPS and modern distributed architecture.\n\n🔗 KreggsCode Ecosystem & Verified Resources:\n🌐 Official Platform & Guides: https://kreggscode.com\n📱 iOS & AI Mobile Apps: https://kreggscode.com/apps/\n📸 Instagram: https://www.instagram.com/kreggscode/\n🐦 X (Twitter): https://x.com/kreggscode\n\nFollow @kreggscode for daily software engineering, system design, and AI breakdowns.\n\n#Shorts #kreggscode #systemdesign #coding #technology #artificialintelligence #softwareengineering",
+  "title": "System Design & Software Architecture Explained ⚡ db index",
+  "ig_caption": "System Design & Software Architecture Explained ⚡ db index: why queries feel instant?\n1,000,000 rows → 0.006 ms with the right index\n\n- No magic: the engine follows sorted shortcuts\n- TABLE scan vs. index lookup (fewer DB reads)\n- Tree structure: root → branches → a leaf\n- Reads ~0 when the index can point straight to the data\n- What “good” indexes look like: pick the columns used in WHERE/ORDER BY\n\nPractical takeaway: In interviews, always ask “What’s the filter and sort order?” then propose an index that matches it.\n\nDebate: Should every table have an index on every column—or only the ones that match your query patterns?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "If your query is “instant,” it’s usually not the database being fast—it’s the database doing *less work*.\n\n### The db index mental model (what’s happening under the hood)\nWhen you add a proper index, the engine can avoid scanning the whole table. Instead of reading 1,000,000 rows, it navigates a sorted structure (e.g., a B-Tree):\n- **Root → Branches → Leaf**: narrow down where matching keys live\n- **Fewer DB reads**: the data page is located directly rather than searched linearly\n- **Lower query latency**: less I/O + tighter execution plans\n\n### Trade-offs you must understand (production reality)\nIndexes are not free. They trade **read speed** for:\n- **Write overhead** (every INSERT/UPDATE may update index entries)\n- **Extra storage** (indexes can become large)\n- **Potentially worse plans** if an index is wrong, low-selectivity, or mismatched to query shape\n\n### Architecture patterns that show up in system design\n- **Index-aligned querying**: design APIs and endpoints so filters/sorts map cleanly to indexed columns.\n- **Selective indexes over “everything”**: only index what appears frequently in WHERE/ORDER BY/JOIN.\n- **Cardinality matters**: low-selectivity columns can yield large “match sets,” reducing index benefits.\n\n### Interview tip\nDon’t just say “add an index.” Specify:\n1) **query pattern** (filters + sort + joins),\n2) **expected cardinality**,\n3) **index type** (B-Tree vs composite), and\n4) what to measure (EXPLAIN plan, latency, read amplification).\n\nWant the interactive system design & database indexing walkthroughs?\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\n\nWhat would you index first in your system: the column in the WHERE clause, or the column used for ORDER BY? Comment your reasoning.",
+  "threads_caption": "db index = “sorted shortcuts.” If your query matches the index, the DB avoids scanning millions of rows.\n\nAdd indexes that mirror WHERE/ORDER BY patterns—not everything.\nhttps://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained ⚡ db index #Shorts",
+  "yt_description": "System Design & Software Architecture Explained ⚡ db index: why your query is instant.\n\nIn this Shorts clip, we break down the real execution path:\n- 1,000,000 rows without a scan (index lookup)\n- root → branches → leaf navigation\n- fewer DB reads → near-zero query time\n- no magic, just sorted shortcuts\n\nTry the interactive guides:\nhttps://kreggscode.com\n\nMobile & AI Apps:\nhttps://kreggscode.com/apps/\n\nInstagram:\nhttps://www.instagram.com/kreggscode/\n\n#Shorts\n\n#dbindex #systemdesign #softwareengineering #backendarchitecture #codinginterview",
   "yt_tags": [
-    "how the internet works",
-    "dns lookup",
-    "computer networks",
-    "tcp udp",
-    "networking algorithms",
-    "kreggscode",
-    "kreggscode",
-    "system design",
-    "coding",
-    "software engineering"
+    "system design interview",
+    "software engineering fundamentals",
+    "scalable backend architecture",
+    "database indexing",
+    "db index",
+    "query optimization",
+    "b-tree index",
+    "query planner",
+    "distributed systems basics",
+    "coding interview questions",
+    "backend performance",
+    "shorts"
   ],
   "hashtags": [
-    "#kreggscode",
+    "#dbindex",
     "#systemdesign",
-    "#backend",
-    "#softwareengineering",
-    "#coding"
+    "#softwarearchitecture",
+    "#kreggscode",
+    "#backendengineering"
   ]
 }
