@@ -296,5 +296,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "19-how-ai-sees-convolution.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+    "video": "19-how-ai-sees-convolution.mp4",
+    "music": null,
+    "timestamp": "2026-10-31T15:36:42Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'type': 'OAuthException', 'code': 9007, 'error_subcode': 2207027, 'is_transient': False, 'error_user_title': 'Cannot Publish', 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'fbtrace_id': 'AWYz6C-oYRC41H88uYenItc'}}"
+      },
+      "facebook": {
+        "id": "1142023391573683",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

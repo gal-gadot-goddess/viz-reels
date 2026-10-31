@@ -1,29 +1,29 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡ db index",
-  "ig_caption": "System Design & Software Architecture Explained ⚡ db index: why queries feel instant?\n1,000,000 rows → 0.006 ms with the right index\n\n- No magic: the engine follows sorted shortcuts\n- TABLE scan vs. index lookup (fewer DB reads)\n- Tree structure: root → branches → a leaf\n- Reads ~0 when the index can point straight to the data\n- What “good” indexes look like: pick the columns used in WHERE/ORDER BY\n\nPractical takeaway: In interviews, always ask “What’s the filter and sort order?” then propose an index that matches it.\n\nDebate: Should every table have an index on every column—or only the ones that match your query patterns?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "If your query is “instant,” it’s usually not the database being fast—it’s the database doing *less work*.\n\n### The db index mental model (what’s happening under the hood)\nWhen you add a proper index, the engine can avoid scanning the whole table. Instead of reading 1,000,000 rows, it navigates a sorted structure (e.g., a B-Tree):\n- **Root → Branches → Leaf**: narrow down where matching keys live\n- **Fewer DB reads**: the data page is located directly rather than searched linearly\n- **Lower query latency**: less I/O + tighter execution plans\n\n### Trade-offs you must understand (production reality)\nIndexes are not free. They trade **read speed** for:\n- **Write overhead** (every INSERT/UPDATE may update index entries)\n- **Extra storage** (indexes can become large)\n- **Potentially worse plans** if an index is wrong, low-selectivity, or mismatched to query shape\n\n### Architecture patterns that show up in system design\n- **Index-aligned querying**: design APIs and endpoints so filters/sorts map cleanly to indexed columns.\n- **Selective indexes over “everything”**: only index what appears frequently in WHERE/ORDER BY/JOIN.\n- **Cardinality matters**: low-selectivity columns can yield large “match sets,” reducing index benefits.\n\n### Interview tip\nDon’t just say “add an index.” Specify:\n1) **query pattern** (filters + sort + joins),\n2) **expected cardinality**,\n3) **index type** (B-Tree vs composite), and\n4) what to measure (EXPLAIN plan, latency, read amplification).\n\nWant the interactive system design & database indexing walkthroughs?\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\n\nWhat would you index first in your system: the column in the WHERE clause, or the column used for ORDER BY? Comment your reasoning.",
-  "threads_caption": "db index = “sorted shortcuts.” If your query matches the index, the DB avoids scanning millions of rows.\n\nAdd indexes that mirror WHERE/ORDER BY patterns—not everything.\nhttps://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained ⚡ db index #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ db index: why your query is instant.\n\nIn this Shorts clip, we break down the real execution path:\n- 1,000,000 rows without a scan (index lookup)\n- root → branches → leaf navigation\n- fewer DB reads → near-zero query time\n- no magic, just sorted shortcuts\n\nTry the interactive guides:\nhttps://kreggscode.com\n\nMobile & AI Apps:\nhttps://kreggscode.com/apps/\n\nInstagram:\nhttps://www.instagram.com/kreggscode/\n\n#Shorts\n\n#dbindex #systemdesign #softwareengineering #backendarchitecture #codinginterview",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work? (AI sees images!)\nInside modern AI under the hood—conv nets build vision 🔥\n\n• Convolution = sliding filters over pixels to detect patterns\n• Early layers find edges + simple textures\n• Deeper layers combine edges into shapes → objects\n• Strides/padding change what details survive\n• Pooling reduces noise; feature maps keep the “what”\n• Training tunes filter weights via gradient descent\n\nPractical takeaway: In interviews, describe the pipeline as “features → hierarchy → classification,” not just “CNNs detect edges.” Start with edges, then scale up.\n\nDebate: Do you think similarity search (embeddings) or convolutional vision is the bigger breakthrough for practical agents?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "How AI sees images: convolution is the “feature extractor” that makes perception compositional—edges become parts, parts become objects.\n\nUnder the hood (and why it matters for production):\n- Local receptive fields: each filter processes a small window, forcing inductive bias that improves sample efficiency.\n- Weight sharing: the same kernel scans the whole image, reducing parameters and enabling consistent pattern detection.\n- Feature hierarchy: shallow layers learn low-level primitives; deeper layers aggregate them into higher-level semantics.\n- Stride/padding as design levers: they trade spatial resolution vs compute; incorrect choices can quietly break downstream tasks.\n- Pooling vs strided conv: pooling reduces variance but can discard detail; many modern stacks prefer strided convolutions depending on the objective.\n- Learned representations feed the rest of the system: the output feature maps can be pooled/normalized and connected to heads (classification/segmentation) or fused with embeddings for multimodal pipelines.\n\nProduction lessons:\n1) Instrument feature-map shapes and activation distributions—most “it doesn’t learn” bugs are shape/normalization/data issues.\n2) Treat receptive field growth like a budget: choose architecture depth/stride so the model “sees” enough context.\n3) For agents, combine modules: convolution for perception features + vector embeddings for retrieval/similarity search, then orchestrate with an agent policy.\n\nWant the full systems view? Explore the interactive guides:\nhttps://kreggscode.com\nAnd mobile/AI app implementations:\nhttps://kreggscode.com/apps/",
+  "threads_caption": "AI sees images by building a hierarchy: filters find edges → layers compose objects. Want the under-the-hood systems view (embeddings + agents too)? 🔥 https://kreggscode.com",
+  "yt_title": "Convolution Explained: How Autonomous AI Works #Shorts",
+  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — in this Short, we connect the “under the hood” basics of how AI sees images using convolution.\n\nIn 30 seconds:\n- Convolution slides filters over pixels\n- Filters detect edges & simple patterns\n- Stacked layers build features into objects\n- Feature maps become the representation for downstream heads/agents\n\nOfficial links:\n- https://kreggscode.com\n- https://kreggscode.com/apps/\n- https://www.instagram.com/kreggscode/\n\n#Shorts #convolution #cnn #embeddings #autonomousai #aisystems",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "scalable backend architecture",
-    "database indexing",
-    "db index",
-    "query optimization",
-    "b-tree index",
-    "query planner",
-    "distributed systems basics",
-    "coding interview questions",
-    "backend performance",
-    "shorts"
+    "autonomous ai agents architecture",
+    "vector embeddings similarity search",
+    "how artificial intelligence works under the hood",
+    "llm system design",
+    "convolution explained",
+    "cnn how it works",
+    "computer vision basics",
+    "feature maps",
+    "machine learning interview",
+    "ai systems architecture",
+    "representation learning",
+    "data to inference pipeline"
   ],
   "hashtags": [
-    "#dbindex",
-    "#systemdesign",
-    "#softwarearchitecture",
     "#kreggscode",
-    "#backendengineering"
+    "#convolution",
+    "#computervision",
+    "#embeddings",
+    "#autonomousai"
   ]
 }
