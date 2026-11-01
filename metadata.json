@@ -1,29 +1,29 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work? (AI sees images!)\nInside modern AI under the hood—conv nets build vision 🔥\n\n• Convolution = sliding filters over pixels to detect patterns\n• Early layers find edges + simple textures\n• Deeper layers combine edges into shapes → objects\n• Strides/padding change what details survive\n• Pooling reduces noise; feature maps keep the “what”\n• Training tunes filter weights via gradient descent\n\nPractical takeaway: In interviews, describe the pipeline as “features → hierarchy → classification,” not just “CNNs detect edges.” Start with edges, then scale up.\n\nDebate: Do you think similarity search (embeddings) or convolutional vision is the bigger breakthrough for practical agents?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "How AI sees images: convolution is the “feature extractor” that makes perception compositional—edges become parts, parts become objects.\n\nUnder the hood (and why it matters for production):\n- Local receptive fields: each filter processes a small window, forcing inductive bias that improves sample efficiency.\n- Weight sharing: the same kernel scans the whole image, reducing parameters and enabling consistent pattern detection.\n- Feature hierarchy: shallow layers learn low-level primitives; deeper layers aggregate them into higher-level semantics.\n- Stride/padding as design levers: they trade spatial resolution vs compute; incorrect choices can quietly break downstream tasks.\n- Pooling vs strided conv: pooling reduces variance but can discard detail; many modern stacks prefer strided convolutions depending on the objective.\n- Learned representations feed the rest of the system: the output feature maps can be pooled/normalized and connected to heads (classification/segmentation) or fused with embeddings for multimodal pipelines.\n\nProduction lessons:\n1) Instrument feature-map shapes and activation distributions—most “it doesn’t learn” bugs are shape/normalization/data issues.\n2) Treat receptive field growth like a budget: choose architecture depth/stride so the model “sees” enough context.\n3) For agents, combine modules: convolution for perception features + vector embeddings for retrieval/similarity search, then orchestrate with an agent policy.\n\nWant the full systems view? Explore the interactive guides:\nhttps://kreggscode.com\nAnd mobile/AI app implementations:\nhttps://kreggscode.com/apps/",
-  "threads_caption": "AI sees images by building a hierarchy: filters find edges → layers compose objects. Want the under-the-hood systems view (embeddings + agents too)? 🔥 https://kreggscode.com",
-  "yt_title": "Convolution Explained: How Autonomous AI Works #Shorts",
-  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — in this Short, we connect the “under the hood” basics of how AI sees images using convolution.\n\nIn 30 seconds:\n- Convolution slides filters over pixels\n- Filters detect edges & simple patterns\n- Stacked layers build features into objects\n- Feature maps become the representation for downstream heads/agents\n\nOfficial links:\n- https://kreggscode.com\n- https://kreggscode.com/apps/\n- https://www.instagram.com/kreggscode/\n\n#Shorts #convolution #cnn #embeddings #autonomousai #aisystems",
+  "title": "HTTP/3: Why Your Internet Stops Stuttering ⚡",
+  "ig_caption": "How Computer Networks & Routing Work Under the Hood: HTTP/3 ⚡ Why it makes latency feel instant\n\n• HTTP/1.1: multiple requests per connection = head-of-line blocking\n• HTTP/2: multiplexing helps, but waits can still line up\n• HTTP/3: runs on QUIC over UDP → less TCP handshake friction\n• 0 round trips to get rolling (faster session resumption)\n• Your phone ↔ network ↔ server: paths change, QUIC keeps streams alive\n• No “greets the server like it’s 1996” → more modern connection migration\n\nPractical takeaway: In interviews, explain that latency = handshake + queuing + retransmits; then say HTTP/3 cuts the handshake pain and reduces blocking.\n\nDebate: Is the real win of HTTP/3 mostly “fewer round trips” or “avoiding head-of-line blocking”? Drop your take 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "HTTP/3 (QUIC over UDP) is the architecture-level fix for the “stutter” people feel when networks vary—especially under loss, mobility, or NAT quirks.\n\nWhat’s happening under the hood:\n- Legacy flow (HTTP/1.1–HTTP/2): TCP establishes state with strict ordering. When packets are delayed/lost, independent requests can still stall together (head-of-line blocking).\n- HTTP/2 multiplexes streams, but the underlying TCP stream ordering can still serialize pain.\n- HTTP/3 moves transport responsibility to QUIC:\n  - QUIC is message-oriented with stream-level independence.\n  - Multiplexed HTTP streams don’t block each other as easily when one stream suffers loss.\n  - Connection setup and resumption are optimized to reduce perceived handshake latency.\n  - Connection migration helps when client IP/paths change (mobile/Wi‑Fi↔cell transitions).\n\nProduction lessons & trade-offs:\n- UDP-based transport: more firewall/NAT edge cases historically, but modern stacks are improving; observe real traffic patterns.\n- Measuring matters: prioritize RUM/LB metrics for handshake time, TTFB, and retransmit rate; don’t judge only by “round trips” on paper.\n- Compatibility strategy: use HTTPS + ALPN negotiation; maintain fallbacks to HTTP/2 where needed.\n\nIf you’re building systems: think of latency as a pipeline—DNS, connection establishment, TLS, congestion/queuing, and retransmissions. HTTP/3 addresses several of those layers directly.\n\nLearn more and explore interactive guides: https://kreggscode.com\nMobile & AI apps: https://kreggscode.com/apps/",
+  "threads_caption": "HTTP/3 = QUIC over UDP → fewer stalls + faster recovery when the network is messy. Less “TCP ordering pain,” more stream independence. 🚀\n\nWhat matters more in your experience: fewer round trips or avoiding head-of-line blocking? \nhttps://kreggscode.com",
+  "yt_title": "How Computer Networks Work: HTTP/3 Explained #Shorts",
+  "yt_description": "How Computer Networks & Routing Work Under the Hood: HTTP/3 ⚡ What actually happens when your connection “stutters” and why it feels instant now.\n\nIn this Short, we break down:\n- TCP vs UDP socket behavior (why ordering matters)\n- The DNS lookup + connection steps that add latency\n- How HTTP/3 uses QUIC to reduce head-of-line blocking\n- Why mobile/IP/path changes are less painful with connection migration\n\nOfficial links:\n- Interactive architecture guides: https://kreggscode.com\n- Mobile & AI Apps: https://kreggscode.com/apps/\n- Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts\n#http3 #quic #networking #tcp #udp #latency #dns #routing #kreggscode",
   "yt_tags": [
-    "autonomous ai agents architecture",
-    "vector embeddings similarity search",
-    "how artificial intelligence works under the hood",
-    "llm system design",
-    "convolution explained",
-    "cnn how it works",
-    "computer vision basics",
-    "feature maps",
-    "machine learning interview",
-    "ai systems architecture",
-    "representation learning",
-    "data to inference pipeline"
+    "http3",
+    "quic",
+    "tcp vs udp",
+    "networking fundamentals",
+    "how routing works",
+    "dns lookup process",
+    "round trip time",
+    "latency explained",
+    "head of line blocking",
+    "mobile connection migration",
+    "shorts",
+    "kreggscode"
   ],
   "hashtags": [
     "#kreggscode",
-    "#convolution",
-    "#computervision",
-    "#embeddings",
-    "#autonomousai"
+    "#http3",
+    "#quic",
+    "#networking",
+    "#latency"
   ]
 }

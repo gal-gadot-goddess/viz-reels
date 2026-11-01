@@ -323,5 +323,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "07-http3.html",
+    "title": "HTTP/3: Why Your Internet Stops Stuttering ⚡",
+    "video": "07-http3.mp4",
+    "music": null,
+    "timestamp": "2026-11-01T15:57:56Z",
+    "publish": {
+      "instagram": {
+        "id": "17916758517542780",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "2183731525913667",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
