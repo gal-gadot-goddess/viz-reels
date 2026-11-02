@@ -1,29 +1,28 @@
 {
-  "title": "HTTP/3: Why Your Internet Stops Stuttering ⚡",
-  "ig_caption": "How Computer Networks & Routing Work Under the Hood: HTTP/3 ⚡ Why it makes latency feel instant\n\n• HTTP/1.1: multiple requests per connection = head-of-line blocking\n• HTTP/2: multiplexing helps, but waits can still line up\n• HTTP/3: runs on QUIC over UDP → less TCP handshake friction\n• 0 round trips to get rolling (faster session resumption)\n• Your phone ↔ network ↔ server: paths change, QUIC keeps streams alive\n• No “greets the server like it’s 1996” → more modern connection migration\n\nPractical takeaway: In interviews, explain that latency = handshake + queuing + retransmits; then say HTTP/3 cuts the handshake pain and reduces blocking.\n\nDebate: Is the real win of HTTP/3 mostly “fewer round trips” or “avoiding head-of-line blocking”? Drop your take 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "HTTP/3 (QUIC over UDP) is the architecture-level fix for the “stutter” people feel when networks vary—especially under loss, mobility, or NAT quirks.\n\nWhat’s happening under the hood:\n- Legacy flow (HTTP/1.1–HTTP/2): TCP establishes state with strict ordering. When packets are delayed/lost, independent requests can still stall together (head-of-line blocking).\n- HTTP/2 multiplexes streams, but the underlying TCP stream ordering can still serialize pain.\n- HTTP/3 moves transport responsibility to QUIC:\n  - QUIC is message-oriented with stream-level independence.\n  - Multiplexed HTTP streams don’t block each other as easily when one stream suffers loss.\n  - Connection setup and resumption are optimized to reduce perceived handshake latency.\n  - Connection migration helps when client IP/paths change (mobile/Wi‑Fi↔cell transitions).\n\nProduction lessons & trade-offs:\n- UDP-based transport: more firewall/NAT edge cases historically, but modern stacks are improving; observe real traffic patterns.\n- Measuring matters: prioritize RUM/LB metrics for handshake time, TTFB, and retransmit rate; don’t judge only by “round trips” on paper.\n- Compatibility strategy: use HTTPS + ALPN negotiation; maintain fallbacks to HTTP/2 where needed.\n\nIf you’re building systems: think of latency as a pipeline—DNS, connection establishment, TLS, congestion/queuing, and retransmissions. HTTP/3 addresses several of those layers directly.\n\nLearn more and explore interactive guides: https://kreggscode.com\nMobile & AI apps: https://kreggscode.com/apps/",
-  "threads_caption": "HTTP/3 = QUIC over UDP → fewer stalls + faster recovery when the network is messy. Less “TCP ordering pain,” more stream independence. 🚀\n\nWhat matters more in your experience: fewer round trips or avoiding head-of-line blocking? \nhttps://kreggscode.com",
-  "yt_title": "How Computer Networks Work: HTTP/3 Explained #Shorts",
-  "yt_description": "How Computer Networks & Routing Work Under the Hood: HTTP/3 ⚡ What actually happens when your connection “stutters” and why it feels instant now.\n\nIn this Short, we break down:\n- TCP vs UDP socket behavior (why ordering matters)\n- The DNS lookup + connection steps that add latency\n- How HTTP/3 uses QUIC to reduce head-of-line blocking\n- Why mobile/IP/path changes are less painful with connection migration\n\nOfficial links:\n- Interactive architecture guides: https://kreggscode.com\n- Mobile & AI Apps: https://kreggscode.com/apps/\n- Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts\n#http3 #quic #networking #tcp #udp #latency #dns #routing #kreggscode",
+  "title": "System Design & Software Architecture Explained ⚡",
+  "ig_caption": "System Design & Software Architecture Explained ⚡: Inside One Commit—how git stores code under the hood\nSystem design interview clue: branches cost ~41 bytes, not “everything”.\n\n• Snapshots, fingerprints & “sticker magic”: commits reference content by hash\n• Zero full file copies: FILES COPIED = 0, COMMITS = 0—just pointers to blobs/tree objects\n• Why branches are cheap: a new ref moves a pointer, not the whole history\n• “One commit” model: commit object ties parent(s) + tree snapshot + metadata\n\nPractical takeaway: Treat a commit like an immutable event in your architecture—content-addressing gives you dedupe + traceability.\n\nDebate question: Is Git’s content model more like a database write-ahead log, or like an immutable event stream?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "If you want system design instincts, study Git internals: not as “version control,” but as a production-grade model for immutable content, references, and history.\n\nInside One Commit (what’s actually stored)\n- Commit object: ties together parent commit(s), an associated tree snapshot, and metadata (author, timestamps, message).\n- Tree object: represents directory structure for that snapshot.\n- Blob object: represents file content. Content is addressed via cryptographic fingerprints (hashes).\n\nWhy branches are cheap (~41 bytes)\n- A branch is essentially a movable reference (a ref) to a commit hash.\n- Creating/changing a branch updates a pointer; it does not duplicate repository contents.\n- That’s the architecture trade-off: you get fast “views” over immutable data with minimal overhead.\n\n“Sticker magic” (dedupe by design)\n- Because objects are identified by fingerprint, identical content maps to the same stored object.\n- This makes history both space-efficient and audit-friendly—ideal for reasoning about causality (parent links) and correctness (hash integrity).\n\nProduction lesson to borrow for scalable backends & AI systems\n- Prefer immutable artifacts + content-addressing when you need traceability, dedupe, caching, and safe concurrency.\n- Model references (pointers/refs) as lightweight views over an immutable store.\n\nWant the systems design breakdown style? See more at https://kreggscode.com and related apps at https://kreggscode.com/apps/.",
+  "threads_caption": "Inside one commit: immutable snapshot + content fingerprints. Branches are cheap because they’re just moving refs (not copying data). Which part do you think matters more for system design: immutability or references?\nhttps://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained #Shorts",
+  "yt_description": "System Design & Software Architecture Explained ⚡ — Inside One Commit: how Git stores code under the hood.\n\nIn this Short, you’ll learn:\n• Snapshots vs pointers (why FILES COPIED = 0 in the model)\n• Fingerprints (content-addressed blobs) and “sticker magic” dedupe\n• What a commit object really contains (parent(s) + tree snapshot + metadata)\n• Why branches are cheap (~41 bytes): refs move, history stays immutable\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nInstagram: https://www.instagram.com/kreggscode/\n\n#Shorts #git #systemdesign #softwareengineering #backend #interview",
   "yt_tags": [
-    "http3",
-    "quic",
-    "tcp vs udp",
-    "networking fundamentals",
-    "how routing works",
-    "dns lookup process",
-    "round trip time",
-    "latency explained",
-    "head of line blocking",
-    "mobile connection migration",
-    "shorts",
-    "kreggscode"
+    "system design",
+    "software architecture",
+    "git internals",
+    "git commit",
+    "branches explained",
+    "content addressing",
+    "immutable data",
+    "backend engineering",
+    "coding interview questions",
+    "scalable systems",
+    "software engineering fundamentals"
   ],
   "hashtags": [
     "#kreggscode",
-    "#http3",
-    "#quic",
-    "#networking",
-    "#latency"
+    "#systemdesign",
+    "#softwareengineering",
+    "#artificialintelligence",
+    "#coding"
   ]
 }
