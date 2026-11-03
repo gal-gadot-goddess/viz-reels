@@ -1,28 +1,28 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡",
-  "ig_caption": "System Design & Software Architecture Explained ⚡: Inside One Commit—how git stores code under the hood\nSystem design interview clue: branches cost ~41 bytes, not “everything”.\n\n• Snapshots, fingerprints & “sticker magic”: commits reference content by hash\n• Zero full file copies: FILES COPIED = 0, COMMITS = 0—just pointers to blobs/tree objects\n• Why branches are cheap: a new ref moves a pointer, not the whole history\n• “One commit” model: commit object ties parent(s) + tree snapshot + metadata\n\nPractical takeaway: Treat a commit like an immutable event in your architecture—content-addressing gives you dedupe + traceability.\n\nDebate question: Is Git’s content model more like a database write-ahead log, or like an immutable event stream?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "If you want system design instincts, study Git internals: not as “version control,” but as a production-grade model for immutable content, references, and history.\n\nInside One Commit (what’s actually stored)\n- Commit object: ties together parent commit(s), an associated tree snapshot, and metadata (author, timestamps, message).\n- Tree object: represents directory structure for that snapshot.\n- Blob object: represents file content. Content is addressed via cryptographic fingerprints (hashes).\n\nWhy branches are cheap (~41 bytes)\n- A branch is essentially a movable reference (a ref) to a commit hash.\n- Creating/changing a branch updates a pointer; it does not duplicate repository contents.\n- That’s the architecture trade-off: you get fast “views” over immutable data with minimal overhead.\n\n“Sticker magic” (dedupe by design)\n- Because objects are identified by fingerprint, identical content maps to the same stored object.\n- This makes history both space-efficient and audit-friendly—ideal for reasoning about causality (parent links) and correctness (hash integrity).\n\nProduction lesson to borrow for scalable backends & AI systems\n- Prefer immutable artifacts + content-addressing when you need traceability, dedupe, caching, and safe concurrency.\n- Model references (pointers/refs) as lightweight views over an immutable store.\n\nWant the systems design breakdown style? See more at https://kreggscode.com and related apps at https://kreggscode.com/apps/.",
-  "threads_caption": "Inside one commit: immutable snapshot + content fingerprints. Branches are cheap because they’re just moving refs (not copying data). Which part do you think matters more for system design: immutability or references?\nhttps://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ — Inside One Commit: how Git stores code under the hood.\n\nIn this Short, you’ll learn:\n• Snapshots vs pointers (why FILES COPIED = 0 in the model)\n• Fingerprints (content-addressed blobs) and “sticker magic” dedupe\n• What a commit object really contains (parent(s) + tree snapshot + metadata)\n• Why branches are cheap (~41 bytes): refs move, history stays immutable\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nInstagram: https://www.instagram.com/kreggscode/\n\n#Shorts #git #systemdesign #softwareengineering #backend #interview",
+  "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
+  "ig_caption": "Redis Caching Patterns: Scaling Backend Architecture ⚡ — How top tech companies handle 100M requests\n\n- The internet feels “close” because content is served from the EDGE, not your origin\n- CDN cache lifecycle: cache key → HIT/MISS decision → fetch from origin (only on MISS)\n- Why “FILES DELIVERED 0 / FROM ORIGIN 0 / EDGE HITS 0” is a latency anti-pattern signal: you’re not benefiting yet\n- Cache aside pattern (Redis): read-through logic, then write-back/refresh safely\n- Set TTLs intentionally: freshness vs. load; add jitter to avoid thundering herds\n- Stale-while-revalidate: serve old content fast, refresh in background\n- Invalidation strategy: purge by URL/version vs. key patterns; avoid global flush\n\nPractical takeaway: For system design interviews, always state your cache key design, TTL policy, and invalidation approach before talking scaling.\n\nSo should Tokyo wait ~340ms for a single file—or do you push content closer with CDN + caching?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "CDN & caching isn’t just an optimization—it’s how we make global latency feel local.\n\nIn a typical setup, the user request shouldn’t have to traverse to origin for every asset/API response. A properly configured CDN shifts the workload to the edge:\n- EDGE HIT: serve cached response immediately\n- EDGE MISS: fetch from origin, then store for subsequent requests\n\nTrade-offs you need to design for (the interview + production checklist):\n1) Cache key strategy\n   - Include the right dimensions (path, query, headers that affect output).\n   - Beware “accidental sharing” (same key for different variants).\n2) TTL policy & consistency\n   - TTL governs freshness vs. origin load.\n   - Add TTL jitter to prevent synchronized refresh storms.\n   - Consider stale-while-revalidate for user experience under pressure.\n3) Invalidation model\n   - Versioned URLs (cache-busting) can be simpler than purges.\n   - If purging: define blast radius—purge by prefix/URL patterns, avoid “flush all.”\n4) Redis caching patterns for backend scaling\n   - Cache-aside (lazy loading): read from Redis first; populate on miss.\n   - Protect origin during misses with request coalescing (locks) and bounded retries.\n   - For hot keys: consider probabilistic early expiration or background refresh.\n5) Observability\n   - Track: cache hit rate, origin fetch latency, error rates, and eviction behavior.\n   - That “FILES DELIVERED 0 / FROM ORIGIN 0 / EDGE HITS 0” kind of metric gap usually means cache policy is misconfigured or you’re not generating cacheable responses.\n\nIf you’re building your own architecture, map each component’s responsibility: CDN (edge delivery), Redis (fast backend state), origin (source of truth).\n\nWant a clean architecture walkthrough with real trade-offs? See: https://kreggscode.com and mobile/AI implementations: https://kreggscode.com/apps/",
+  "threads_caption": "If your CDN shows low EDGE HITS, you’re paying origin latency globally. Design cache keys + TTL + invalidation first, then scale. What would you prioritize: freshness or fewer origin calls? 🔥 https://kreggscode.com",
+  "yt_title": "Redis Caching Patterns: Scaling Backend Architecture #Shorts",
+  "yt_description": "Redis Caching Patterns: Scaling Backend Architecture — CDN & caching explained in 60s.\n\nWhy the internet feels close:\n- CDN moves content delivery to the EDGE\n- Cache HIT vs MISS decides if requests reach origin\n- Redis cache-aside patterns help backend scale under spikes\n\nUnder the hood checklist:\n- Cache key design (avoid variant collisions)\n- TTL + jitter (freshness vs load, prevents thundering herds)\n- Stale-while-revalidate (fast UX, safe refresh)\n- Invalidation strategy (versioned URLs vs purges)\n\nPractical interview tip:\nState your cache-aside flow + TTL + invalidation before discussing scaling.\n\nLinks:\n- https://kreggscode.com\n- https://kreggscode.com/apps/\n- https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
+    "cdn caching",
+    "redis caching",
+    "cache aside pattern",
+    "backend scaling",
     "system design",
-    "software architecture",
-    "git internals",
-    "git commit",
-    "branches explained",
-    "content addressing",
-    "immutable data",
-    "backend engineering",
-    "coding interview questions",
-    "scalable systems",
-    "software engineering fundamentals"
+    "database latency",
+    "edge hits",
+    "ttl strategy",
+    "invalidation",
+    "distributed systems",
+    "high traffic architecture"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#redis",
+    "#caching",
+    "#cdn",
+    "#systemdesign"
   ]
 }

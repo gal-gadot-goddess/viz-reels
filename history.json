@@ -377,5 +377,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "10-cdn-caching.html",
+    "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
+    "video": "10-cdn-caching.mp4",
+    "music": null,
+    "timestamp": "2026-11-03T16:58:44Z",
+    "publish": {
+      "instagram": {
+        "id": "17923881327446830",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "2177422283180678",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
