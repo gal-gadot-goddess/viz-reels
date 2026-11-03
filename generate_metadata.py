@@ -276,7 +276,7 @@ Return strictly a valid JSON object with keys: "title", "ig_caption", "fb_captio
 """
 
     payload = {
-        "model": "openai",
+        "model": "openai/gpt-5.4-nano",
         "messages": [
             {"role": "system", "content": "You are a professional system design and AI content creator. You output strictly valid JSON without markdown wrapping."},
             {"role": "user", "content": prompt}
