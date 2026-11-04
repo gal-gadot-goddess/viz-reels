@@ -1,28 +1,27 @@
 {
   "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
-  "ig_caption": "Redis Caching Patterns: Scaling Backend Architecture ⚡ — How top tech companies handle 100M requests\n\n- The internet feels “close” because content is served from the EDGE, not your origin\n- CDN cache lifecycle: cache key → HIT/MISS decision → fetch from origin (only on MISS)\n- Why “FILES DELIVERED 0 / FROM ORIGIN 0 / EDGE HITS 0” is a latency anti-pattern signal: you’re not benefiting yet\n- Cache aside pattern (Redis): read-through logic, then write-back/refresh safely\n- Set TTLs intentionally: freshness vs. load; add jitter to avoid thundering herds\n- Stale-while-revalidate: serve old content fast, refresh in background\n- Invalidation strategy: purge by URL/version vs. key patterns; avoid global flush\n\nPractical takeaway: For system design interviews, always state your cache key design, TTL policy, and invalidation approach before talking scaling.\n\nSo should Tokyo wait ~340ms for a single file—or do you push content closer with CDN + caching?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "CDN & caching isn’t just an optimization—it’s how we make global latency feel local.\n\nIn a typical setup, the user request shouldn’t have to traverse to origin for every asset/API response. A properly configured CDN shifts the workload to the edge:\n- EDGE HIT: serve cached response immediately\n- EDGE MISS: fetch from origin, then store for subsequent requests\n\nTrade-offs you need to design for (the interview + production checklist):\n1) Cache key strategy\n   - Include the right dimensions (path, query, headers that affect output).\n   - Beware “accidental sharing” (same key for different variants).\n2) TTL policy & consistency\n   - TTL governs freshness vs. origin load.\n   - Add TTL jitter to prevent synchronized refresh storms.\n   - Consider stale-while-revalidate for user experience under pressure.\n3) Invalidation model\n   - Versioned URLs (cache-busting) can be simpler than purges.\n   - If purging: define blast radius—purge by prefix/URL patterns, avoid “flush all.”\n4) Redis caching patterns for backend scaling\n   - Cache-aside (lazy loading): read from Redis first; populate on miss.\n   - Protect origin during misses with request coalescing (locks) and bounded retries.\n   - For hot keys: consider probabilistic early expiration or background refresh.\n5) Observability\n   - Track: cache hit rate, origin fetch latency, error rates, and eviction behavior.\n   - That “FILES DELIVERED 0 / FROM ORIGIN 0 / EDGE HITS 0” kind of metric gap usually means cache policy is misconfigured or you’re not generating cacheable responses.\n\nIf you’re building your own architecture, map each component’s responsibility: CDN (edge delivery), Redis (fast backend state), origin (source of truth).\n\nWant a clean architecture walkthrough with real trade-offs? See: https://kreggscode.com and mobile/AI implementations: https://kreggscode.com/apps/",
-  "threads_caption": "If your CDN shows low EDGE HITS, you’re paying origin latency globally. Design cache keys + TTL + invalidation first, then scale. What would you prioritize: freshness or fewer origin calls? 🔥 https://kreggscode.com",
+  "ig_caption": "Redis Caching Patterns: Scaling Backend Architecture ⚡ — how cache-aside handles DB latency\nand stops overload when traffic spikes.\n\n• Same 14 users + same database\n• USERS: 14 requests\n• No cache: every request hits the DB → DB overload ✗\n• Redis cache: most reads served from memory → DB barely touched ✓\n\nUnder the hood (cache-aside):\n1) Read key from Redis\n2) If missing, fetch from DB\n3) Write result back to Redis with TTL\n4) Future requests avoid the DB\n\nPractical takeaway: In interviews, call out TTL + cache invalidation strategy (and what happens on misses).\n\nWould you rather optimize for consistency or latency first: strict reads or eventual freshness?\n\n🔗 Deep-dive engineering guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | AI & Systems Studio",
+  "fb_caption": "Redis Cache vs No Cache—same workload, different outcomes.\n\nIn this VIZ: 14 users send 14 requests to the same database.\n- No cache: every request hits the DB → DB overload and latency spikes (✗)\n- With Redis cache: reads are served from in-memory entries → DB is barely touched (✓)\n\nArchitecture trade-offs (production reality):\n1) Latency: Redis reduces database round-trips, especially for hot keys.\n2) Load shedding: caching smooths bursts; your DB doesn’t get “thundering herd” traffic.\n3) Consistency: stale data risk depends on TTL and invalidation approach.\n4) Failure modes: define behavior on cache misses, cache failures, and Redis outages.\n\nCommon patterns to mention in system design interview answers:\n- Cache-aside (lazy): read-through Redis; on miss, load from DB and populate Redis.\n- Write-through: write to cache and DB simultaneously (more write cost).\n- Write-back: update cache first, persist asynchronously (more complex + risk).\n\nRule of thumb: pair caching with clear TTL, invalidation rules, and a “graceful degrade” path (e.g., serve from DB if Redis is down).\n\nWant more practical architecture breakdowns and scalable patterns? 🔗 https://kreggscode.com\nMobile & AI app deployments: 📱 https://kreggscode.com/apps/",
+  "threads_caption": "No cache = every request hammers the DB. Redis cache = memory hits + DB barely noticed. ⚡\n\nCache-aside + TTL is the usual pattern. What’s your consistency vs latency pick?\nhttps://kreggscode.com",
   "yt_title": "Redis Caching Patterns: Scaling Backend Architecture #Shorts",
-  "yt_description": "Redis Caching Patterns: Scaling Backend Architecture — CDN & caching explained in 60s.\n\nWhy the internet feels close:\n- CDN moves content delivery to the EDGE\n- Cache HIT vs MISS decides if requests reach origin\n- Redis cache-aside patterns help backend scale under spikes\n\nUnder the hood checklist:\n- Cache key design (avoid variant collisions)\n- TTL + jitter (freshness vs load, prevents thundering herds)\n- Stale-while-revalidate (fast UX, safe refresh)\n- Invalidation strategy (versioned URLs vs purges)\n\nPractical interview tip:\nState your cache-aside flow + TTL + invalidation before discussing scaling.\n\nLinks:\n- https://kreggscode.com\n- https://kreggscode.com/apps/\n- https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "yt_description": "Redis Caching Patterns: Scaling Backend Architecture ⚡ #Shorts\n\nIn-memory caching can turn “DB overload” into “DB barely touched” by serving hot reads from Redis.\n\nWhat you’ll see:\n• Same 14 users, same database\n• No cache: every request hits the DB → overloaded ✗\n• Redis cache: most requests served from cache → barely touched ✓\n\nPattern to know (cache-aside):\n1) Check Redis key\n2) On miss: fetch from DB\n3) Store in Redis with TTL\n4) Subsequent requests avoid the DB\n\nLinks:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts #redis #caching #systemdesign #backend #architecture #latency",
   "yt_tags": [
-    "cdn caching",
-    "redis caching",
+    "redis caching strategies",
     "cache aside pattern",
+    "system design interview questions",
     "backend scaling",
-    "system design",
     "database latency",
-    "edge hits",
-    "ttl strategy",
-    "invalidation",
+    "in memory cache",
+    "thundering herd",
+    "ttl caching",
     "distributed systems",
-    "high traffic architecture"
+    "microservices performance"
   ],
   "hashtags": [
     "#kreggscode",
-    "#redis",
-    "#caching",
-    "#cdn",
-    "#systemdesign"
+    "#systemdesign",
+    "#softwareengineering",
+    "#artificialintelligence",
+    "#coding"
   ]
 }

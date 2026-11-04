@@ -404,5 +404,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "05-redis-cache-vs-no-cache.html",
+    "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
+    "video": "05-redis-cache-vs-no-cache.mp4",
+    "music": null,
+    "timestamp": "2026-11-04T17:02:29Z",
+    "publish": {
+      "instagram": {
+        "id": "17972752740179385",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "986864363881250",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
