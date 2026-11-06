@@ -1,27 +1,27 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡",
-  "ig_caption": "System Design & Software Architecture Explained: BFS vs A* ⚡\nShortest path on the same map—one algorithm wins.\n\n• BFS (Breadth-First Search): explores neighbors level-by-level\n• BFS behavior: wide fan-out → checks “everywhere” first\n• A* (A-star): uses a heuristic to prioritize promising nodes\n• A* behavior: narrows the search to where it matters\n• Under the hood: BFS has no goal bias; A* has goal-directed scoring\n• Production lens: same correctness goal, different performance profile\n\nPractical takeaway: In interviews, always ask “what’s the complexity and what data structures power it?”—BFS is predictable; A* wins when the heuristic is strong.\n\nDebate question: Would you pick BFS for simpler reasoning, or A* for speed—what should “default” be in a real backend pathfinding service?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Shortest path: BFS vs A* is a great microcosm of software architecture trade-offs—correctness vs performance vs how you “guide” computation.\n\nBFS (Breadth-First Search)\n- Model: explore the graph in concentric layers by distance from the start.\n- Strength: simple invariants; if all edges are equal cost, BFS finds the shortest path.\n- Cost shape: can expand a huge portion of the state space (“searches everywhere”).\n- Data structures: queue + visited/parent tracking.\n\nA* (A-star)\n- Model: best-first search using f(n) = g(n) + h(n).\n  - g(n): known cost from start\n  - h(n): heuristic estimate to goal\n- Strength: focuses exploration on nodes likely to lead to an optimal solution.\n- Cost shape: fewer expansions when the heuristic is informative.\n- Architecture lesson: A* performance depends heavily on heuristic quality and consistency.\n- Data structures: priority queue (min-heap) + g-score map + parent reconstruction.\n\nProduction lessons (how teams think about it)\n- Heuristic design is analogous to choosing the right indexing strategy: good signals reduce work.\n- Always define correctness constraints: BFS is robust under uniform edge costs; A* correctness depends on heuristic properties.\n- Measure the real bottleneck: CPU time (expansions), memory (open/closed sets), and latency budget.\n\nIf you’re designing a scalable backend architecture (or prepping for system design interview questions), use this pattern: clarify the cost model, validate correctness assumptions, then optimize search expansion with the smallest reliable “guidance.”\n\nInteractive architecture guides: https://kreggscode.com\nMobile & AI Apps: https://kreggscode.com/apps/",
-  "threads_caption": "BFS finds shortest paths by expanding level-by-level; A* finds them faster by steering with a heuristic. Same goal, different work. Which would you default to in production—BFS for clarity or A* for speed? https://kreggscode.com",
-  "yt_title": "Shortest Path: BFS vs A* (System Design Explained) #Shorts",
-  "yt_description": "Shortest Path: BFS vs A* — same map, one winner. ⚡\n\nIn this Short, we break down what happens under the hood:\n• BFS: level-by-level exploration → searches “everywhere”\n• A*: uses f(n)=g(n)+h(n) → searches “where it matters”\n• Trade-off: simpler expansion vs heuristic-guided performance\n• Practical takeaway for system design interview thinking\n\nOfficial links:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work (under the hood) ⚡\nDocker vs VM: same server, how many apps fit?\n\n• VMs: a whole OS each → heavier CPU/RAM overhead\n• Containers: share the host kernel → lighter isolation\n• Kernel sharing changes density: more apps per box\n• Rule of thumb: VM = stronger OS boundary; container = faster packing\n\nPractical takeaway: If you’re interviewing, describe the isolation trade-off (kernel vs full OS) and tie it to reliability/SRE goals.\n\nDebate question: When building LLM systems + tools, should you default to VMs for “safety” or containers for “scale” — and why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Docker vs VM isn’t just deployment trivia—it’s an architecture decision that affects how you run LLM system components (vector DB/search services, agent tool runners, queues, and inference gateways).\n\nVMs (Virtual Machines)\n• Each VM includes a full guest OS.\n• Pros: stronger separation at the OS boundary; familiar operational model.\n• Cons: higher overhead → fewer workloads per host; slower boot; more “moving OS” surface.\n\nContainers (Docker/LXC)\n• Containers share the host kernel; each container has its own userspace.\n• Pros: higher density (e.g., “host full” with VMs vs many containers sharing the kernel), faster start, and more consistent packaging for microservices.\n• Cons: isolation is different—if the host kernel is compromised, multiple containers can be impacted.\n\nProduction pattern for autonomous AI agents + vector embeddings\n• Separate concerns: agent runtime, embedding/indexing pipelines, and similarity search (vector store) as distinct services.\n• Use containers to maximize packing/iteration speed; use VMs when you need stronger OS-level isolation (e.g., multi-tenant risk, compliance boundaries, or heterogeneous kernel requirements).\n• Add guardrails: resource limits (cgroups), network policies, and staged rollouts for inference + embedding jobs.\n\nIf you’re building for reliability: decide isolation level based on threat model and operational cost, then standardize your orchestration (Kubernetes/managed equivalents) and observability.\n\nOfficial resources:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\n\nWant the full “under the hood” breakdown of how these pieces connect? Check the guides and app templates at kreggscode.com.",
+  "threads_caption": "Docker vs VM = isolation + density trade-offs. Containers share the kernel (more apps/host), VMs run a whole OS (stronger boundary, more overhead). Where would you deploy your LLM/agent stack—VMs or containers? 🔗 https://kreggscode.com",
+  "yt_title": "How Autonomous AI Agents & Vector Embeddings Work #Shorts",
+  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work (under the hood) ⚡\n\nDocker vs VM on the same server: how many apps fit?\n\nIn this Short, we break down:\n• VMs: a whole OS per instance → heavier overhead\n• Containers: share the host kernel → higher density\n• What that means for LLM system design (agent tool runners, vector embedding/indexing, similarity search services)\n\nOfficial links:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts #docker #vm #vectorembeddings #llm #autonomousagents",
   "yt_tags": [
-    "shortest path",
-    "bfs vs a*",
-    "breadth first search",
-    "astar algorithm",
-    "data structures",
-    "algorithms explained",
-    "system design interview",
-    "software engineering fundamentals",
-    "backend architecture",
-    "ai engineering"
+    "autonomous ai agents architecture",
+    "vector embeddings similarity search",
+    "docker vs vm",
+    "llm system design",
+    "how artificial intelligence works under the hood",
+    "vector database",
+    "llm deployment",
+    "containers vs vms",
+    "microservices architecture",
+    "kubernetes beginner"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#docker",
+    "#vm",
+    "#vectorembeddings",
+    "#llmsystemdesign"
   ]
 }

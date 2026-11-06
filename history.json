@@ -458,5 +458,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "04-docker-vs-vm.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+    "video": "04-docker-vs-vm.mp4",
+    "music": null,
+    "timestamp": "2026-11-06T16:43:35Z",
+    "publish": {
+      "instagram": {
+        "id": "18037029863893004",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1100209086108936",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
