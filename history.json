@@ -485,5 +485,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "11-watch-an-ai-learn.html",
+    "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+    "video": "11-watch-an-ai-learn.mp4",
+    "music": null,
+    "timestamp": "2026-11-07T15:58:29Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'type': 'OAuthException', 'code': 9007, 'error_subcode': 2207027, 'is_transient': False, 'error_user_title': 'Cannot Publish', 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'fbtrace_id': 'Alj3Z9X4p2WXy-RhSmYodwT'}}"
+      },
+      "facebook": {
+        "id": "3107087122818680",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

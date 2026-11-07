@@ -1,27 +1,29 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work (under the hood) ⚡\nDocker vs VM: same server, how many apps fit?\n\n• VMs: a whole OS each → heavier CPU/RAM overhead\n• Containers: share the host kernel → lighter isolation\n• Kernel sharing changes density: more apps per box\n• Rule of thumb: VM = stronger OS boundary; container = faster packing\n\nPractical takeaway: If you’re interviewing, describe the isolation trade-off (kernel vs full OS) and tie it to reliability/SRE goals.\n\nDebate question: When building LLM systems + tools, should you default to VMs for “safety” or containers for “scale” — and why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Docker vs VM isn’t just deployment trivia—it’s an architecture decision that affects how you run LLM system components (vector DB/search services, agent tool runners, queues, and inference gateways).\n\nVMs (Virtual Machines)\n• Each VM includes a full guest OS.\n• Pros: stronger separation at the OS boundary; familiar operational model.\n• Cons: higher overhead → fewer workloads per host; slower boot; more “moving OS” surface.\n\nContainers (Docker/LXC)\n• Containers share the host kernel; each container has its own userspace.\n• Pros: higher density (e.g., “host full” with VMs vs many containers sharing the kernel), faster start, and more consistent packaging for microservices.\n• Cons: isolation is different—if the host kernel is compromised, multiple containers can be impacted.\n\nProduction pattern for autonomous AI agents + vector embeddings\n• Separate concerns: agent runtime, embedding/indexing pipelines, and similarity search (vector store) as distinct services.\n• Use containers to maximize packing/iteration speed; use VMs when you need stronger OS-level isolation (e.g., multi-tenant risk, compliance boundaries, or heterogeneous kernel requirements).\n• Add guardrails: resource limits (cgroups), network policies, and staged rollouts for inference + embedding jobs.\n\nIf you’re building for reliability: decide isolation level based on threat model and operational cost, then standardize your orchestration (Kubernetes/managed equivalents) and observability.\n\nOfficial resources:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\n\nWant the full “under the hood” breakdown of how these pieces connect? Check the guides and app templates at kreggscode.com.",
-  "threads_caption": "Docker vs VM = isolation + density trade-offs. Containers share the kernel (more apps/host), VMs run a whole OS (stronger boundary, more overhead). Where would you deploy your LLM/agent stack—VMs or containers? 🔗 https://kreggscode.com",
-  "yt_title": "How Autonomous AI Agents & Vector Embeddings Work #Shorts",
-  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work (under the hood) ⚡\n\nDocker vs VM on the same server: how many apps fit?\n\nIn this Short, we break down:\n• VMs: a whole OS per instance → heavier overhead\n• Containers: share the host kernel → higher density\n• What that means for LLM system design (agent tool runners, vector embedding/indexing, similarity search services)\n\nOfficial links:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts #docker #vm #vectorembeddings #llm #autonomousagents",
+  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+  "ig_caption": "How Computer Networks & Routing Work Under the Hood ⚡ | What happens when you change your IP or query DNS?\n\nWatch an AI learn live: a tiny network of 180 dots, no rules—just numbers finding patterns in real time.\n\nUnder the hood (routing + DNS, visualized):\n• Your IP change starts a new path/association for traffic\n• DNS lookup maps name → IP (cache hits vs full resolution)\n• Routers choose next hops based on routing tables (best path)\n• TCP vs UDP: connection reliability vs low-latency transport\n• Sockets bind, send, receive—then packets get forwarded hop-by-hop\n\nPractical takeaway: For interviews, describe the full flow (DNS → routing → transport) and name the trade-offs (latency, reliability, state).\n\nDebate question: When DNS changes, should apps “fail fast” or “gracefully degrade” with retries and cached answers?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "— Watch an AI Learn (and connect it to how networks actually move your data) ⚡\n\nWhen you ask “what happens under the hood?” the real story spans multiple layers:\n\n1) DNS lookup process visualized\n- Name resolution (and caching) determines which IP your client targets.\n- Changing your IP / querying DNS can shift where traffic lands, affecting latency and reachability.\n- TTL + resolver caches create “stale vs fresh” trade-offs.\n\n2) How internet routing works\n- After you have an IP, routers forward packets hop-by-hop.\n- Routing tables + metrics drive “best path” selection.\n- Convergence and transient inconsistencies can cause short-lived blackholes or reroutes.\n\n3) TCP vs UDP socket programming trade-offs\n- TCP: connection establishment, ordered delivery, retransmissions, and flow/congestion control (more state, more reliability).\n- UDP: minimal overhead and lower latency, but app-layer handling is required (reordering, loss recovery, etc.).\n\n4) Production architecture lesson (pattern that scales)\n- Observability-first: log DNS resolutions, target IPs, RTT, retransmits/timeouts.\n- Resilience: retries with backoff, circuit breaking, and fallback to cached answers.\n- Clear contracts: separate “transport guarantees” from “application correctness.”\n\nIf you enjoy visual learning, pair this reel with the interactive guides here:\n🔗 https://kreggscode.com\n\nFor mobile + AI app flows (and practical system behavior):\n📱 https://kreggscode.com/apps/\n\nQuestion for engineers: Would you rather depend on DNS freshness (lower staleness) or DNS caching stability (fewer resolution failures) under real traffic?\n\n#kreggscode",
+  "threads_caption": "What actually happens when you change your IP or query DNS? 🔍\n\nDNS → routing → TCP/UDP → packets hop-by-hop. Watch an AI learn patterns in 180 dots, then map the same “data flow” mindset to real systems.\nhttps://kreggscode.com",
+  "yt_title": "How Computer Networks & Routing Work Under the Hood #Shorts",
+  "yt_description": "Watch an AI learn live: a tiny network of 180 dots finding patterns—then map it to what really happens under the hood in computer networks and routing.\n\nWhat you’ll see / learn:\n• DNS lookup process visualized (name → IP, caching, TTL)\n• How internet routing works (next hops, best path, hop-by-hop forwarding)\n• TCP vs UDP socket programming trade-offs (reliability vs low-latency, state vs simplicity)\n\nPractical takeaway (engineering/interview tip): Explain the end-to-end flow (DNS → routing → transport) and call out the trade-offs in latency, reliability, and state.\n\nOfficial links:\n• Interactive architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts #kreggscode",
   "yt_tags": [
-    "autonomous ai agents architecture",
-    "vector embeddings similarity search",
-    "docker vs vm",
-    "llm system design",
-    "how artificial intelligence works under the hood",
-    "vector database",
-    "llm deployment",
-    "containers vs vms",
-    "microservices architecture",
-    "kubernetes beginner"
+    "computer networks",
+    "internet routing",
+    "dns lookup",
+    "tcp vs udp",
+    "socket programming",
+    "networking fundamentals",
+    "ip address change",
+    "packet forwarding",
+    "routing tables",
+    "shorts",
+    "kreggscode",
+    "ai learns"
   ],
   "hashtags": [
     "#kreggscode",
-    "#docker",
-    "#vm",
-    "#vectorembeddings",
-    "#llmsystemdesign"
+    "#computernetworks",
+    "#dnslookup",
+    "#tcpvsudp",
+    "#introuting"
   ]
 }
