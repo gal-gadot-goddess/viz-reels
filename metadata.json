@@ -1,29 +1,28 @@
 {
-  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
-  "ig_caption": "How Computer Networks & Routing Work Under the Hood ⚡ | What happens when you change your IP or query DNS?\n\nWatch an AI learn live: a tiny network of 180 dots, no rules—just numbers finding patterns in real time.\n\nUnder the hood (routing + DNS, visualized):\n• Your IP change starts a new path/association for traffic\n• DNS lookup maps name → IP (cache hits vs full resolution)\n• Routers choose next hops based on routing tables (best path)\n• TCP vs UDP: connection reliability vs low-latency transport\n• Sockets bind, send, receive—then packets get forwarded hop-by-hop\n\nPractical takeaway: For interviews, describe the full flow (DNS → routing → transport) and name the trade-offs (latency, reliability, state).\n\nDebate question: When DNS changes, should apps “fail fast” or “gracefully degrade” with retries and cached answers?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "— Watch an AI Learn (and connect it to how networks actually move your data) ⚡\n\nWhen you ask “what happens under the hood?” the real story spans multiple layers:\n\n1) DNS lookup process visualized\n- Name resolution (and caching) determines which IP your client targets.\n- Changing your IP / querying DNS can shift where traffic lands, affecting latency and reachability.\n- TTL + resolver caches create “stale vs fresh” trade-offs.\n\n2) How internet routing works\n- After you have an IP, routers forward packets hop-by-hop.\n- Routing tables + metrics drive “best path” selection.\n- Convergence and transient inconsistencies can cause short-lived blackholes or reroutes.\n\n3) TCP vs UDP socket programming trade-offs\n- TCP: connection establishment, ordered delivery, retransmissions, and flow/congestion control (more state, more reliability).\n- UDP: minimal overhead and lower latency, but app-layer handling is required (reordering, loss recovery, etc.).\n\n4) Production architecture lesson (pattern that scales)\n- Observability-first: log DNS resolutions, target IPs, RTT, retransmits/timeouts.\n- Resilience: retries with backoff, circuit breaking, and fallback to cached answers.\n- Clear contracts: separate “transport guarantees” from “application correctness.”\n\nIf you enjoy visual learning, pair this reel with the interactive guides here:\n🔗 https://kreggscode.com\n\nFor mobile + AI app flows (and practical system behavior):\n📱 https://kreggscode.com/apps/\n\nQuestion for engineers: Would you rather depend on DNS freshness (lower staleness) or DNS caching stability (fewer resolution failures) under real traffic?\n\n#kreggscode",
-  "threads_caption": "What actually happens when you change your IP or query DNS? 🔍\n\nDNS → routing → TCP/UDP → packets hop-by-hop. Watch an AI learn patterns in 180 dots, then map the same “data flow” mindset to real systems.\nhttps://kreggscode.com",
-  "yt_title": "How Computer Networks & Routing Work Under the Hood #Shorts",
-  "yt_description": "Watch an AI learn live: a tiny network of 180 dots finding patterns—then map it to what really happens under the hood in computer networks and routing.\n\nWhat you’ll see / learn:\n• DNS lookup process visualized (name → IP, caching, TTL)\n• How internet routing works (next hops, best path, hop-by-hop forwarding)\n• TCP vs UDP socket programming trade-offs (reliability vs low-latency, state vs simplicity)\n\nPractical takeaway (engineering/interview tip): Explain the end-to-end flow (DNS → routing → transport) and call out the trade-offs in latency, reliability, and state.\n\nOfficial links:\n• Interactive architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts #kreggscode",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (VIZ23)",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (VIZ 23): Overfitting vs learning—test on new data.\n\n• VIZ 23 shows polynomial “fit” training error ↓ while test error can ↑\n• Overfitting = memorizing patterns/noise, not general rules\n• Under the hood: train/test split + validation loop prevent “cheating”\n• Even with smarter LLM system design, evaluation must use unseen data\n• Production fix: regularization, early stopping, data augmentation, sanity checks\n\nTakeaway: If your model looks great on train but drops on test, you’re likely memorizing—start by validating with a held-out set.\n\nQuestion: Where do you draw the line between “learning” and “memorizing” in real AI systems?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "VIZ 23 — Overfitting: when a model memorizes instead of learning.\n\nThe intuition: you can drive training loss down by fitting a high-degree polynomial (or a large neural net) to the quirks of your dataset. But if you only check train error, you miss the failure mode: test error rises because the model learned noise, not the underlying signal.\n\nUnder the hood (production view):\n- Train vs test vs validation: Training loss can improve continuously while generalization degrades.\n- Evaluation loop: Always gate model selection on validation metrics; reserve test for final reporting.\n- Overfitting signals: large train–test gap, unstable performance across time splits, and brittleness to distribution shift.\n\nWhen you connect this to modern AI agent architectures:\n- Vector embeddings similarity search helps agents retrieve relevant context, but retrieval quality can mask overfitting elsewhere.\n- Autonomous ai agents architecture still needs robust offline eval + online monitoring; “it works for my prompts” is not evaluation.\n- LLM system design best practice: treat embeddings/agents as components—measure retrieval hit-rate, downstream task success, and calibration separately.\n\nTrade-offs & patterns:\n- Regularization + early stopping: cheaper than constantly collecting more data.\n- Data strategy: augmentation and better sampling often beat larger models.\n- Safer rollouts: use canary deployments and track test-like metrics continuously.\n\nIf you want the interactive engineering maps, start here: https://kreggscode.com\nAnd for apps/mobile workflows: https://kreggscode.com/apps/\n\nWhat metric do you trust most to detect memorization in your pipelines—loss gap, retrieval metrics, or task success on unseen distributions?",
+  "threads_caption": "Overfitting is memorizing, not learning: train error ↓ but test error ↑. In AI agents + vector embeddings, you still must evaluate on unseen data. What’s your “memorization detector”? \nhttps://kreggscode.com",
+  "yt_title": "Overfitting vs Learning (Agents + Embeddings) #Shorts",
+  "yt_description": "VIZ 23 explainer: Overfitting vs learning—why training error can lie. In this 9x16 reel, we show how a polynomial fit can memorize training data while test error gets worse, and how that same risk appears in modern AI agent workflows.\n\nWhat you’ll learn:\n- What overfitting actually looks like (train vs test error gap)\n- Why memorizing isn’t learning (generalization matters)\n- How vector embeddings + autonomous ai agents still need real evaluation on unseen data\n- Practical fixes: validation loops, regularization, early stopping, and robust dataset splits\n\nLinks:\n- Interactive architecture guides: https://kreggscode.com\n- Mobile & AI Apps: https://kreggscode.com/apps/\n- Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "computer networks",
-    "internet routing",
-    "dns lookup",
-    "tcp vs udp",
-    "socket programming",
-    "networking fundamentals",
-    "ip address change",
-    "packet forwarding",
-    "routing tables",
-    "shorts",
-    "kreggscode",
-    "ai learns"
+    "overfitting",
+    "machine learning explainer",
+    "train test split",
+    "polynomial regression",
+    "ai evaluation",
+    "vector embeddings",
+    "similarity search",
+    "autonomous ai agents",
+    "llm system design",
+    "how ai works under the hood",
+    "shorts"
   ],
   "hashtags": [
     "#kreggscode",
-    "#computernetworks",
-    "#dnslookup",
-    "#tcpvsudp",
-    "#introuting"
+    "#overfitting",
+    "#vectorembeddings",
+    "#aiagents",
+    "#machinelearning"
   ]
 }

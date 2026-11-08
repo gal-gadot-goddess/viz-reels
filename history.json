@@ -512,5 +512,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "VIZ-23_overfitting-memorizing-vs-learning-polynomial-fit-training-vs-test-error_AI-machine-learning-explainer_9x16-reel_with-synth-sound.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (VIZ23)",
+    "video": "VIZ-23_overfitting-memorizing-vs-learning-polynomial-fit-training-vs-test-error_AI-machine-learning-explainer_9x16-reel_with-synth-sound.mp4",
+    "music": null,
+    "timestamp": "2026-11-08T16:15:33Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'type': 'OAuthException', 'code': 9007, 'error_subcode': 2207027, 'is_transient': False, 'error_user_title': 'Cannot Publish', 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'fbtrace_id': 'A-aD5GPkM4luPyVF9T3EBHm'}}"
+      },
+      "facebook": {
+        "id": "1439377267742209",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
