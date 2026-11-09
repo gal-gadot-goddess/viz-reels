@@ -1,28 +1,29 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (VIZ23)",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (VIZ 23): Overfitting vs learning—test on new data.\n\n• VIZ 23 shows polynomial “fit” training error ↓ while test error can ↑\n• Overfitting = memorizing patterns/noise, not general rules\n• Under the hood: train/test split + validation loop prevent “cheating”\n• Even with smarter LLM system design, evaluation must use unseen data\n• Production fix: regularization, early stopping, data augmentation, sanity checks\n\nTakeaway: If your model looks great on train but drops on test, you’re likely memorizing—start by validating with a held-out set.\n\nQuestion: Where do you draw the line between “learning” and “memorizing” in real AI systems?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "VIZ 23 — Overfitting: when a model memorizes instead of learning.\n\nThe intuition: you can drive training loss down by fitting a high-degree polynomial (or a large neural net) to the quirks of your dataset. But if you only check train error, you miss the failure mode: test error rises because the model learned noise, not the underlying signal.\n\nUnder the hood (production view):\n- Train vs test vs validation: Training loss can improve continuously while generalization degrades.\n- Evaluation loop: Always gate model selection on validation metrics; reserve test for final reporting.\n- Overfitting signals: large train–test gap, unstable performance across time splits, and brittleness to distribution shift.\n\nWhen you connect this to modern AI agent architectures:\n- Vector embeddings similarity search helps agents retrieve relevant context, but retrieval quality can mask overfitting elsewhere.\n- Autonomous ai agents architecture still needs robust offline eval + online monitoring; “it works for my prompts” is not evaluation.\n- LLM system design best practice: treat embeddings/agents as components—measure retrieval hit-rate, downstream task success, and calibration separately.\n\nTrade-offs & patterns:\n- Regularization + early stopping: cheaper than constantly collecting more data.\n- Data strategy: augmentation and better sampling often beat larger models.\n- Safer rollouts: use canary deployments and track test-like metrics continuously.\n\nIf you want the interactive engineering maps, start here: https://kreggscode.com\nAnd for apps/mobile workflows: https://kreggscode.com/apps/\n\nWhat metric do you trust most to detect memorization in your pipelines—loss gap, retrieval metrics, or task success on unseen distributions?",
-  "threads_caption": "Overfitting is memorizing, not learning: train error ↓ but test error ↑. In AI agents + vector embeddings, you still must evaluate on unseen data. What’s your “memorization detector”? \nhttps://kreggscode.com",
-  "yt_title": "Overfitting vs Learning (Agents + Embeddings) #Shorts",
-  "yt_description": "VIZ 23 explainer: Overfitting vs learning—why training error can lie. In this 9x16 reel, we show how a polynomial fit can memorize training data while test error gets worse, and how that same risk appears in modern AI agent workflows.\n\nWhat you’ll learn:\n- What overfitting actually looks like (train vs test error gap)\n- Why memorizing isn’t learning (generalization matters)\n- How vector embeddings + autonomous ai agents still need real evaluation on unseen data\n- Practical fixes: validation loops, regularization, early stopping, and robust dataset splits\n\nLinks:\n- Interactive architecture guides: https://kreggscode.com\n- Mobile & AI Apps: https://kreggscode.com/apps/\n- Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (Backprop inside)\nGuess → measure mistake → send blame backward → adjust.\n\n• Vector embeddings similarity search: find the most relevant context\n• LLM under the hood: predict tokens, then compare to the target\n• Backpropagation: compute gradients that explain “what to change”\n• Credit assignment: blame flows backward through layers\n• Update step: weights shift to reduce future error\n• In agent systems: this improves tool-use policies via training signals\n\nPractical takeaway: In interviews, describe learning as “loss → gradients → parameter updates,” not just “AI learns.”\n\nWhat would you rather optimize first in production: retrieval accuracy (embeddings) or learning stability (backprop/gradients)? Comment your pick.\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Backpropagation is the “fix my mistake” loop that sits under modern AI—especially when you’re building toward autonomous AI agents.\n\nHere’s the under-the-hood view in the context of autonomous agent architecture:\n\n1) Retrieval stage (embeddings similarity search)\n- Vector embeddings turn text into points in a vector space.\n- You run similarity search to retrieve candidate context (top-k) for the agent/LLM.\n- Trade-off: better retrieval improves factual grounding, but can increase latency and cost. Too much retrieval noise can also destabilize downstream learning.\n\n2) Prediction stage (LLM system design)\n- The model outputs a probability distribution over the next token (or an action).\n- A loss function measures how wrong the prediction is versus the target.\n\n3) Backpropagation stage (the core learning mechanism)\n- Forward pass: compute predictions layer-by-layer.\n- Loss: quantify the mistake.\n- Backward pass: compute gradients (∂loss/∂weights).\n- Update: apply an optimizer (e.g., SGD/Adam) to adjust parameters to reduce future loss.\n\n4) Why this matters for autonomous agents\n- Agents aren’t just chat—they choose actions/tools.\n- Training signals can come from supervised learning, imitation, RL-style rewards, or preference optimization.\n- Backprop updates the model components that decide actions or generate policies, while retrieval updates what context the model sees.\n\nProduction lessons / trade-offs to keep in mind:\n- Retrieval + learning are coupled: poor retrieval can create misleading training signals.\n- Stability matters: exploding/vanishing gradients, learning-rate schedules, and gradient clipping are not optional at scale.\n- Measure the right thing: track both task loss and end-to-end metrics (e.g., tool success rate, factuality, latency).\n\nIf you’re designing agent systems, think in pipelines: embeddings → retrieval → reasoning → action, and remember backprop is what makes the reasoning/action network improve over time.\n\nMore architecture patterns:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
+  "threads_caption": "Backprop is the loop: Guess → Measure the mistake → Send the blame backward → Adjust. ⚡\nThis is how models learn better “under the hood” for autonomous agents.\nWhat would you optimize first: retrieval (embeddings) or learning stability (gradients)?\nhttps://kreggscode.com",
+  "yt_title": "How Autonomous AI Agents Work (Backprop) #Shorts",
+  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — Backpropagation explained in under 60 seconds.\n\nIn this Short, you’ll see the learning loop:\n• Vector embeddings similarity search finds relevant context\n• The LLM guesses an output\n• A loss function measures the mistake\n• Backpropagation sends blame backward via gradients\n• Weights update to reduce future error\n\nTrade-offs in real systems:\n• Retrieval quality affects what the model learns\n• Gradient stability determines whether training converges\n• End-to-end metrics matter (not just loss)\n\nOfficial guides & apps:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #backpropagation #embeddings #vectorsearch #llm #machinelearning",
   "yt_tags": [
-    "overfitting",
-    "machine learning explainer",
-    "train test split",
-    "polynomial regression",
-    "ai evaluation",
+    "autonomous ai agents architecture",
     "vector embeddings",
-    "similarity search",
-    "autonomous ai agents",
+    "vector embeddings similarity search",
+    "how artificial intelligence works under the hood",
     "llm system design",
-    "how ai works under the hood",
-    "shorts"
+    "backpropagation",
+    "neural networks",
+    "gradient descent",
+    "loss function",
+    "machine learning training",
+    "ai engineering",
+    "ai agents"
   ],
   "hashtags": [
-    "#kreggscode",
-    "#overfitting",
+    "#backpropagation",
     "#vectorembeddings",
-    "#aiagents",
-    "#machinelearning"
+    "#llmsystemdesign",
+    "#autonomousai",
+    "#kreggscode"
   ]
 }

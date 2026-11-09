@@ -539,5 +539,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "16-backpropagation.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+    "video": "16-backpropagation.mp4",
+    "music": null,
+    "timestamp": "2026-11-09T20:06:27Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'type': 'OAuthException', 'code': 9007, 'error_subcode': 2207027, 'is_transient': False, 'error_user_title': 'Cannot Publish', 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'fbtrace_id': 'AF4yLwGSOUDorbELu_QnxYl'}}"
+      },
+      "facebook": {
+        "id": "1854673528894886",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "cannot access local variable 'video_url' where it is not associated with a value"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
