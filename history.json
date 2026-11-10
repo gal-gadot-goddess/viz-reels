@@ -566,5 +566,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "05-memory-leak.html",
+    "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
+    "video": "05-memory-leak.mp4",
+    "music": null,
+    "timestamp": "2026-11-10T16:58:29Z",
+    "publish": {
+      "instagram": {
+        "id": "17907609843349532",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1129917673168058",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
