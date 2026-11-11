@@ -1,28 +1,27 @@
 {
-  "title": "Redis Caching Patterns: Scaling Backend Architecture ⚡",
-  "ig_caption": "Redis caching patterns: scaling backend architecture—how memory leaks happen in real systems? ⚡\nCache aside, heap growth, GC, and why your server crashes.\n\n• The heap is where your server stores live objects (and dreams)\n• Requests come in → caching grows (or never shrinks)\n• Cache keeps every user → unbounded keys = memory climb\n• GC cleanup exists, but it only frees unreachable objects\n• “Leak” often means references stay reachable (maps, queues, listeners)\n• RAM limit gets hit → heap fragmentation → GC thrash → blocked requests\n\nPractical takeaway: In interviews, ask “Where do keys expire? Who holds references?” Then quantify cardinality + TTL.\n\nDebate: Is your “memory leak” really a GC problem—or an architectural retention problem?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Redis caching patterns: scaling backend architecture—and the hidden path from “in-memory cache” to a real memory leak.\n\nWhat people call a “memory leak” is often retention by design:\n\n- Unbounded cache cardinality: cache keeps every user (and every session attribute) → key explosion\n- Cache-aside gotchas: if misses fall back to DB but write-backs never expire, memory monotonically grows\n- Reachability beats GC: garbage collection only reclaims objects that are unreachable; if your cache, maps, or event listeners still reference them, GC can’t help\n- Backpressure and blocked work: when the heap hits RAM limits, GC thrash increases pause time and request handling can effectively stall\n- Heap growth vs. fragmentation: even with “cleanup,” allocator churn can degrade latency until the server crashes\n\nProduction patterns that prevent this:\n- Enforce TTLs and eviction policies (LRU/LFU) and set sane max-memory bounds\n- Use key design with strict limits (avoid per-user-per-request keys unless absolutely necessary)\n- Add observability: heap usage, live-set size, GC time, cache hit ratio, and key counts\n- Validate reference lifetimes: look for long-lived maps, listeners, and queues that retain objects\n\nFor more architecture walkthroughs (including caching trade-offs and backend scaling), see:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
-  "threads_caption": "If you have “memory leaks,” it’s rarely just GC. It’s usually retention: unbounded cache keys or live references. Redis caching patterns + TTL/eviction fixes the root cause. Debate: where does your system hold references? 🔗 https://kreggscode.com",
-  "yt_title": "Redis Caching Patterns: Memory Leak vs GC #Shorts",
-  "yt_description": "Redis caching patterns: scaling backend architecture—why “memory leaks” happen even with garbage collection. ⚡\n\nIn this Short, we break down:\n- The heap: where your server’s memory lives\n- Requests in → cache grows (and can keep every user)\n- Why GC can’t fix retention: objects stay reachable\n- RAM limit → blocked requests → heap thrash → crash\n\nQuick takeaway (interview ready): Ask about TTL, eviction, and who still holds references.\n\nOfficial guides:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nFollow on Instagram:\nhttps://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "System Design & Software Architecture Explained ⚡",
+  "ig_caption": "System Design & Software Architecture Explained: recursion call stack + memoization (fib(6)) 🔥\nHow high-performance systems & modern AI operate under the hood!\n\n• Recursion: a function calls itself until the base case\n• Call stack: each call pushes a frame (where to return + local state)\n• fib(6) live trace: watch frames expand/contract step-by-step\n• Exponential re-computation happens fast (why it’s slow)\n• Memoization: cache results so repeated calls become O(1) hits\n\nPractical takeaway: In interviews, always ask “what repeats?”—then cache or restructure to cut repeated work.\n\nDebate: Should production code prefer memoization or an iterative DP loop for reliability under load?\n\n🔗 Deep-dive engineering guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | AI & Systems Studio",
+  "fb_caption": "Recursion isn’t just a coding pattern—it’s an execution model. In VIZ 22 we live-trace fib(6) to visualize how the recursion call stack grows/shrinks frame-by-frame, then we add memoization to show the “under the hood” performance shift.\n\nWhat’s happening architecturally:\n• Call stack dynamics: each recursive call allocates a frame (return address + locals). Deep recursion risks stack overflow and adds overhead per frame.\n• Redundant work in naive Fibonacci: overlapping subproblems recompute the same values repeatedly—classic exponential blow-up.\n• Memoization as a caching layer: we trade memory for compute by storing computed results (a targeted form of dynamic programming).\n\nProduction trade-offs to consider:\n• Memoization memory bounds: unbounded caches can hurt latency and GC/heap stability; use size limits/TTL when appropriate.\n• Iterative vs recursive: iterative DP avoids deep stacks and can be more predictable in real services.\n• Concurrency: shared caches need careful synchronization or lock-free design; per-request caches are often safer.\n\nInterview lens: When you see recursion, immediately check for overlapping subproblems. If yes, memoization/DP usually wins.\n\nLinks:\n🔗 https://kreggscode.com\n(Interactive architecture guides)\n📱 https://kreggscode.com/apps/ (Mobile & AI Apps)\n\nWould you implement memoization or an iterative DP loop in production first—and why?",
+  "threads_caption": "Recursion = call stack frames. Memoization = cache the repeats. Watch fib(6) live under the hood ⚡ What would you pick in production: memoization or iterative DP?\n🔗 https://kreggscode.com",
+  "yt_title": "Recursion Call Stack + Memoization (fib(6)) #Shorts",
+  "yt_description": "System Design & Software Architecture Explained: recursion call stack + memoization using a live fib(6) trace ⚡\n\nIn this Short, we:\n• Visualize recursion and how the call stack grows/shrinks\n• Live-trace fib(6) to show where time is wasted\n• Apply memoization to remember results and remove repeated work\n• Connect the idea to “under the hood” performance engineering for modern systems & AI\n\nOfficial links:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "memory leak",
-    "garbage collection",
-    "heap memory",
-    "redis caching strategies",
-    "cache aside pattern",
-    "backend scaling",
-    "system design interview questions",
-    "database latency",
-    "in memory caching",
-    "web performance",
-    "distributed systems"
+    "system design interview",
+    "software engineering fundamentals",
+    "recursion",
+    "call stack",
+    "memoization",
+    "dynamic programming",
+    "coding interview questions",
+    "scalable backend architecture",
+    "artificial intelligence",
+    "performance engineering"
   ],
   "hashtags": [
     "#kreggscode",
     "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#recursion",
+    "#memoization",
+    "#shorts"
   ]
 }
