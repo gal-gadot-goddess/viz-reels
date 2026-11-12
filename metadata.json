@@ -1,27 +1,28 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡",
-  "ig_caption": "System Design & Software Architecture Explained: recursion call stack + memoization (fib(6)) 🔥\nHow high-performance systems & modern AI operate under the hood!\n\n• Recursion: a function calls itself until the base case\n• Call stack: each call pushes a frame (where to return + local state)\n• fib(6) live trace: watch frames expand/contract step-by-step\n• Exponential re-computation happens fast (why it’s slow)\n• Memoization: cache results so repeated calls become O(1) hits\n\nPractical takeaway: In interviews, always ask “what repeats?”—then cache or restructure to cut repeated work.\n\nDebate: Should production code prefer memoization or an iterative DP loop for reliability under load?\n\n🔗 Deep-dive engineering guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | AI & Systems Studio",
-  "fb_caption": "Recursion isn’t just a coding pattern—it’s an execution model. In VIZ 22 we live-trace fib(6) to visualize how the recursion call stack grows/shrinks frame-by-frame, then we add memoization to show the “under the hood” performance shift.\n\nWhat’s happening architecturally:\n• Call stack dynamics: each recursive call allocates a frame (return address + locals). Deep recursion risks stack overflow and adds overhead per frame.\n• Redundant work in naive Fibonacci: overlapping subproblems recompute the same values repeatedly—classic exponential blow-up.\n• Memoization as a caching layer: we trade memory for compute by storing computed results (a targeted form of dynamic programming).\n\nProduction trade-offs to consider:\n• Memoization memory bounds: unbounded caches can hurt latency and GC/heap stability; use size limits/TTL when appropriate.\n• Iterative vs recursive: iterative DP avoids deep stacks and can be more predictable in real services.\n• Concurrency: shared caches need careful synchronization or lock-free design; per-request caches are often safer.\n\nInterview lens: When you see recursion, immediately check for overlapping subproblems. If yes, memoization/DP usually wins.\n\nLinks:\n🔗 https://kreggscode.com\n(Interactive architecture guides)\n📱 https://kreggscode.com/apps/ (Mobile & AI Apps)\n\nWould you implement memoization or an iterative DP loop in production first—and why?",
-  "threads_caption": "Recursion = call stack frames. Memoization = cache the repeats. Watch fib(6) live under the hood ⚡ What would you pick in production: memoization or iterative DP?\n🔗 https://kreggscode.com",
-  "yt_title": "Recursion Call Stack + Memoization (fib(6)) #Shorts",
-  "yt_description": "System Design & Software Architecture Explained: recursion call stack + memoization using a live fib(6) trace ⚡\n\nIn this Short, we:\n• Visualize recursion and how the call stack grows/shrinks\n• Live-trace fib(6) to show where time is wasted\n• Apply memoization to remember results and remove repeated work\n• Connect the idea to “under the hood” performance engineering for modern systems & AI\n\nOfficial links:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ inside LLM system design\nInside Modern AI: from vector embeddings to attention 🔥\n\n• Vector embeddings: convert text into dense vectors\n• Similarity search: find nearest neighbors (what’s relevant)\n• Attention: scaled dot-product decides what each token “looks at”\n• Every word attends to every word; weights decide importance\n• Live relevance: query→keys→values → weighted context\n• Production detail: mask, normalize, and manage token budgets\n\nPractical takeaway: In interviews, explain attention as “dynamic routing of information” using Q/K/V and why it beats fixed heuristics.\n\nDebate question: Should agent memory rely more on vector retrieval—or on attention over long context? Why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "How AI pays attention—and why that matters for autonomous agents.\n\nAt a systems level, “attention” is the mechanism that turns token-level signals into a context representation. In modern LLM pipelines, you typically combine two complementary retrieval/routing patterns:\n\n1) Vector embeddings + similarity search (candidate selection)\n- Embeddings map text (or documents) into a shared vector space.\n- Similarity search retrieves the most relevant chunks for the current query.\n- Trade-off: speed/quality balance. ANN indexes (HNSW/IVF) improve latency, but can miss edge-case neighbors—so you often add re-ranking.\n\n2) Scaled dot-product attention (context construction)\n- Attention computes scores between query tokens and key tokens.\n- Scores are scaled, normalized (softmax), then used to weight value vectors.\n- Trade-off: compute grows with sequence length (O(n²) attention). Production systems mitigate this via chunking, sliding windows, sparse attention, or KV-cache.\n\nProduction lessons for autonomous AI agents architecture\n- Retrieval-first agents: embeddings reduce the reasoning surface area, then attention focuses on the retrieved context.\n- Long-context agents: attention over more tokens can reduce retrieval complexity, but increases cost and latency.\n- Memory strategy: vector memory excels at “what to fetch,” while attention excels at “what to emphasize.” Many real systems blend both.\n\nIf you want architecture diagrams and implementation-oriented guides, start here:\nhttps://kreggscode.com\n\nMobile/agent app patterns:\nhttps://kreggscode.com/apps/",
+  "threads_caption": "Attention is dynamic routing: every token “looks at” every other token, and weights decide what matters. Pair it with vector embeddings for candidate selection. What would you optimize first—latency, accuracy, or memory? 🔥\nhttps://kreggscode.com",
+  "yt_title": "How Autonomous AI Agents & Vector Embeddings Work #Shorts",
+  "yt_description": "How AI pays attention (and why vector embeddings + agents work together) ⚡\n\nIn this Short, we connect the dots from vector embeddings similarity search to scaled dot-product attention—computed live conceptually:\n• Embeddings turn text into vectors\n• Similarity search retrieves relevant context\n• Attention uses Q/K/V to weight which tokens matter\n• Weights decide “what the model pays attention to”\n• Production trade-offs: token budgets + compute costs\n\nOfficial guides:\nhttps://kreggscode.com\n\nMobile & AI Apps:\nhttps://kreggscode.com/apps/\n\nFollow on Instagram:\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #LLM #Attention #VectorEmbeddings #AIAgents",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "recursion",
-    "call stack",
-    "memoization",
-    "dynamic programming",
-    "coding interview questions",
-    "scalable backend architecture",
-    "artificial intelligence",
-    "performance engineering"
+    "how ai works under the hood",
+    "autonomous ai agents architecture",
+    "llm system design",
+    "vector embeddings similarity search",
+    "scaled dot product attention",
+    "attention mechanism explained",
+    "qkv attention",
+    "retrieval augmented generation",
+    "rAG architecture",
+    "kreggscode",
+    "ai engineering"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#recursion",
-    "#memoization",
-    "#shorts"
+    "#ai",
+    "#aia",
+    "#llm",
+    "#vectorembeddings"
   ]
 }
