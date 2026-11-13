@@ -1,28 +1,27 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ inside LLM system design\nInside Modern AI: from vector embeddings to attention 🔥\n\n• Vector embeddings: convert text into dense vectors\n• Similarity search: find nearest neighbors (what’s relevant)\n• Attention: scaled dot-product decides what each token “looks at”\n• Every word attends to every word; weights decide importance\n• Live relevance: query→keys→values → weighted context\n• Production detail: mask, normalize, and manage token budgets\n\nPractical takeaway: In interviews, explain attention as “dynamic routing of information” using Q/K/V and why it beats fixed heuristics.\n\nDebate question: Should agent memory rely more on vector retrieval—or on attention over long context? Why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "How AI pays attention—and why that matters for autonomous agents.\n\nAt a systems level, “attention” is the mechanism that turns token-level signals into a context representation. In modern LLM pipelines, you typically combine two complementary retrieval/routing patterns:\n\n1) Vector embeddings + similarity search (candidate selection)\n- Embeddings map text (or documents) into a shared vector space.\n- Similarity search retrieves the most relevant chunks for the current query.\n- Trade-off: speed/quality balance. ANN indexes (HNSW/IVF) improve latency, but can miss edge-case neighbors—so you often add re-ranking.\n\n2) Scaled dot-product attention (context construction)\n- Attention computes scores between query tokens and key tokens.\n- Scores are scaled, normalized (softmax), then used to weight value vectors.\n- Trade-off: compute grows with sequence length (O(n²) attention). Production systems mitigate this via chunking, sliding windows, sparse attention, or KV-cache.\n\nProduction lessons for autonomous AI agents architecture\n- Retrieval-first agents: embeddings reduce the reasoning surface area, then attention focuses on the retrieved context.\n- Long-context agents: attention over more tokens can reduce retrieval complexity, but increases cost and latency.\n- Memory strategy: vector memory excels at “what to fetch,” while attention excels at “what to emphasize.” Many real systems blend both.\n\nIf you want architecture diagrams and implementation-oriented guides, start here:\nhttps://kreggscode.com\n\nMobile/agent app patterns:\nhttps://kreggscode.com/apps/",
-  "threads_caption": "Attention is dynamic routing: every token “looks at” every other token, and weights decide what matters. Pair it with vector embeddings for candidate selection. What would you optimize first—latency, accuracy, or memory? 🔥\nhttps://kreggscode.com",
-  "yt_title": "How Autonomous AI Agents & Vector Embeddings Work #Shorts",
-  "yt_description": "How AI pays attention (and why vector embeddings + agents work together) ⚡\n\nIn this Short, we connect the dots from vector embeddings similarity search to scaled dot-product attention—computed live conceptually:\n• Embeddings turn text into vectors\n• Similarity search retrieves relevant context\n• Attention uses Q/K/V to weight which tokens matter\n• Weights decide “what the model pays attention to”\n• Production trade-offs: token budgets + compute costs\n\nOfficial guides:\nhttps://kreggscode.com\n\nMobile & AI Apps:\nhttps://kreggscode.com/apps/\n\nFollow on Instagram:\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #LLM #Attention #VectorEmbeddings #AIAgents",
+  "title": "System Design & Software Architecture Explained ⚡",
+  "ig_caption": "System Design & Software Architecture Explained ⚡: Bubble vs Quicksort in real time\nSorting, seen & heard—96 shuffled numbers, 2 algorithms.\n\n• VIZ 12: Sorting, seen & heard (sound + replay for focus)\n• Bubble sort: “still shuffling” → many passes, lots of comparisons\n• Quicksort: “done in a blink” → partitioning + recursion reduces work\n\nUnder the hood (engineering analogy):\n• Bubble sort = predictable but inefficient CPU cycles (like chatty endpoints)\n• Quicksort = smarter work scheduling (like partitioned workloads)\n\nPractical takeaway:\nWhen optimizing, measure what dominates (comparisons, swaps, latency). If the shape of work changes, big wins follow.\n\nDebate question: In interviews, would you prioritize simpler code (bubble) or faster average behavior (quicksort) first?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "“Sorting, seen & heard” (VIZ 12) is a fun way to visualize a hard truth in system design: algorithmic structure often beats micro-optimizations.\n\nWhat you’re seeing\n• Bubble sort keeps shuffling: repeated adjacent passes do a lot of redundant comparisons.\n• Quicksort finishes faster: it partitions the problem, recursing on smaller subranges.\n\nTrade-offs that map directly to production systems\n1) Work amplification vs. work decomposition\n   - Bubble sort resembles workloads that repeatedly scan/compare the same data.\n   - Quicksort resembles partitioning: split the input, reduce the remaining search space.\n\n2) Worst-case behavior matters\n   - Quicksort’s average is great, but bad pivots can degrade performance.\n   - In backend design, “fast on average” must still pass tail-latency and worst-case constraints.\n\n3) Observability (“seen & heard”)\n   - The sound/replay framing mirrors how engineers debug: you need signals to confirm assumptions.\n   - Track metrics (comparisons/swaps → CPU time; partitions → request fan-out; recursion depth → queue depth/backpressure).\n\n4) Interview framing\n   - Good answers don’t just state Big-O; they explain how the work is shaped.\n   - Mention strategies to mitigate worst cases (e.g., pivot selection/randomization) the way you’d use load shedding, retries, and circuit breakers.\n\nTry this takeaway\nBefore coding or scaling, identify what dominates: total operations, concurrency overhead, or data movement. Then choose an architecture/algorithm that changes the work shape.\n\nWant more system design patterns?\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/",
+  "threads_caption": "Bubble keeps shuffling. Quicksort partitions and finishes fast. ⚡ In system design interviews, do you optimize for average case first—or nail tail risk immediately? https://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained #Shorts",
+  "yt_description": "Sorting, seen & heard (VIZ 12) — 96 shuffled numbers, two algorithms.\n\nIn this Short:\n• Bubble sort: “still shuffling” through repeated passes\n• Quicksort: “done in a blink” via partition + recursion\n• What it teaches about scalable backend thinking (work decomposition + tail risk)\n\nOfficial links:\n• Interactive architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts\n\n#kreggscode",
   "yt_tags": [
-    "how ai works under the hood",
-    "autonomous ai agents architecture",
-    "llm system design",
-    "vector embeddings similarity search",
-    "scaled dot product attention",
-    "attention mechanism explained",
-    "qkv attention",
-    "retrieval augmented generation",
-    "rAG architecture",
-    "kreggscode",
-    "ai engineering"
+    "system design interview",
+    "software engineering fundamentals",
+    "sorting algorithms",
+    "bubble sort",
+    "quicksort",
+    "algorithm visualization",
+    "scalable backend architecture",
+    "coding interview questions",
+    "performance optimization",
+    "artificial intelligence"
   ],
   "hashtags": [
     "#kreggscode",
-    "#ai",
-    "#aia",
-    "#llm",
-    "#vectorembeddings"
+    "#systemdesign",
+    "#softwareengineering",
+    "#artificialintelligence",
+    "#coding"
   ]
 }
