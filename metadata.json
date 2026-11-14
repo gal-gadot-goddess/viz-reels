@@ -1,27 +1,27 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡",
-  "ig_caption": "System Design & Software Architecture Explained ⚡: Bubble vs Quicksort in real time\nSorting, seen & heard—96 shuffled numbers, 2 algorithms.\n\n• VIZ 12: Sorting, seen & heard (sound + replay for focus)\n• Bubble sort: “still shuffling” → many passes, lots of comparisons\n• Quicksort: “done in a blink” → partitioning + recursion reduces work\n\nUnder the hood (engineering analogy):\n• Bubble sort = predictable but inefficient CPU cycles (like chatty endpoints)\n• Quicksort = smarter work scheduling (like partitioned workloads)\n\nPractical takeaway:\nWhen optimizing, measure what dominates (comparisons, swaps, latency). If the shape of work changes, big wins follow.\n\nDebate question: In interviews, would you prioritize simpler code (bubble) or faster average behavior (quicksort) first?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "“Sorting, seen & heard” (VIZ 12) is a fun way to visualize a hard truth in system design: algorithmic structure often beats micro-optimizations.\n\nWhat you’re seeing\n• Bubble sort keeps shuffling: repeated adjacent passes do a lot of redundant comparisons.\n• Quicksort finishes faster: it partitions the problem, recursing on smaller subranges.\n\nTrade-offs that map directly to production systems\n1) Work amplification vs. work decomposition\n   - Bubble sort resembles workloads that repeatedly scan/compare the same data.\n   - Quicksort resembles partitioning: split the input, reduce the remaining search space.\n\n2) Worst-case behavior matters\n   - Quicksort’s average is great, but bad pivots can degrade performance.\n   - In backend design, “fast on average” must still pass tail-latency and worst-case constraints.\n\n3) Observability (“seen & heard”)\n   - The sound/replay framing mirrors how engineers debug: you need signals to confirm assumptions.\n   - Track metrics (comparisons/swaps → CPU time; partitions → request fan-out; recursion depth → queue depth/backpressure).\n\n4) Interview framing\n   - Good answers don’t just state Big-O; they explain how the work is shaped.\n   - Mention strategies to mitigate worst cases (e.g., pivot selection/randomization) the way you’d use load shedding, retries, and circuit breakers.\n\nTry this takeaway\nBefore coding or scaling, identify what dominates: total operations, concurrency overhead, or data movement. Then choose an architecture/algorithm that changes the work shape.\n\nWant more system design patterns?\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/",
-  "threads_caption": "Bubble keeps shuffling. Quicksort partitions and finishes fast. ⚡ In system design interviews, do you optimize for average case first—or nail tail risk immediately? https://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained #Shorts",
-  "yt_description": "Sorting, seen & heard (VIZ 12) — 96 shuffled numbers, two algorithms.\n\nIn this Short:\n• Bubble sort: “still shuffling” through repeated passes\n• Quicksort: “done in a blink” via partition + recursion\n• What it teaches about scalable backend thinking (work decomposition + tail risk)\n\nOfficial links:\n• Interactive architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts\n\n#kreggscode",
+  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+  "ig_caption": "How Computer Networks & Routing Work Under the Hood ⚡ What Actually Happens When You Change Your IP Address or Query DNS?\n— How HTTPS Builds Trust (VIZ 13)\n\n• IP change: your request must be routed to the right server (DNS → routing → TCP/UDP path)\n• DNS lookup: your name becomes an IP (with caching, TTLs, and resolvers)\n• TCP vs UDP: sockets, ports, and reliability (HTTPS sits on top of TCP)\n• The handshake: browser & server agree on encryption using keys + a certificate\n• Why the padlock matters: the cert proves identity (auth), not just secrecy\n• “One unfair math trick”: public-key cryptography makes key exchange safe\n\nPractical takeaway: For interviews, describe the chain as: DNS → connect → TCP → TLS handshake → encrypted HTTP.\nIn production: always validate certificates and enable modern cipher suites.\n\nWhat would break first in your setup: DNS, routing, or the TLS handshake—and why? Drop your guess 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "What actually happens after you change an IP address or trigger a DNS lookup—and how HTTPS turns that path into trust?\n\nUnder the hood, the flow looks like:\n- DNS lookup process: hostnames resolve to IPs via recursive resolvers + caching (TTL-based) + potential “last-known-good” behavior.\n- Routing: packets follow the control plane’s decisions (next-hops) and the data plane forwards based on headers.\n- Transport: HTTPS typically uses TCP (reliable, ordered bytes). This matters because TLS needs a stable byte stream.\n- TLS handshake: client and server negotiate parameters, exchange/verify keys, and authenticate the server using a certificate.\n- Encrypted trips: once the session is established, application data flows inside protected records.\n\nTrade-offs to remember:\n- DNS vs TLS failure modes: DNS issues cause “can’t reach the host,” while TLS issues often show up as certificate errors or handshake failures.\n- Identity vs confidentiality: the padlock is not just encryption—it’s proof you’re talking to the right server (certificate validation).\n- Performance vs security: session resumption (faster handshakes) vs strict full verification (stronger guarantees).\n\nProduction lessons:\n- Validate certificate chains and hostnames; don’t skip verification.\n- Use modern TLS settings and keep CA trust stores updated.\n- Monitor both networking (DNS latency, route changes) and TLS telemetry (handshake errors, cipher negotiation).\n\nLearn the interactive mechanics here: https://kreggscode.com\nAnd try the mobile/AI tooling: https://kreggscode.com/apps/\n\nDebate question: if DNS is flaky but TLS is perfect, what user symptom do you see first—and how would you instrument it?",
+  "threads_caption": "HTTPS trust isn’t magic: it’s DNS → routing → TCP → TLS handshake → cert validation.\nWhat would break first for you: DNS, routing, or the handshake? 👇\nhttps://kreggscode.com",
+  "yt_title": "How HTTPS Builds Trust (DNS→Routing→Handshake) #Shorts",
+  "yt_description": "How Computer Networks & Routing Work Under the Hood ⚡ What Actually Happens When You Change Your IP Address or Query DNS—and how HTTPS turns the connection into trust?\n\nIn this Shorts breakdown (VIZ 13):\n- DNS lookup process visualised (name → IP, caching, TTL)\n- how internet routing works (packet path to the right server)\n- TCP vs UDP socket programming (why HTTPS usually sits on TCP)\n- a wiretap, a handshake & one unfair math trick (TLS key exchange)\n- why the padlock actually means something (certificate = authentication)\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #networking #dns #tls #https #cybersecurity #programming",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "sorting algorithms",
-    "bubble sort",
-    "quicksort",
-    "algorithm visualization",
-    "scalable backend architecture",
-    "coding interview questions",
-    "performance optimization",
-    "artificial intelligence"
+    "how internet routing works",
+    "dns lookup process visualised",
+    "https handshake",
+    "tls explained",
+    "tcp vs udp sockets",
+    "computer networking fundamentals",
+    "certificate explained",
+    "network security basics",
+    "socket programming",
+    "shorts"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#networking",
+    "#dns",
+    "#https",
+    "#tls"
   ]
 }
