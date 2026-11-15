@@ -701,5 +701,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "07-array-vs-hash-table.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+    "video": "07-array-vs-hash-table.mp4",
+    "music": null,
+    "timestamp": "2026-11-15T16:14:48Z",
+    "publish": {
+      "instagram": {
+        "id": "18351000529283130",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1125025896903279",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

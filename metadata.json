@@ -1,27 +1,29 @@
 {
-  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
-  "ig_caption": "How Computer Networks & Routing Work Under the Hood ⚡ What Actually Happens When You Change Your IP Address or Query DNS?\n— How HTTPS Builds Trust (VIZ 13)\n\n• IP change: your request must be routed to the right server (DNS → routing → TCP/UDP path)\n• DNS lookup: your name becomes an IP (with caching, TTLs, and resolvers)\n• TCP vs UDP: sockets, ports, and reliability (HTTPS sits on top of TCP)\n• The handshake: browser & server agree on encryption using keys + a certificate\n• Why the padlock matters: the cert proves identity (auth), not just secrecy\n• “One unfair math trick”: public-key cryptography makes key exchange safe\n\nPractical takeaway: For interviews, describe the chain as: DNS → connect → TCP → TLS handshake → encrypted HTTP.\nIn production: always validate certificates and enable modern cipher suites.\n\nWhat would break first in your setup: DNS, routing, or the TLS handshake—and why? Drop your guess 👇\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "What actually happens after you change an IP address or trigger a DNS lookup—and how HTTPS turns that path into trust?\n\nUnder the hood, the flow looks like:\n- DNS lookup process: hostnames resolve to IPs via recursive resolvers + caching (TTL-based) + potential “last-known-good” behavior.\n- Routing: packets follow the control plane’s decisions (next-hops) and the data plane forwards based on headers.\n- Transport: HTTPS typically uses TCP (reliable, ordered bytes). This matters because TLS needs a stable byte stream.\n- TLS handshake: client and server negotiate parameters, exchange/verify keys, and authenticate the server using a certificate.\n- Encrypted trips: once the session is established, application data flows inside protected records.\n\nTrade-offs to remember:\n- DNS vs TLS failure modes: DNS issues cause “can’t reach the host,” while TLS issues often show up as certificate errors or handshake failures.\n- Identity vs confidentiality: the padlock is not just encryption—it’s proof you’re talking to the right server (certificate validation).\n- Performance vs security: session resumption (faster handshakes) vs strict full verification (stronger guarantees).\n\nProduction lessons:\n- Validate certificate chains and hostnames; don’t skip verification.\n- Use modern TLS settings and keep CA trust stores updated.\n- Monitor both networking (DNS latency, route changes) and TLS telemetry (handshake errors, cipher negotiation).\n\nLearn the interactive mechanics here: https://kreggscode.com\nAnd try the mobile/AI tooling: https://kreggscode.com/apps/\n\nDebate question: if DNS is flaky but TLS is perfect, what user symptom do you see first—and how would you instrument it?",
-  "threads_caption": "HTTPS trust isn’t magic: it’s DNS → routing → TCP → TLS handshake → cert validation.\nWhat would break first for you: DNS, routing, or the handshake? 👇\nhttps://kreggscode.com",
-  "yt_title": "How HTTPS Builds Trust (DNS→Routing→Handshake) #Shorts",
-  "yt_description": "How Computer Networks & Routing Work Under the Hood ⚡ What Actually Happens When You Change Your IP Address or Query DNS—and how HTTPS turns the connection into trust?\n\nIn this Shorts breakdown (VIZ 13):\n- DNS lookup process visualised (name → IP, caching, TTL)\n- how internet routing works (packet path to the right server)\n- TCP vs UDP socket programming (why HTTPS usually sits on TCP)\n- a wiretap, a handshake & one unfair math trick (TLS key exchange)\n- why the padlock actually means something (certificate = authentication)\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #networking #dns #tls #https #cybersecurity #programming",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — Array vs Hash Table in 30s\nFind one name among thousands: O(n) vs O(1), under the hood.\n\n• Array: you scan/check them all → O(n) • scales badly ✗\n• Hash table: you compute a key → direct lookup O(1) ✓\n• Why it matters in AI: fast index lookups power similarity search\n• Where it shows up: agent memory, vector ID maps, cache keys\n\nPractical takeaway: If your system “checks every candidate,” add an index (hash/table or ANN) before production load hits.\n\nWhich scales better for your use case: arrays with pruning, or hash tables with direct lookup?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Array vs hash table seems basic—until it shows up inside autonomous AI agent pipelines.\n\nIn an agent + embedding workflow, you often need fast routing: “Given a query/entity, where do I find its supporting context?” That routing is the difference between:\n\n• Array scan: check everything → O(n)\n• Hash table lookup: map key → direct access → average O(1)\n\nProduction lesson: if you’re doing repeated linear scans, performance collapses as data grows, especially under concurrent requests.\n\nArchitecture patterns you’ll see in real LLM system design:\n• Index indirection: store vectors separately, but map from IDs/keys to metadata via hash tables.\n• Caching: hash-based caches turn repeated retrieval into constant-time reads.\n• Similarity search pipeline: ANN (approximate nearest neighbors) reduces candidates, while hash tables accelerate exact ID/metadata access for the finalists.\n\nInterview tip: when asked “how would you speed this up?”, describe (1) indexing strategy, (2) lookup complexity, and (3) memory/cache trade-offs—then connect it to how agents fetch tool outputs and memories.\n\nWant deeper system diagrams? Explore: https://kreggscode.com and apps here: https://kreggscode.com/apps/",
+  "threads_caption": "Arrays scan O(n); hash tables jump to O(1). In agent + embedding systems, that lookup speed determines whether you feel “instant” or “laggy.” Which would you choose—and why? https://kreggscode.com",
+  "yt_title": "How Autonomous AI Agents Work: Array vs Hash #Shorts",
+  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — Array vs Hash Table in 30s.\n\nIn AI/agent systems, fast lookups matter: you don’t want to “check them all” when you can index and jump straight to the target.\n\nKey takeaways:\n• Array lookup = scan all items → O(n) (scales badly)\n• Hash table lookup = compute key → direct access → O(1)\n• In vector workflows: hash maps often route IDs/metadata while similarity search finds nearest candidates\n• Faster retrieval = smoother autonomous agent behavior under load\n\nLinks:\n• Architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "how internet routing works",
-    "dns lookup process visualised",
-    "https handshake",
-    "tls explained",
-    "tcp vs udp sockets",
-    "computer networking fundamentals",
-    "certificate explained",
-    "network security basics",
-    "socket programming",
-    "shorts"
+    "autonomous ai agents architecture",
+    "vector embeddings similarity search",
+    "hash table vs array",
+    "hashmap vs array",
+    "llm system design",
+    "ai retrieval augmented generation",
+    "memory indexing for agents",
+    "high performance computing patterns",
+    "software engineering interviews",
+    "data structures tutorial",
+    "cache design",
+    "vector database basics"
   ],
   "hashtags": [
     "#kreggscode",
-    "#networking",
-    "#dns",
-    "#https",
-    "#tls"
+    "#array",
+    "#hashtable",
+    "#vectorembeddings",
+    "#aiagents"
   ]
 }
