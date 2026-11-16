@@ -1,29 +1,28 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — Array vs Hash Table in 30s\nFind one name among thousands: O(n) vs O(1), under the hood.\n\n• Array: you scan/check them all → O(n) • scales badly ✗\n• Hash table: you compute a key → direct lookup O(1) ✓\n• Why it matters in AI: fast index lookups power similarity search\n• Where it shows up: agent memory, vector ID maps, cache keys\n\nPractical takeaway: If your system “checks every candidate,” add an index (hash/table or ANN) before production load hits.\n\nWhich scales better for your use case: arrays with pruning, or hash tables with direct lookup?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Array vs hash table seems basic—until it shows up inside autonomous AI agent pipelines.\n\nIn an agent + embedding workflow, you often need fast routing: “Given a query/entity, where do I find its supporting context?” That routing is the difference between:\n\n• Array scan: check everything → O(n)\n• Hash table lookup: map key → direct access → average O(1)\n\nProduction lesson: if you’re doing repeated linear scans, performance collapses as data grows, especially under concurrent requests.\n\nArchitecture patterns you’ll see in real LLM system design:\n• Index indirection: store vectors separately, but map from IDs/keys to metadata via hash tables.\n• Caching: hash-based caches turn repeated retrieval into constant-time reads.\n• Similarity search pipeline: ANN (approximate nearest neighbors) reduces candidates, while hash tables accelerate exact ID/metadata access for the finalists.\n\nInterview tip: when asked “how would you speed this up?”, describe (1) indexing strategy, (2) lookup complexity, and (3) memory/cache trade-offs—then connect it to how agents fetch tool outputs and memories.\n\nWant deeper system diagrams? Explore: https://kreggscode.com and apps here: https://kreggscode.com/apps/",
-  "threads_caption": "Arrays scan O(n); hash tables jump to O(1). In agent + embedding systems, that lookup speed determines whether you feel “instant” or “laggy.” Which would you choose—and why? https://kreggscode.com",
-  "yt_title": "How Autonomous AI Agents Work: Array vs Hash #Shorts",
-  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡ — Array vs Hash Table in 30s.\n\nIn AI/agent systems, fast lookups matter: you don’t want to “check them all” when you can index and jump straight to the target.\n\nKey takeaways:\n• Array lookup = scan all items → O(n) (scales badly)\n• Hash table lookup = compute key → direct access → O(1)\n• In vector workflows: hash maps often route IDs/metadata while similarity search finds nearest candidates\n• Faster retrieval = smoother autonomous agent behavior under load\n\nLinks:\n• Architecture guides: https://kreggscode.com\n• Mobile & AI Apps: https://kreggscode.com/apps/\n• Instagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL",
+  "ig_caption": "Database Sharding explained: partitioning vs sharding at billion-record scale—how SQL vs NoSQL keeps systems fast?\nVIZ 09: same data, two ways to store it (and why joins/migrations feel different).\n\n• SQL: strict relational tables → schema + joins, but careful migration planning\n• NoSQL: flexible nested docs → fewer joins, fast reads, evolving structures\n• Scaling: horizontal vs vertical scaling\n• Under the hood: replication + routing + workload-aware partitioning\n• Interview lens: “how do you avoid hotspots and keep queries predictable?”\n\nPractical takeaway: For system design interviews, describe the data model first (entities + access patterns), then choose SQL/NoSQL plus sharding/partition strategy.\n\nDo you prefer SQL consistency with joins, or NoSQL flexibility with nested reads—what would you pick for a billion-record system?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "SQL vs NoSQL is often framed as “schema vs flexibility,” but at scale the real differentiator is how your storage model interacts with partitioning/sharding, query patterns, and operational risk.\n\nIn high-scale systems you’ll typically combine:\n- Horizontal scaling (more nodes) rather than only vertical (bigger machines)\n- Partitioning vs sharding:\n  • Partitioning: split data to improve manageability/throughput while keeping a logical model\n  • Sharding: split ownership/routing across shards to scale write volume and avoid bottlenecks\n- Replication + routing:\n  • replicas for read throughput and failover\n  • query routing/shard key selection to prevent hotspots\n\nTrade-offs to remember:\n1) SQL (relational)\n- Pros: clear constraints, strong consistency options, efficient joins when the model fits\n- Cons: schema changes and migrations can be costly; cross-shard joins can get expensive fast\n\n2) NoSQL (document/key-value/column families)\n- Pros: flexible/nested data, often fewer joins for read-heavy workloads\n- Cons: denormalization increases write complexity; enforcing invariants may move to the app layer\n\nArchitecture patterns that work in production:\n- Start from access patterns (reads/writes, hot keys, query shapes), then pick SQL/NoSQL\n- If you need joins across partitions, consider: data modeling changes, precomputed views, or event-driven denormalization\n- Design migrations as a first-class system: dual-write/expand-contract strategies (where applicable)\n\nIf you want the practical system design playbook and interactive guides, check:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\n\nQuestion for engineers: in your experience, what was the bigger failure mode at scale—bad sharding keys, costly migrations, or unexpected access patterns?",
+  "threads_caption": "Database Sharding vs Partitioning decides whether SQL/NoSQL stays fast at billions.\nSQL leans toward joins + migrations; NoSQL leans toward nested reads + denormalization.\nWhat would you choose for your next system? https://kreggscode.com",
+  "yt_title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL #Shorts",
+  "yt_description": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL — how databases scale to billions without crashing.\n\nIn this Short (VIZ 09), we break down “same data, two ways to store it” and what changes at scale:\n- SQL: strict relational model → joins + schema/migration planning\n- NoSQL: flexible nested model → fewer joins, fast reads, evolving structures\n- Sharding vs partitioning: routing + hotspot avoidance\n- Horizontal vs vertical scaling\n- Interview-ready framing: access patterns → data model → scaling strategy\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #SQL #NoSQL #Sharding #Partitioning",
   "yt_tags": [
-    "autonomous ai agents architecture",
-    "vector embeddings similarity search",
-    "hash table vs array",
-    "hashmap vs array",
-    "llm system design",
-    "ai retrieval augmented generation",
-    "memory indexing for agents",
-    "high performance computing patterns",
-    "software engineering interviews",
-    "data structures tutorial",
-    "cache design",
-    "vector database basics"
+    "database sharding explained",
+    "partitioning vs sharding",
+    "sql vs nosql architecture",
+    "horizontal vs vertical scaling",
+    "system design database interview",
+    "high scale systems",
+    "data partitioning",
+    "database scaling",
+    "no sql nested documents",
+    "sql joins migration",
+    "shard key selection"
   ],
   "hashtags": [
     "#kreggscode",
-    "#array",
-    "#hashtable",
-    "#vectorembeddings",
-    "#aiagents"
+    "#sqlvsnosql",
+    "#databasesharding",
+    "#partitioning",
+    "#systemdesign"
   ]
 }

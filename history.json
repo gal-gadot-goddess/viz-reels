@@ -728,5 +728,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "09-sql-vs-nosql.html",
+    "title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL",
+    "video": "09-sql-vs-nosql.mp4",
+    "music": null,
+    "timestamp": "2026-11-16T19:30:03Z",
+    "publish": {
+      "instagram": {
+        "id": "18001597358825710",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1691950765623577",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
