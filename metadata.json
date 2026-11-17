@@ -1,28 +1,29 @@
 {
-  "title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL",
-  "ig_caption": "Database Sharding explained: partitioning vs sharding at billion-record scale—how SQL vs NoSQL keeps systems fast?\nVIZ 09: same data, two ways to store it (and why joins/migrations feel different).\n\n• SQL: strict relational tables → schema + joins, but careful migration planning\n• NoSQL: flexible nested docs → fewer joins, fast reads, evolving structures\n• Scaling: horizontal vs vertical scaling\n• Under the hood: replication + routing + workload-aware partitioning\n• Interview lens: “how do you avoid hotspots and keep queries predictable?”\n\nPractical takeaway: For system design interviews, describe the data model first (entities + access patterns), then choose SQL/NoSQL plus sharding/partition strategy.\n\nDo you prefer SQL consistency with joins, or NoSQL flexibility with nested reads—what would you pick for a billion-record system?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "SQL vs NoSQL is often framed as “schema vs flexibility,” but at scale the real differentiator is how your storage model interacts with partitioning/sharding, query patterns, and operational risk.\n\nIn high-scale systems you’ll typically combine:\n- Horizontal scaling (more nodes) rather than only vertical (bigger machines)\n- Partitioning vs sharding:\n  • Partitioning: split data to improve manageability/throughput while keeping a logical model\n  • Sharding: split ownership/routing across shards to scale write volume and avoid bottlenecks\n- Replication + routing:\n  • replicas for read throughput and failover\n  • query routing/shard key selection to prevent hotspots\n\nTrade-offs to remember:\n1) SQL (relational)\n- Pros: clear constraints, strong consistency options, efficient joins when the model fits\n- Cons: schema changes and migrations can be costly; cross-shard joins can get expensive fast\n\n2) NoSQL (document/key-value/column families)\n- Pros: flexible/nested data, often fewer joins for read-heavy workloads\n- Cons: denormalization increases write complexity; enforcing invariants may move to the app layer\n\nArchitecture patterns that work in production:\n- Start from access patterns (reads/writes, hot keys, query shapes), then pick SQL/NoSQL\n- If you need joins across partitions, consider: data modeling changes, precomputed views, or event-driven denormalization\n- Design migrations as a first-class system: dual-write/expand-contract strategies (where applicable)\n\nIf you want the practical system design playbook and interactive guides, check:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\n\nQuestion for engineers: in your experience, what was the bigger failure mode at scale—bad sharding keys, costly migrations, or unexpected access patterns?",
-  "threads_caption": "Database Sharding vs Partitioning decides whether SQL/NoSQL stays fast at billions.\nSQL leans toward joins + migrations; NoSQL leans toward nested reads + denormalization.\nWhat would you choose for your next system? https://kreggscode.com",
-  "yt_title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL #Shorts",
-  "yt_description": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL — how databases scale to billions without crashing.\n\nIn this Short (VIZ 09), we break down “same data, two ways to store it” and what changes at scale:\n- SQL: strict relational model → joins + schema/migration planning\n- NoSQL: flexible nested model → fewer joins, fast reads, evolving structures\n- Sharding vs partitioning: routing + hotspot avoidance\n- Horizontal vs vertical scaling\n- Interview-ready framing: access patterns → data model → scaling strategy\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #SQL #NoSQL #Sharding #Partitioning",
+  "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+  "ig_caption": "How Computer Networks & Routing Work Under the Hood ⚡—what actually happens when you change your IP?\nDNS lookup → sockets → AI vision of a cat (pixels → edges → verdict).\n\n• Pixels in: the “cat” becomes numeric tensors (≈12M multiplications)\n• Then: pixels → edges → parts (ears/eyes/whiskers) → verdict\n• Under the hood: your network stack also does “layers”\n• Routing: packets hop via next-hop decisions (not magic)\n• DNS lookup: domain → IP so your app can connect\n• TCP vs UDP: reliability vs low-latency delivery trade-off\n\nPractical takeaway: When debugging, log the full path—DNS result, IP, socket type, and timing—before blaming the model.\n\nHot take: Is your AI “seeing” or just pattern-matching the same way routers “deliver” by rules—what breaks first when it fails?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "How Computer Networks & Routing Work Under the Hood ⚡ maps surprisingly well to how AI sees a cat.\n\nWhen you watch the reel, the model’s pipeline is: pixels → edges → parts (ears/eyes/whiskers) → verdict. The networking pipeline has the same “layered” feel: name resolution → routing decisions → transport semantics → application processing.\n\nProduction trade-offs to notice:\n• DNS lookup process: caching changes behavior dramatically (TTL, resolver choice, negative caching). Updating your IP doesn’t instantly change every client’s view.\n• Routing: “it works” until path diversity, MTU, or next-hop selection fails; then packet loss looks like the system “can’t see.”\n• TCP vs UDP: TCP’s handshake + retransmits add reliability; UDP favors low latency but pushes loss handling to the app.\n• Layer boundaries: models fail when features don’t line up; systems fail when assumptions cross boundaries (e.g., wrong destination IP, wrong socket semantics).\n\nEngineering patterns worth stealing:\n• Instrument the chain end-to-end (DNS answer, resolved IP, connect/send timings, model confidence).\n• Use explicit contracts at each layer: schema for inputs, clear retry/backoff policy for networking, deterministic logging for reproducibility.\n• Build graceful fallbacks: circuit breakers for connectivity; confidence thresholds / fallback classifiers for vision.\n\nIf you’re interviewing: explain both pipelines using the same structure—“inputs, transformations, routing/aggregation, and final decision.” That’s a strong systems signal.\n\nCurious question: when you change your IP or query DNS, what do you think breaks first—name resolution, routing, transport, or the app’s assumptions?\n\nInteractive architecture guides: https://kreggscode.com\nMobile & AI Apps: https://kreggscode.com/apps/",
+  "threads_caption": "AI “sees” a cat as layers: pixels → edges → parts → verdict. Networks do the same vibe: DNS → routing → TCP/UDP → app.\nWhere do you think it breaks first when IP/DNS changes?\nhttps://kreggscode.com",
+  "yt_title": "How Computer Networks & Routing Work Under the Hood #Shorts",
+  "yt_description": "How Computer Networks & Routing Work Under the Hood ⚡ — what actually happens when you change your IP address or query DNS, visualized in the same “layered pipeline” style as AI seeing a cat.\n\nIn this Short:\n• DNS lookup process visualised: domain → IP (and why caching matters)\n• How internet routing works: packets follow next-hop decisions\n• TCP vs UDP socket programming: reliability vs low-latency trade-offs\n• AI vision analogy: pixels → edges → parts (ears/eyes/whiskers) → verdict\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\nInstagram: https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "database sharding explained",
-    "partitioning vs sharding",
-    "sql vs nosql architecture",
-    "horizontal vs vertical scaling",
-    "system design database interview",
-    "high scale systems",
-    "data partitioning",
-    "database scaling",
-    "no sql nested documents",
-    "sql joins migration",
-    "shard key selection"
+    "ai sees cat",
+    "computer networks",
+    "routing",
+    "dns lookup",
+    "ip address",
+    "tcp vs udp",
+    "socket programming",
+    "networking fundamentals",
+    "shorts",
+    "ai architecture",
+    "systems engineering",
+    "kreggscode"
   ],
   "hashtags": [
     "#kreggscode",
-    "#sqlvsnosql",
-    "#databasesharding",
-    "#partitioning",
-    "#systemdesign"
+    "#computernetworks",
+    "#routing",
+    "#dns",
+    "#shorts"
   ]
 }

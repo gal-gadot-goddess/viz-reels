@@ -755,5 +755,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "24-ai-sees-cat.html",
+    "title": "How Computer Networks & Routing Work Under the Hood ⚡",
+    "video": "24-ai-sees-cat.mp4",
+    "music": null,
+    "timestamp": "2026-11-17T18:24:43Z",
+    "publish": {
+      "instagram": {
+        "id": "18177030910458135",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1768377797603807",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
