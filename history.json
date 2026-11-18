@@ -782,5 +782,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "22-torn-qr.html",
+    "title": "System Design & Software Architecture Explained ⚡ Torn QR",
+    "video": "22-torn-qr.mp4",
+    "music": null,
+    "timestamp": "2026-11-18T17:57:33Z",
+    "publish": {
+      "instagram": {
+        "id": "18000731823105010",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "2914388955602316",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
