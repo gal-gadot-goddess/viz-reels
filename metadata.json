@@ -1,28 +1,27 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡ Torn QR",
-  "ig_caption": "System Design & Software Architecture Explained ⚡ How high-performance systems read torn QR codes.\nUnder the hood: robust decoding survives missing pixels (almost like redundancy + fault-tolerance).\n\n• VIZ 22 — Torn QR Codes, Decoded\n• why broken codes still scan perfectly\n• five frames · coffee-proof by design\n• squares read 0 → squares lost 0 (survivor-only reconstruction)\n• 3 finder corners: which way is up\n• scan line: square-by-square evidence accumulation\n• tear → 6 squares vanish\n• rebuilt from the survivors (tolerate partial data)\n\nPractical takeaway: In interviews, explain failure tolerance as an architecture property (inputs are noisy; you recover using redundancy + constraints).\n\nQuestion for you: Where would you add more resilience in real systems—data encoding, decoding logic, or error-correction budgets?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "Torn QR codes are a perfect micro-demo of software architecture under real-world noise.\n\nWhat looks like “damage” is often a designed property: the decoder can infer structure from partial evidence.\n\nHow the system behaves (mapping directly to systems design patterns):\n- Redundancy & fault tolerance: when 6 squares vanish, the remaining signal is still sufficient to recover the payload.\n- Constraints guide interpretation: the 3 finder corners act like a canonical orientation reference—like schema + invariants in a pipeline.\n- Evidence accumulation: the scan line reads square-by-square; the decoder behaves more like a state machine that progressively confirms hypotheses.\n- Robustness over ideal inputs: “squares read 0 / squares lost 0” is a reminder that evaluation often focuses on recoverability, not perfection.\n- Multi-frame tolerance: “five frames” reinforces that modern systems rarely rely on a single shot; they aggregate across time.\n\nTrade-offs you can discuss in architecture interviews:\n- Latency vs. reliability: more frames/evidence can improve success rates but may increase decoding time.\n- Bandwidth/compute vs. robustness: stronger error-correction costs resources.\n- Observability: to debug failures, you need to record intermediate states (e.g., which corners were detected, what evidence was accepted).\n\nProduction lesson: Treat “broken input” as the default operating condition. Design recovery paths (fallbacks), validate invariants early, and budget error-correction consciously.\n\nWant the systems framing behind this? Explore more at https://kreggscode.com and related mobile/AI implementations at https://kreggscode.com/apps/.",
-  "threads_caption": "Torn QR codes still scan because the decoder reconstructs from survivors using redundancy + constraints (like resilient systems under noisy inputs). Where would you budget error-correction in your design? 🔗 https://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained ⚡ Torn QR #Shorts",
-  "yt_description": "How do torn QR codes still scan? In this #Shorts breakdown (VIZ 22 — Torn QR Codes, Decoded), we map QR recovery to system design fundamentals: redundancy, constraints, orientation inference (3 finder corners), and evidence accumulation (square-by-square scan line).\n\nKey beats:\n- why broken codes still scan perfectly\n- five frames · coffee-proof by design\n- tear → 6 squares vanish\n- rebuilt from the survivors\n\nLinks:\n- https://kreggscode.com\n- https://kreggscode.com/apps/\n- https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "System Design & WebRTC Under the Hood Explained ⚡",
+  "ig_caption": "System Design & Software Architecture Explained ⚡ How WebRTC connects peers through NAT!\nYour friend sits behind TWO locked routers—and the call still finds them.\n\n• WebRTC = real-time media over the internet (low-latency)\n• Web RTC handshake: find an addressable path to the peer\n• STUN server: discovers your public-facing network info (NAT mapping)\n• Matchmaker: coordinates who talks to whom (signaling)\n• TURN relay: fallback when direct paths fail (media relayed via server)\n• Router · NAT: blocks inbound connections → WebRTC adapts\n• Typical target latency budget: ~80 ms for responsive voice/video\n\nPractical takeaway: In interviews, describe the pipeline as “signaling → ICE candidate gathering → connectivity checks → P2P if possible, TURN otherwise.”\n\nQuestion: If you had to pick one in production—STUN-only vs TURN fallback—what would you optimize for: cost, latency, or reliability?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "WebRTC is the system-design interview favorite because it’s a full end-to-end story: addressing, discovery, NAT traversal, and media transport—under real latency constraints.\n\nUnder the hood, a typical WebRTC call looks like this:\n\n1) Signaling / Matchmaking (out-of-band)\n- Participants must learn “who is who” and exchange session metadata (SDP, ICE parameters).\n- In practice, this is handled by a matchmaker + signaling channel (often WebSocket-based).\n- Trade-off: signaling servers scale differently than media forwarding. Keep them lightweight and stateless where possible.\n\n2) ICE Candidate Gathering\n- Each client enumerates possible network paths.\n- STUN helps discover the public address/port mapping created by NAT.\n- Trade-off: STUN improves success rates for direct connectivity, but does not guarantee it.\n\n3) Connectivity Checks (ICE)\n- Peers test which candidate pairs work.\n- If a direct path exists, WebRTC establishes a P2P connection.\n- If traversal fails due to restrictive NAT/firewalls, the system must fall back.\n\n4) TURN Relay (the “just connect” fallback)\n- TURN relays media through a server when P2P is impossible.\n- Trade-off: TURN increases cost and adds relay latency, but maximizes reliability.\n- Production lesson: design policies—e.g., attempt P2P first, escalate to TURN only when needed.\n\nArchitecture patterns & system lessons:\n- Separate control plane (signaling/matchmaking) from data plane (media path).\n- Embrace multi-path negotiation (ICE) rather than assuming one network topology.\n- Budget latency carefully; real-time voice/video often targets ~80ms responsiveness in the user’s perception.\n\nIf you want more architecture breakdowns, see:\nhttps://kreggscode.com\nand the apps/projects side:\nhttps://kreggscode.com/apps/",
+  "threads_caption": "WebRTC connects through NAT with ICE: STUN for discovery, TURN as fallback, and a matchmaker for signaling. The architecture is basically “try P2P first, relay only when necessary.” What would you optimize: latency or cost? https://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained (WebRTC) #Shorts",
+  "yt_description": "System Design & Software Architecture Explained ⚡ How WebRTC connects peers through NAT—even behind TWO locked routers.\n\nWhat happens under the hood:\n• Signaling / Matchmaker helps peers find each other (control plane)\n• STUN discovers public-facing network info (NAT mapping)\n• ICE gathers candidates and runs connectivity checks\n• TURN relays media when P2P fails (reliability fallback)\n• Router · NAT constraints drive the need for traversal\n• Target responsiveness: ~80 ms\n\nLinks:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "scalable backend architecture",
-    "error correction",
-    "fault tolerance",
-    "qr code decoding",
-    "distributed systems",
-    "ai systems",
-    "coding interview questions",
-    "performance engineering",
-    "software architecture explained"
+    "webrtc",
+    "system design",
+    "software architecture",
+    "nat traversal",
+    "stun",
+    "turn",
+    "ice",
+    "peer to peer",
+    "real time communication",
+    "scalable backend architecture"
   ],
   "hashtags": [
-    "#kreggscode",
+    "#webrtc",
     "#systemdesign",
-    "#softwarearchitecture",
-    "#faulttolerance",
-    "#shorts"
+    "#softwareengineering",
+    "#nat",
+    "#kreggscode"
   ]
 }

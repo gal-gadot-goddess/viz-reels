@@ -809,5 +809,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "09-webrtc.html",
+    "title": "System Design & WebRTC Under the Hood Explained ⚡",
+    "video": "09-webrtc.mp4",
+    "music": null,
+    "timestamp": "2026-11-19T18:10:48Z",
+    "publish": {
+      "instagram": {
+        "id": "18386871565239388",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1174102708630345",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
