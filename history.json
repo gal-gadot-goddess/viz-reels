@@ -836,5 +836,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "02-api-versioning.html",
+    "title": "System Design & Software Architecture Explained ⚡ API Versioning",
+    "video": "02-api-versioning.mp4",
+    "music": null,
+    "timestamp": "2026-11-20T17:44:12Z",
+    "publish": {
+      "instagram": {
+        "id": "18117307136027038",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "2039524623363569",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

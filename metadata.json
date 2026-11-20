@@ -1,27 +1,27 @@
 {
-  "title": "System Design & WebRTC Under the Hood Explained ⚡",
-  "ig_caption": "System Design & Software Architecture Explained ⚡ How WebRTC connects peers through NAT!\nYour friend sits behind TWO locked routers—and the call still finds them.\n\n• WebRTC = real-time media over the internet (low-latency)\n• Web RTC handshake: find an addressable path to the peer\n• STUN server: discovers your public-facing network info (NAT mapping)\n• Matchmaker: coordinates who talks to whom (signaling)\n• TURN relay: fallback when direct paths fail (media relayed via server)\n• Router · NAT: blocks inbound connections → WebRTC adapts\n• Typical target latency budget: ~80 ms for responsive voice/video\n\nPractical takeaway: In interviews, describe the pipeline as “signaling → ICE candidate gathering → connectivity checks → P2P if possible, TURN otherwise.”\n\nQuestion: If you had to pick one in production—STUN-only vs TURN fallback—what would you optimize for: cost, latency, or reliability?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "WebRTC is the system-design interview favorite because it’s a full end-to-end story: addressing, discovery, NAT traversal, and media transport—under real latency constraints.\n\nUnder the hood, a typical WebRTC call looks like this:\n\n1) Signaling / Matchmaking (out-of-band)\n- Participants must learn “who is who” and exchange session metadata (SDP, ICE parameters).\n- In practice, this is handled by a matchmaker + signaling channel (often WebSocket-based).\n- Trade-off: signaling servers scale differently than media forwarding. Keep them lightweight and stateless where possible.\n\n2) ICE Candidate Gathering\n- Each client enumerates possible network paths.\n- STUN helps discover the public address/port mapping created by NAT.\n- Trade-off: STUN improves success rates for direct connectivity, but does not guarantee it.\n\n3) Connectivity Checks (ICE)\n- Peers test which candidate pairs work.\n- If a direct path exists, WebRTC establishes a P2P connection.\n- If traversal fails due to restrictive NAT/firewalls, the system must fall back.\n\n4) TURN Relay (the “just connect” fallback)\n- TURN relays media through a server when P2P is impossible.\n- Trade-off: TURN increases cost and adds relay latency, but maximizes reliability.\n- Production lesson: design policies—e.g., attempt P2P first, escalate to TURN only when needed.\n\nArchitecture patterns & system lessons:\n- Separate control plane (signaling/matchmaking) from data plane (media path).\n- Embrace multi-path negotiation (ICE) rather than assuming one network topology.\n- Budget latency carefully; real-time voice/video often targets ~80ms responsiveness in the user’s perception.\n\nIf you want more architecture breakdowns, see:\nhttps://kreggscode.com\nand the apps/projects side:\nhttps://kreggscode.com/apps/",
-  "threads_caption": "WebRTC connects through NAT with ICE: STUN for discovery, TURN as fallback, and a matchmaker for signaling. The architecture is basically “try P2P first, relay only when necessary.” What would you optimize: latency or cost? https://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained (WebRTC) #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ How WebRTC connects peers through NAT—even behind TWO locked routers.\n\nWhat happens under the hood:\n• Signaling / Matchmaker helps peers find each other (control plane)\n• STUN discovers public-facing network info (NAT mapping)\n• ICE gathers candidates and runs connectivity checks\n• TURN relays media when P2P fails (reliability fallback)\n• Router · NAT constraints drive the need for traversal\n• Target responsiveness: ~80 ms\n\nLinks:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "System Design & Software Architecture Explained ⚡ API Versioning",
+  "ig_caption": "System design & software architecture explained ⚡ API versioning—how to change without breaking old apps.\nWhy did every app crash after one rename?\n\n• /v1 contract: returns full_name\n• Client expects stable shape → YOUR API keeps “200 OK” *correctly*\n• You rename full_name → “renamed”\n• Without versioning, old clients deserialize wrong → boom\n\nUnder the hood:\n• Version the API (e.g., /v1 vs /v2)\n• Keep backward-compatible responses for a deprecation window\n• Use explicit schemas + request/response validation\n• Prefer additive changes; treat breaking changes as new versions\n\nPractical takeaway: For system design interview questions, always call out compatibility guarantees + rollout strategy (dual-write/dual-read, canaries, deprecation).\n\nDebate: Should you version by URL (/v1) or by headers/content negotiation—or is one approach always “best”?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "API versioning is one of those “simple” backend concerns that decides whether your system is resilient or fragile.\n\nWhat goes wrong (the classic crash-after-rename):\n- Your API returns a response schema shape (e.g., /v1 returns full_name).\n- A mobile/web client deserializes into its expected model.\n- You rename a field (full_name → renamed) in a live endpoint.\n- Even with HTTP 200 OK, clients can fail at runtime because the contract changed.\n\nCore trade-offs and production patterns:\n1) Versioning strategy\n- URL versioning (/v1, /v2) is explicit, easy to reason about, and works well for system design interview questions.\n- Header-based or content negotiation versioning can reduce URL clutter, but increases complexity and requires stronger governance.\n\n2) Backward compatibility guarantees\n- Additive changes: introduce new fields without removing/renaming old ones.\n- Breaking changes: ship as a new version and keep the old one running for a deprecation window.\n\n3) Governance mechanisms\n- Schema validation (request/response) at the API boundary.\n- Contract tests between frontend/mobile and backend.\n- Observability: track error rates by client version and route/version usage.\n\n4) Rollout approach\n- Canary releases for new versions.\n- Dual-stack (route both old and new) during migration.\n- Publish migration notes and deadlines.\n\nPractical takeaway: When explaining scalable backend architecture, emphasize the “contract” mindset—versioning isn’t about features, it’s about preserving interoperability.\n\nWant more architecture breakdowns and system design fundamentals? https://kreggscode.com\n(Also see the apps used to validate ideas): https://kreggscode.com/apps/",
+  "threads_caption": "API versioning prevents silent client breakage. If you rename full_name → renamed, old apps can fail even with 200 OK. How would you version in production—URL, headers, or schemas? https://kreggscode.com",
+  "yt_title": "System Design & Software Architecture Explained: API Versioning #Shorts",
+  "yt_description": "System Design & Software Architecture Explained ⚡ API versioning: how to change your API without breaking old apps.\n\nIn this Short, we show why a simple rename can crash clients:\n- /v1 returns: full_name\n- You rename the field in-place\n- Old clients deserialize wrong → failures even when status stays 200\n- Solution: create /v2 with the new contract (e.g., name)\n\nKey under-the-hood takeaways:\n- Version your API (URL/header) for breaking changes\n- Keep backward compatibility during a deprecation window\n- Use explicit schemas + validation + contract tests\n- Roll out safely (canary + observability by version)\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #SystemDesign #SoftwareEngineering #Backend #APIVersioning #ScalableArchitecture #CodingInterview",
   "yt_tags": [
-    "webrtc",
-    "system design",
-    "software architecture",
-    "nat traversal",
-    "stun",
-    "turn",
-    "ice",
-    "peer to peer",
-    "real time communication",
-    "scalable backend architecture"
+    "system design interview",
+    "software engineering fundamentals",
+    "scalable backend architecture",
+    "backend engineering",
+    "api versioning",
+    "api design",
+    "distributed systems",
+    "coding interview questions",
+    "production best practices",
+    "microservices"
   ],
   "hashtags": [
-    "#webrtc",
+    "#kreggscode",
     "#systemdesign",
     "#softwareengineering",
-    "#nat",
-    "#kreggscode"
+    "#artificialintelligence",
+    "#coding"
   ]
 }
