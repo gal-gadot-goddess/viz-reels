@@ -1,27 +1,27 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡ API Versioning",
-  "ig_caption": "System design & software architecture explained ⚡ API versioning—how to change without breaking old apps.\nWhy did every app crash after one rename?\n\n• /v1 contract: returns full_name\n• Client expects stable shape → YOUR API keeps “200 OK” *correctly*\n• You rename full_name → “renamed”\n• Without versioning, old clients deserialize wrong → boom\n\nUnder the hood:\n• Version the API (e.g., /v1 vs /v2)\n• Keep backward-compatible responses for a deprecation window\n• Use explicit schemas + request/response validation\n• Prefer additive changes; treat breaking changes as new versions\n\nPractical takeaway: For system design interview questions, always call out compatibility guarantees + rollout strategy (dual-write/dual-read, canaries, deprecation).\n\nDebate: Should you version by URL (/v1) or by headers/content negotiation—or is one approach always “best”?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "API versioning is one of those “simple” backend concerns that decides whether your system is resilient or fragile.\n\nWhat goes wrong (the classic crash-after-rename):\n- Your API returns a response schema shape (e.g., /v1 returns full_name).\n- A mobile/web client deserializes into its expected model.\n- You rename a field (full_name → renamed) in a live endpoint.\n- Even with HTTP 200 OK, clients can fail at runtime because the contract changed.\n\nCore trade-offs and production patterns:\n1) Versioning strategy\n- URL versioning (/v1, /v2) is explicit, easy to reason about, and works well for system design interview questions.\n- Header-based or content negotiation versioning can reduce URL clutter, but increases complexity and requires stronger governance.\n\n2) Backward compatibility guarantees\n- Additive changes: introduce new fields without removing/renaming old ones.\n- Breaking changes: ship as a new version and keep the old one running for a deprecation window.\n\n3) Governance mechanisms\n- Schema validation (request/response) at the API boundary.\n- Contract tests between frontend/mobile and backend.\n- Observability: track error rates by client version and route/version usage.\n\n4) Rollout approach\n- Canary releases for new versions.\n- Dual-stack (route both old and new) during migration.\n- Publish migration notes and deadlines.\n\nPractical takeaway: When explaining scalable backend architecture, emphasize the “contract” mindset—versioning isn’t about features, it’s about preserving interoperability.\n\nWant more architecture breakdowns and system design fundamentals? https://kreggscode.com\n(Also see the apps used to validate ideas): https://kreggscode.com/apps/",
-  "threads_caption": "API versioning prevents silent client breakage. If you rename full_name → renamed, old apps can fail even with 200 OK. How would you version in production—URL, headers, or schemas? https://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained: API Versioning #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ API versioning: how to change your API without breaking old apps.\n\nIn this Short, we show why a simple rename can crash clients:\n- /v1 returns: full_name\n- You rename the field in-place\n- Old clients deserialize wrong → failures even when status stays 200\n- Solution: create /v2 with the new contract (e.g., name)\n\nKey under-the-hood takeaways:\n- Version your API (URL/header) for breaking changes\n- Keep backward compatibility during a deprecation window\n- Use explicit schemas + validation + contract tests\n- Roll out safely (canary + observability by version)\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #SystemDesign #SoftwareEngineering #Backend #APIVersioning #ScalableArchitecture #CodingInterview",
+  "title": "How AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ tokenization & LLM text→numbers\nThen tokens flow into embeddings for vector search + agent reasoning.\n\n• Tokenization: text is split into subwords/tokens (often BPE)\n• Tokens become IDs, then numbers → embeddings\n• Embeddings: learned vectors capturing meaning\n• Similarity search: nearest vectors via cosine/dot product\n• Agents: use retrieval results + tools to plan/execute\n\nPractical takeaway: If embeddings feel “off,” check preprocessing + prompt formatting + chunking before blaming the model.\n\nWhich matters more for quality: tokenization choice, chunk size, or retrieval (similarity) scoring?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (under the hood: tokenization → vectors → retrieval → action)\n\nWhen people ask “how AI reads text,” the core sequence is:\n\n1) Tokenization (text → token IDs)\n- LLMs don’t operate on raw characters; they operate on token IDs.\n- Most modern models use subword tokenization such as Byte-Pair Encoding (BPE) or variants.\n- Key trade-off: token granularity. Finer tokens can represent rare words better, but increase sequence length and compute.\n\n2) Embeddings (token IDs → vector representation)\n- Embeddings convert text (or chunks of text) into fixed-length vectors.\n- Production design pattern: keep a consistent chunking strategy and metadata schema so similarity search and citations remain stable over time.\n\n3) Vector embeddings similarity search\n- Retrieve top-k neighbors using cosine similarity / dot product.\n- Trade-off: recall vs latency. Larger indexes, bigger k, and more reranking improve answers but increase cost.\n\n4) Autonomous agent architecture\n- Agents combine: (a) a planner, (b) retrieval, and (c) tool execution.\n- Common production pitfalls:\n  • “Retrieval drift” from changing chunking/prompt formats\n  • Context window overflow (bad chunk sizes or too many retrieved passages)\n  • Lack of guardrails for tool calls\n\nPractical lesson from production: instrument each stage (token counts, embedding norms, retrieval similarity distribution, reranker score) before tuning prompts—otherwise you’re optimizing noise.\n\nFor interactive architecture guides and app patterns:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/",
+  "threads_caption": "Tokenization turns text into tokens (IDs) → numbers; embeddings turn that into vectors for similarity search—then agents use retrieval to act. Which stage breaks most in real systems? https://kreggscode.com",
+  "yt_title": "How Autonomous AI Agents Work via Tokenization #Shorts",
+  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡—inside modern AI: tokenization → embeddings → similarity search → agent decisions.\n\nIn this Short we cover:\n- Text becomes tokens (often BPE) \n- Tokens map to numbers (IDs → vectors)\n- Vector embeddings enable similarity search (top-k neighbors)\n- Agents combine retrieval + tools to plan/execute\n\nTry this engineering checklist:\n- Verify chunk size + overlap\n- Keep preprocessing consistent across indexing/query\n- Tune retrieval (k + similarity) before prompt tweaks\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\n📷 https://www.instagram.com/kreggscode/\n\n#Shorts #AI #LLM #Embeddings #VectorSearch",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "scalable backend architecture",
-    "backend engineering",
-    "api versioning",
-    "api design",
-    "distributed systems",
-    "coding interview questions",
-    "production best practices",
-    "microservices"
+    "autonomous ai agents architecture",
+    "vector embeddings similarity search",
+    "how artificial intelligence works under the hood",
+    "llm system design",
+    "tokenization",
+    "byte pair encoding",
+    "vector database",
+    "semantic search",
+    "retrieval augmented generation",
+    "ai engineering"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#tokenization",
+    "#embeddings",
+    "#vectorsearch",
+    "#llmarchitecture"
   ]
 }
