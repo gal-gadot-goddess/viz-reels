@@ -890,5 +890,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "VIZ-25_llm-temperature-softmax-sampling-low-vs-high-creativity_ChatGPT-setting-explained_AI-machine-learning-explainer_9x16-reel_with-synth-sound.html",
+    "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+    "video": "VIZ-25_llm-temperature-softmax-sampling-low-vs-high-creativity_ChatGPT-setting-explained_AI-machine-learning-explainer_9x16-reel_with-synth-sound.mp4",
+    "music": null,
+    "timestamp": "2026-11-22T17:21:57Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Media publish failed: {'error': {'message': 'Media ID is not available', 'code': 9007, 'type': 'OAuthException', 'error_subcode': 2207027, 'is_transient': False, 'error_user_msg': 'The media is not ready for publishing, please wait for a moment', 'error_user_title': 'Cannot Publish', 'fbtrace_id': 'ArRYzBgqprTy5vJUqCKoQzC'}}"
+      },
+      "facebook": {
+        "id": "1778574733436052",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

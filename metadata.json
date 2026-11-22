@@ -1,27 +1,27 @@
 {
-  "title": "How AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ tokenization & LLM text→numbers\nThen tokens flow into embeddings for vector search + agent reasoning.\n\n• Tokenization: text is split into subwords/tokens (often BPE)\n• Tokens become IDs, then numbers → embeddings\n• Embeddings: learned vectors capturing meaning\n• Similarity search: nearest vectors via cosine/dot product\n• Agents: use retrieval results + tools to plan/execute\n\nPractical takeaway: If embeddings feel “off,” check preprocessing + prompt formatting + chunking before blaming the model.\n\nWhich matters more for quality: tokenization choice, chunk size, or retrieval (similarity) scoring?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "How Autonomous AI Agents & Vector Embeddings Work ⚡ (under the hood: tokenization → vectors → retrieval → action)\n\nWhen people ask “how AI reads text,” the core sequence is:\n\n1) Tokenization (text → token IDs)\n- LLMs don’t operate on raw characters; they operate on token IDs.\n- Most modern models use subword tokenization such as Byte-Pair Encoding (BPE) or variants.\n- Key trade-off: token granularity. Finer tokens can represent rare words better, but increase sequence length and compute.\n\n2) Embeddings (token IDs → vector representation)\n- Embeddings convert text (or chunks of text) into fixed-length vectors.\n- Production design pattern: keep a consistent chunking strategy and metadata schema so similarity search and citations remain stable over time.\n\n3) Vector embeddings similarity search\n- Retrieve top-k neighbors using cosine similarity / dot product.\n- Trade-off: recall vs latency. Larger indexes, bigger k, and more reranking improve answers but increase cost.\n\n4) Autonomous agent architecture\n- Agents combine: (a) a planner, (b) retrieval, and (c) tool execution.\n- Common production pitfalls:\n  • “Retrieval drift” from changing chunking/prompt formats\n  • Context window overflow (bad chunk sizes or too many retrieved passages)\n  • Lack of guardrails for tool calls\n\nPractical lesson from production: instrument each stage (token counts, embedding norms, retrieval similarity distribution, reranker score) before tuning prompts—otherwise you’re optimizing noise.\n\nFor interactive architecture guides and app patterns:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/",
-  "threads_caption": "Tokenization turns text into tokens (IDs) → numbers; embeddings turn that into vectors for similarity search—then agents use retrieval to act. Which stage breaks most in real systems? https://kreggscode.com",
-  "yt_title": "How Autonomous AI Agents Work via Tokenization #Shorts",
-  "yt_description": "How Autonomous AI Agents & Vector Embeddings Work ⚡—inside modern AI: tokenization → embeddings → similarity search → agent decisions.\n\nIn this Short we cover:\n- Text becomes tokens (often BPE) \n- Tokens map to numbers (IDs → vectors)\n- Vector embeddings enable similarity search (top-k neighbors)\n- Agents combine retrieval + tools to plan/execute\n\nTry this engineering checklist:\n- Verify chunk size + overlap\n- Keep preprocessing consistent across indexing/query\n- Tune retrieval (k + similarity) before prompt tweaks\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\n📷 https://www.instagram.com/kreggscode/\n\n#Shorts #AI #LLM #Embeddings #VectorSearch",
+  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
+  "ig_caption": "How autonomous AI agents & vector embeddings work: LLM temp + softmax sampling explained 🔥\nWhat does ChatGPT temperature REALLY do (low vs high) ?\n\n• Under the hood: tokens get scores → softmax turns scores into probabilities\n• “Temperature” scales logits: \n  - Low temp (e.g., 0.2–0.5) = sharper probs → safer, repeatable outputs\n  - High temp (e.g., 0.8–1.3) = flatter probs → more variation (and risk of nonsense)\n• LLM system design trade-off: creativity vs reliability (latency + re-try patterns)\n• Practical mental model: it’s not “IQ”—it’s randomness in the next-token choice\n\nTakeaway: For interviews and production prompts, start low for factual tasks, raise only when exploring ideas—and add guardrails (schemas/tools) as temp climbs.\n\nWould you rather ship a low-temp agent that’s boring but correct, or a high-temp agent that invents but needs heavy validation? Drop your take.\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "How autonomous AI agents & vector embeddings work ⚡\n\nIf you want the “under the hood” mental model for modern AI systems, start with two layers:\n\n1) Retrieval layer (vector embeddings similarity search)\n- You embed queries and documents into the same vector space.\n- Then you run similarity search (top-k nearest neighbors) to fetch the most relevant context.\n- This reduces hallucinations by anchoring generation to retrieved evidence.\n\n2) Generation layer (LLM system design + softmax temperature)\n- A Transformer produces logits (scores) for the next token.\n- Softmax converts logits → a probability distribution.\n- “Temperature” rescales those logits before softmax:\n  - Low temperature: probabilities become more peaked → higher likelihood of safe, consistent tokens\n  - High temperature: probabilities flatten → more sampling diversity, but increased variance and potential failure modes\n\nProduction trade-offs & patterns\n- Determinism vs exploration: low temp helps reproducibility; higher temp helps ideation, but you’ll need stronger validation.\n- Agent loops: when using autonomous agents, combine temperature with:\n  - tool/function calling\n  - structured outputs (JSON schemas)\n  - self-checks / verifier passes\n  - capped retries + confidence thresholds\n- Evaluation: log prompts, temperature, retrieval hits, and outcome quality; otherwise you can’t attribute failures to retrieval vs sampling.\n\nPractical engineering lesson: If an agent is failing, don’t only tweak temperature—first check retrieval quality (embedding + indexing + top-k), then confirm prompt/tool constraints. Temperature is one lever, not the whole system.\n\nWant interactive system maps? https://kreggscode.com\nFor mobile & AI app patterns: https://kreggscode.com/apps/",
+  "threads_caption": "Temperature in ChatGPT isn’t “creativity”—it’s next-token randomness. Low = sharp probs (reliable). High = flat probs (diverse, risky). Where would YOU set the bar for an autonomous agent: safe or exploratory? https://kreggscode.com",
+  "yt_title": "Autonomous Agents + Vector Embeddings (Temp) #Shorts",
+  "yt_description": "How autonomous AI agents & vector embeddings work: softmax sampling + LLM temperature explained (low vs high) ⚡\n\nIn this Short we break down what “AI temperature” in ChatGPT actually changes:\n• Logits → softmax → next-token probabilities\n• Low temperature = sharper distribution (safe, repeatable)\n• High temperature = flatter distribution (more creative, more nonsense risk)\n\nWhy it matters for autonomous agents:\n• Retrieval (vector embeddings similarity search) grounds responses\n• Sampling (temperature) controls exploration vs reliability\n\nLinks:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
     "autonomous ai agents architecture",
     "vector embeddings similarity search",
-    "how artificial intelligence works under the hood",
     "llm system design",
-    "tokenization",
-    "byte pair encoding",
-    "vector database",
-    "semantic search",
+    "how artificial intelligence works under the hood",
+    "chatgpt temperature explained",
+    "softmax sampling",
+    "temperature vs creativity",
+    "ai reliability",
     "retrieval augmented generation",
     "ai engineering"
   ],
   "hashtags": [
     "#kreggscode",
-    "#tokenization",
-    "#embeddings",
-    "#vectorsearch",
-    "#llmarchitecture"
+    "#autonomousai",
+    "#vectorembeddings",
+    "#llm",
+    "#softmax"
   ]
 }
