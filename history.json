@@ -917,5 +917,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "19-sessions-cookies.html",
+    "title": "Why You Stay Logged In: Sessions Cookies Explained ⚡",
+    "video": "19-sessions-cookies.mp4",
+    "music": null,
+    "timestamp": "2026-11-23T21:09:13Z",
+    "publish": {
+      "instagram": {
+        "id": "18123862798746598",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "1005967058643736",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

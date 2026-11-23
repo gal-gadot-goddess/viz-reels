@@ -1,27 +1,29 @@
 {
-  "title": "How Autonomous AI Agents & Vector Embeddings Work ⚡",
-  "ig_caption": "How autonomous AI agents & vector embeddings work: LLM temp + softmax sampling explained 🔥\nWhat does ChatGPT temperature REALLY do (low vs high) ?\n\n• Under the hood: tokens get scores → softmax turns scores into probabilities\n• “Temperature” scales logits: \n  - Low temp (e.g., 0.2–0.5) = sharper probs → safer, repeatable outputs\n  - High temp (e.g., 0.8–1.3) = flatter probs → more variation (and risk of nonsense)\n• LLM system design trade-off: creativity vs reliability (latency + re-try patterns)\n• Practical mental model: it’s not “IQ”—it’s randomness in the next-token choice\n\nTakeaway: For interviews and production prompts, start low for factual tasks, raise only when exploring ideas—and add guardrails (schemas/tools) as temp climbs.\n\nWould you rather ship a low-temp agent that’s boring but correct, or a high-temp agent that invents but needs heavy validation? Drop your take.\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "How autonomous AI agents & vector embeddings work ⚡\n\nIf you want the “under the hood” mental model for modern AI systems, start with two layers:\n\n1) Retrieval layer (vector embeddings similarity search)\n- You embed queries and documents into the same vector space.\n- Then you run similarity search (top-k nearest neighbors) to fetch the most relevant context.\n- This reduces hallucinations by anchoring generation to retrieved evidence.\n\n2) Generation layer (LLM system design + softmax temperature)\n- A Transformer produces logits (scores) for the next token.\n- Softmax converts logits → a probability distribution.\n- “Temperature” rescales those logits before softmax:\n  - Low temperature: probabilities become more peaked → higher likelihood of safe, consistent tokens\n  - High temperature: probabilities flatten → more sampling diversity, but increased variance and potential failure modes\n\nProduction trade-offs & patterns\n- Determinism vs exploration: low temp helps reproducibility; higher temp helps ideation, but you’ll need stronger validation.\n- Agent loops: when using autonomous agents, combine temperature with:\n  - tool/function calling\n  - structured outputs (JSON schemas)\n  - self-checks / verifier passes\n  - capped retries + confidence thresholds\n- Evaluation: log prompts, temperature, retrieval hits, and outcome quality; otherwise you can’t attribute failures to retrieval vs sampling.\n\nPractical engineering lesson: If an agent is failing, don’t only tweak temperature—first check retrieval quality (embedding + indexing + top-k), then confirm prompt/tool constraints. Temperature is one lever, not the whole system.\n\nWant interactive system maps? https://kreggscode.com\nFor mobile & AI app patterns: https://kreggscode.com/apps/",
-  "threads_caption": "Temperature in ChatGPT isn’t “creativity”—it’s next-token randomness. Low = sharp probs (reliable). High = flat probs (diverse, risky). Where would YOU set the bar for an autonomous agent: safe or exploratory? https://kreggscode.com",
-  "yt_title": "Autonomous Agents + Vector Embeddings (Temp) #Shorts",
-  "yt_description": "How autonomous AI agents & vector embeddings work: softmax sampling + LLM temperature explained (low vs high) ⚡\n\nIn this Short we break down what “AI temperature” in ChatGPT actually changes:\n• Logits → softmax → next-token probabilities\n• Low temperature = sharper distribution (safe, repeatable)\n• High temperature = flatter distribution (more creative, more nonsense risk)\n\nWhy it matters for autonomous agents:\n• Retrieval (vector embeddings similarity search) grounds responses\n• Sampling (temperature) controls exploration vs reliability\n\nLinks:\n• https://kreggscode.com\n• https://kreggscode.com/apps/\n• https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "Why You Stay Logged In: Sessions Cookies Explained ⚡",
+  "ig_caption": "How computer networks & routing work under the hood: DNS → HTTPS → sessions cookies\nWhat actually happens after you login—zero mystery, just verified tickets\n\n• sessions & cookies: your “login state” rides on a signed token\n• login once: server sets a session cookie (over HTTPS)\n• ticket checks 0 passwords: requests carry a cookie back to the server\n• hash match: server validates the token/session hash (e.g., 3f9a… ✓)\n• why it stays: routing + sockets deliver the request; auth happens at the app layer\n\nPractical takeaway: In interviews, describe the flow as “client stores a cookie; server verifies it per request”—not “the network remembers you.”\n\nHot debate: Should long-lived sessions be default, or should rotating session IDs be the safer standard?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Most people say “cookies keep you logged in,” but that’s only the top layer. Under the hood, your auth experience is the coordination of networking fundamentals (routing/DNS/transport) and application-layer verification (sessions).\n\nHere’s the production-grade mental model:\n\n1) Network path (routing & DNS) isn’t authentication\n- Your browser resolves the host (DNS), establishes a route, then opens transport connections (TCP) and sends HTTP requests.\n- DNS lookup and routing affect delivery latency/reachability, not whether you’re authenticated.\n\n2) Transport delivers; the app decides\n- When you login, the server issues a session cookie (signed/tokenized) over HTTPS.\n- After that, every request includes the cookie. The network just transports it; your backend validates it.\n\n3) Sessions & cookies: “ticket checks” are the real gate\n- The server reads the cookie, computes/compares the expected value (often a hash/signature).\n- If the server sees a match (e.g., 3f9a… ✓), it resumes your session without re-asking for credentials.\n\nTrade-offs you should understand:\n- Security vs usability: longer session lifetimes reduce friction but increase exposure if stolen.\n- Stateless vs stateful sessions: JWT-like tokens can reduce server storage, but revocation/rotation becomes a design challenge.\n- Cookie flags matter: Secure/HttpOnly/SameSite reduce common attack surfaces.\n- Rotation & hashing: rotating session IDs and verifying signatures/hashes lowers replay risk.\n\nProduction lesson: always explain login as “client storage + per-request server verification,” and always separate “network routing” from “auth enforcement.”\n\nInteractive resources:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
+  "threads_caption": "You “stay logged in” because the server verifies your session cookie per request—routing/DNS just delivers it. Login once, then ticket checks (hash match) do the rest. Thoughts? https://kreggscode.com",
+  "yt_title": "Sessions Cookies: Login Once, Stay In #Shorts",
+  "yt_description": "How computer networks & routing work under the hood: DNS → HTTPS → TCP delivery → sessions cookies verification.\n\nIn this Shorts breakdown, you’ll see why you stay logged in:\n- The login response sets a session cookie (via HTTPS)\n- Your browser sends that cookie on later requests\n- The server validates the session (hash/signature match)\n- Zero password re-entry: “ticket checks” replace repeated logins\n\nOfficial links:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "autonomous ai agents architecture",
-    "vector embeddings similarity search",
-    "llm system design",
-    "how artificial intelligence works under the hood",
-    "chatgpt temperature explained",
-    "softmax sampling",
-    "temperature vs creativity",
-    "ai reliability",
-    "retrieval augmented generation",
-    "ai engineering"
+    "sessions cookies",
+    "http cookies",
+    "authentication",
+    "web security",
+    "https explained",
+    "dns lookup process visualized",
+    "tcp vs udp",
+    "computer networking fundamentals",
+    "login flow",
+    "server session validation",
+    "routing under the hood",
+    "jwt vs sessions"
   ],
   "hashtags": [
     "#kreggscode",
-    "#autonomousai",
-    "#vectorembeddings",
-    "#llm",
-    "#softmax"
+    "#systemdesign",
+    "#softwareengineering",
+    "#artificialintelligence",
+    "#coding"
   ]
 }
