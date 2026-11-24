@@ -944,5 +944,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "git-graph-reel (1).html",
+    "title": "System Design & Software Architecture Explained ⚡ Git Branch/Merge",
+    "video": "git-graph-reel (1).mp4",
+    "music": null,
+    "timestamp": "2026-11-24T20:06:15Z",
+    "publish": {
+      "instagram": {
+        "id": "18101987291436888",
+        "platform": "instagram",
+        "status": "success"
+      },
+      "facebook": {
+        "id": "4183119585153342",
+        "page": "kreggscode",
+        "status": "success"
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]
