@@ -1,27 +1,29 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡ Git Branch/Merge",
-  "ig_caption": "System Design & Software Architecture Explained ⚡ How Git Branch & Merge works under the hood\nHigh-performance like modern systems: fast replays, safe zones, clean history—tap for sound 🔊\n\n• Branch = parallel workstreams (like microservices in isolation)\n• Commit graph = immutable timeline (audit trail you can reason about)\n• Merge = reconciling divergent states (conflict resolution + integration)\n• Fast-forward vs 3-way merge = different consistency/rewrites\n• Rebase = history reshaping (trade speed for traceability)\n• “Safe zones” replay = deterministic steps you can re-run\n\nPractical takeaway: For interviews, map Git operations to system behaviors—branching ≈ isolation, merge ≈ convergence, rebase ≈ “rewrite with intent.”\n\nWhich is “safer” in production collaboration: merge commits or rebase/squash—and why?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "System Design & Software Architecture Explained ⚡ (Git Graph Reel) — Branch & Merge under the hood.\n\nWhen you think of Git as a distributed system, its core primitives line up with architecture trade-offs:\n\n• Branching (isolation): Creating a branch is like spinning up an isolated execution context. You can evolve features independently without blocking the mainline—similar to deploying behind a feature flag.\n\n• Commit graph (immutable state + auditability): Commits are content-addressed snapshots, forming a DAG. This gives you strong explainability: you can reconstruct “what happened” without guessing.\n\n• Merge (convergence strategy): Merging is reconciliation of divergent histories.\n  - Fast-forward merge is effectively “no new reconciliation logic”—it assumes the mainline was not moved.\n  - 3-way merge performs explicit reconciliation using a common ancestor (think of it as resolving conflicts with reference context).\n\n• Rebase (history rewrite): Rebasing replays commits onto a new base. It can reduce noise and produce a linear history, but it changes commit identities—so it’s analogous to performing a “history rewrite” with potential coordination costs (and requires discipline with shared branches).\n\n• Production lesson: Pick strategies based on your team’s reliability needs.\n  - Prefer merge commits when you want maximum traceability of integration events.\n  - Prefer squash/rebase when you want a cleaner change log and your workflow supports deterministic replay.\n\nInterview tip: When asked about system design fundamentals, borrow the Git mental model—define isolated work, immutable state, and deterministic convergence paths.\n\n🔗 Learn more patterns and architecture: https://kreggscode.com\n📱 Apps: https://kreggscode.com/apps/\n\nQuestion: For collaborative engineering, should teams optimize for “traceability” (merge commits) or “readability” (rebase/squash)?",
-  "threads_caption": "Branch & merge is basically “isolation + immutable state + convergence.” ⚡ In your team, merge commits or rebase/squash? Why?\nhttps://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained ⚡ Git Merge #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ How Git Branch & Merge works under the hood — mapped to scalable backend architecture concepts.\n\nIn this reel/short, you’ll see:\n• Branching = isolated workstreams (feature isolation)\n• Commit graph = immutable timeline you can reason about\n• Merge strategies (fast-forward vs 3-way) = different convergence behaviors\n• Rebase = history replay with trade-offs\n• “Safe zones” replay = deterministic, repeatable steps\n\nPractical takeaway: Use this mapping in system design interviews—branch ≈ isolation, merge ≈ convergence, commit graph ≈ auditability.\n\nLinks:\n🔗 https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\n📷 https://www.instagram.com/kreggscode/\n\n#Shorts",
+  "title": "Why You Stay Logged In: Sessions Cookies Explained ⚡",
+  "ig_caption": "How computer networks & routing work under the hood: DNS → HTTPS → sessions cookies\nWhat actually happens after you login—zero mystery, just verified tickets\n\n• sessions & cookies: your “login state” rides on a signed token\n• login once: server sets a session cookie (over HTTPS)\n• ticket checks 0 passwords: requests carry a cookie back to the server\n• hash match: server validates the token/session hash (e.g., 3f9a… ✓)\n• why it stays: routing + sockets deliver the request; auth happens at the app layer\n\nPractical takeaway: In interviews, describe the flow as “client stores a cookie; server verifies it per request”—not “the network remembers you.”\n\nHot debate: Should long-lived sessions be default, or should rotating session IDs be the safer standard?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "Most people say “cookies keep you logged in,” but that’s only the top layer. Under the hood, your auth experience is the coordination of networking fundamentals (routing/DNS/transport) and application-layer verification (sessions).\n\nHere’s the production-grade mental model:\n\n1) Network path (routing & DNS) isn’t authentication\n- Your browser resolves the host (DNS), establishes a route, then opens transport connections (TCP) and sends HTTP requests.\n- DNS lookup and routing affect delivery latency/reachability, not whether you’re authenticated.\n\n2) Transport delivers; the app decides\n- When you login, the server issues a session cookie (signed/tokenized) over HTTPS.\n- After that, every request includes the cookie. The network just transports it; your backend validates it.\n\n3) Sessions & cookies: “ticket checks” are the real gate\n- The server reads the cookie, computes/compares the expected value (often a hash/signature).\n- If the server sees a match (e.g., 3f9a… ✓), it resumes your session without re-asking for credentials.\n\nTrade-offs you should understand:\n- Security vs usability: longer session lifetimes reduce friction but increase exposure if stolen.\n- Stateless vs stateful sessions: JWT-like tokens can reduce server storage, but revocation/rotation becomes a design challenge.\n- Cookie flags matter: Secure/HttpOnly/SameSite reduce common attack surfaces.\n- Rotation & hashing: rotating session IDs and verifying signatures/hashes lowers replay risk.\n\nProduction lesson: always explain login as “client storage + per-request server verification,” and always separate “network routing” from “auth enforcement.”\n\nInteractive resources:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/",
+  "threads_caption": "You “stay logged in” because the server verifies your session cookie per request—routing/DNS just delivers it. Login once, then ticket checks (hash match) do the rest. Thoughts? https://kreggscode.com",
+  "yt_title": "Sessions Cookies: Login Once, Stay In #Shorts",
+  "yt_description": "How computer networks & routing work under the hood: DNS → HTTPS → TCP delivery → sessions cookies verification.\n\nIn this Shorts breakdown, you’ll see why you stay logged in:\n- The login response sets a session cookie (via HTTPS)\n- Your browser sends that cookie on later requests\n- The server validates the session (hash/signature match)\n- Zero password re-entry: “ticket checks” replace repeated logins\n\nOfficial links:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "scalable backend architecture",
-    "coding interview questions",
-    "git graph",
-    "branch and merge",
-    "distributed systems",
-    "rebase vs merge",
-    "software architecture",
-    "ai systems"
+    "sessions cookies",
+    "http cookies",
+    "authentication",
+    "web security",
+    "https explained",
+    "dns lookup process visualized",
+    "tcp vs udp",
+    "computer networking fundamentals",
+    "login flow",
+    "server session validation",
+    "routing under the hood",
+    "jwt vs sessions"
   ],
   "hashtags": [
     "#kreggscode",
     "#systemdesign",
-    "#softwarearchitecture",
-    "#git",
-    "#backendengineering"
+    "#softwareengineering",
+    "#artificialintelligence",
+    "#coding"
   ]
 }
