@@ -1025,5 +1025,32 @@
         "reason": "No credentials configured"
       }
     }
+  },
+  {
+    "file": "09-sql-vs-nosql.html",
+    "title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL",
+    "video": "09-sql-vs-nosql.mp4",
+    "music": null,
+    "timestamp": "2026-11-27T18:49:47Z",
+    "publish": {
+      "instagram": {
+        "status": "failed",
+        "platform": "instagram",
+        "error": "Container creation failed with URL: {\"error\":{\"message\":\"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.\",\"code\":190,\"type\":\"OAuthException\",\"error_subcode\":460,\"fbtrace_id\":\"AF090MDQwNBBbDMtTZLKkPH\"}}"
+      },
+      "facebook": {
+        "status": "failed",
+        "page": "kreggscode",
+        "error": "Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons."
+      },
+      "threads": {
+        "status": "skipped",
+        "reason": "Failed to create container with all API versions"
+      },
+      "youtube": {
+        "status": "skipped",
+        "reason": "No credentials configured"
+      }
+    }
   }
 ]

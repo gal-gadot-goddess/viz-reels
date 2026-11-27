@@ -1,29 +1,28 @@
 {
-  "title": "System Design & Software Architecture Explained ⚡ Inside Git",
-  "ig_caption": "System Design & Software Architecture Explained ⚡ How a commit works (git internals)\nInside One Commit: snapshots, fingerprints & “sticker magic”\n\n• A commit is the metadata + pointers to content, not a full copy\n• “FILES COPIED 0 / COMMITS 0” — Git reuses objects by content identity\n• Snapshots: your project state is reconstructed from stored objects\n• Fingerprints: content is hashed; the same content maps to the same object\n• Branches: cheap refs (tiny pointers), cost ~41 bytes because they don’t duplicate history\n• Why it’s fast: immutability + deduplication + object addressing\n\nPractical takeaway: In interviews, describe versioning as “content-addressed DAG snapshots,” not “folders copied per commit.”\n\nDebate question: Should production systems prefer “copy-on-write snapshots” (Git style) or “in-place updates” for performance and reliability?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
-  "fb_caption": "System Design & Software Architecture Explained ⚡ Today’s deep dive: git internals—what’s actually inside “one commit,” and why it scales.\n\nUnder the hood, Git behaves like a content-addressed storage system:\n\n• Commits aren’t full filesystem copies. They’re metadata objects that reference other objects.\n• Snapshots are conceptual: the tree you see at HEAD is reconstructed via pointers to stored content objects.\n• Fingerprints (hashes) make deduplication natural. If two states share the same content, Git reuses the same objects.\n• “Sticker magic”: think of the commit as a sticker that points to an immutable content graph. The sticker changes; the underlying pieces are shared.\n\nWhy branches feel “cheap”:\n\n• A branch is essentially a ref (a pointer) to a commit—small and fast to create.\n• The history remains a DAG of immutable objects; branching doesn’t require duplicating the underlying content.\n• This is the same architectural idea behind scalable systems: avoid copying large state; reference immutable artifacts.\n\nTrade-offs / production lessons:\n\n• Immutable objects simplify concurrency and auditing—great for reliable rebuilds.\n• Hash-addressing improves integrity and caching opportunities.\n• Garbage collection becomes an operational concern: you manage object lifetimes, not just logical history.\n\nInterview tip: When asked about “version control internals,” answer with: “content-addressed immutable objects + commit/tree pointers = a DAG of snapshots,” then connect it to real systems (CAS, immutability, caching).\n\nWant more systems-style breakdowns? Visit https://kreggscode.com and the apps layer at https://kreggscode.com/apps/.\n\nQuestion for engineers: In your systems, where do you draw the line between referencing immutable artifacts vs updating state in-place?",
-  "threads_caption": "One commit in Git = metadata + pointers to immutable, content-hashed objects (snapshots reconstructed, not copied). Branches are cheap refs because history is a DAG. Thoughts—immutability or in-place updates? 🔗 https://kreggscode.com",
-  "yt_title": "System Design & Software Architecture Explained: Git Internals #Shorts",
-  "yt_description": "System Design & Software Architecture Explained ⚡ Inside One Commit: git internals in 30–45s.\n\nYou’ll learn:\n• Why commits don’t copy files (FILES COPIED: 0)\n• How snapshots are reconstructed from object pointers\n• Fingerprints (hashes) = deduplication + integrity\n• Branches cost ~41 bytes because they’re refs, not duplicated history\n\nOfficial links:\n🔗 https://kreggscode.com\n📱 https://kreggscode.com/apps/\nInstagram: https://www.instagram.com/kreggscode/\n\nComment question: Should production systems prefer immutable, content-addressed snapshots or in-place updates?\n\n#Shorts #git #systemdesign #softwarearchitecture #interviewprep #backendengineering #immutability #devtools #kreggscode",
+  "title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL",
+  "ig_caption": "Database Sharding explained: partitioning vs sharding at billion-record scale—how SQL vs NoSQL keeps systems fast?\nVIZ 09: same data, two ways to store it (and why joins/migrations feel different).\n\n• SQL: strict relational tables → schema + joins, but careful migration planning\n• NoSQL: flexible nested docs → fewer joins, fast reads, evolving structures\n• Scaling: horizontal vs vertical scaling\n• Under the hood: replication + routing + workload-aware partitioning\n• Interview lens: “how do you avoid hotspots and keep queries predictable?”\n\nPractical takeaway: For system design interviews, describe the data model first (entities + access patterns), then choose SQL/NoSQL plus sharding/partition strategy.\n\nDo you prefer SQL consistency with joins, or NoSQL flexibility with nested reads—what would you pick for a billion-record system?\n\n🔗 Interactive architecture guides: https://kreggscode.com\n📱 Mobile & AI Apps: https://kreggscode.com/apps/\nFollow @kreggscode | Autonomous AI & Systems Studio",
+  "fb_caption": "SQL vs NoSQL is often framed as “schema vs flexibility,” but at scale the real differentiator is how your storage model interacts with partitioning/sharding, query patterns, and operational risk.\n\nIn high-scale systems you’ll typically combine:\n- Horizontal scaling (more nodes) rather than only vertical (bigger machines)\n- Partitioning vs sharding:\n  • Partitioning: split data to improve manageability/throughput while keeping a logical model\n  • Sharding: split ownership/routing across shards to scale write volume and avoid bottlenecks\n- Replication + routing:\n  • replicas for read throughput and failover\n  • query routing/shard key selection to prevent hotspots\n\nTrade-offs to remember:\n1) SQL (relational)\n- Pros: clear constraints, strong consistency options, efficient joins when the model fits\n- Cons: schema changes and migrations can be costly; cross-shard joins can get expensive fast\n\n2) NoSQL (document/key-value/column families)\n- Pros: flexible/nested data, often fewer joins for read-heavy workloads\n- Cons: denormalization increases write complexity; enforcing invariants may move to the app layer\n\nArchitecture patterns that work in production:\n- Start from access patterns (reads/writes, hot keys, query shapes), then pick SQL/NoSQL\n- If you need joins across partitions, consider: data modeling changes, precomputed views, or event-driven denormalization\n- Design migrations as a first-class system: dual-write/expand-contract strategies (where applicable)\n\nIf you want the practical system design playbook and interactive guides, check:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\n\nQuestion for engineers: in your experience, what was the bigger failure mode at scale—bad sharding keys, costly migrations, or unexpected access patterns?",
+  "threads_caption": "Database Sharding vs Partitioning decides whether SQL/NoSQL stays fast at billions.\nSQL leans toward joins + migrations; NoSQL leans toward nested reads + denormalization.\nWhat would you choose for your next system? https://kreggscode.com",
+  "yt_title": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL #Shorts",
+  "yt_description": "Database Sharding vs Partitioning ⚡ SQL vs NoSQL — how databases scale to billions without crashing.\n\nIn this Short (VIZ 09), we break down “same data, two ways to store it” and what changes at scale:\n- SQL: strict relational model → joins + schema/migration planning\n- NoSQL: flexible nested model → fewer joins, fast reads, evolving structures\n- Sharding vs partitioning: routing + hotspot avoidance\n- Horizontal vs vertical scaling\n- Interview-ready framing: access patterns → data model → scaling strategy\n\nLinks:\nhttps://kreggscode.com\nhttps://kreggscode.com/apps/\nhttps://www.instagram.com/kreggscode/\n\n#Shorts #SQL #NoSQL #Sharding #Partitioning",
   "yt_tags": [
-    "system design interview",
-    "software engineering fundamentals",
-    "software architecture",
-    "scalable backend architecture",
-    "coding interview questions",
-    "git internals",
-    "git commit",
-    "branches in git",
-    "immutability",
-    "content addressed storage",
-    "shorts",
-    "kreggscode"
+    "database sharding explained",
+    "partitioning vs sharding",
+    "sql vs nosql architecture",
+    "horizontal vs vertical scaling",
+    "system design database interview",
+    "high scale systems",
+    "data partitioning",
+    "database scaling",
+    "no sql nested documents",
+    "sql joins migration",
+    "shard key selection"
   ],
   "hashtags": [
     "#kreggscode",
-    "#systemdesign",
-    "#softwareengineering",
-    "#artificialintelligence",
-    "#coding"
+    "#sqlvsnosql",
+    "#databasesharding",
+    "#partitioning",
+    "#systemdesign"
   ]
 }
